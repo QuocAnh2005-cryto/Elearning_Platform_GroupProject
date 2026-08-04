@@ -1,0 +1,358 @@
+/* --- Custom Styles for Course Player (learning.html) --- */
+
+:root {
+    --player-gray: #f8fafc;
+}
+
+/* Page Split Screen Layout */
+.main-player-content {
+    background-color: #ffffff;
+}
+
+.sidebar-curriculum-container {
+    min-height: calc(100vh - 73px); /* 100vh minus navbar height */
+    position: sticky;
+    top: 73px;
+    z-index: 10;
+}
+
+/* Video Player */
+.video-player-container {
+    background-color: #000000;
+}
+
+/* Play button center overlay */
+.play-overlay {
+    background-color: var(--primary);
+    box-shadow: 0 4px 20px rgba(26, 86, 219, 0.4);
+    width: 60px;
+    height: 60px;
+    opacity: 0.95;
+    z-index: 20;
+}
+
+.play-overlay:hover {
+    transform: translate(-50%, -50%) scale(1.1) !important;
+    opacity: 1;
+}
+
+/* Video Controls overlay */
+.video-controls-bar {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0) 100%);
+    z-index: 15;
+}
+
+.video-progress-wrapper {
+    padding: 6px 0;
+}
+
+.video-progress-wrapper:hover .video-progress-bg {
+    height: 6px !important;
+}
+
+.video-progress-fill {
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sidebar lists styling */
+.lesson-item {
+    transition: var(--transition);
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Section header in accordion */
+.accordion .accordion-header .accordion-button {
+    padding: 0.75rem 1rem;
+}
+
+.accordion .text-start .d-block {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.lesson-link {
+    color: inherit;
+}
+
+.btn-open-lesson-document.disabled,
+.btn-download-lesson-document.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.lesson-item:hover:not(.active-lesson-item) {
+    background-color: #f8fafc !important;
+}
+
+/* Active playing lesson */
+.active-lesson-item {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    border-color: var(--primary) !important;
+}
+
+.active-lesson-item .lesson-link,
+.active-lesson-item .text-muted-dark {
+    color: #ffffff !important;
+}
+
+.active-lesson-item .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.active-lesson-item .lesson-icon-indicator.border {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+}
+
+.active-lesson-item .lesson-icon-indicator.bg-success {
+    background-color: #198754 !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+.active-play-icon-box {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.lesson-document-link {
+    transition: var(--transition);
+    opacity: 0.9;
+}
+
+.lesson-document-link:hover {
+    opacity: 1;
+    text-decoration: underline !important;
+}
+
+/* Sticky sidebar footer */
+.sticky-bottom-sidebar {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Nav Tabs */
+.player-nav-tabs .nav-link {
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 15px;
+    font-family: var(--font-heading), sans-serif;
+    position: relative;
+    transition: var(--transition);
+}
+
+.player-nav-tabs .nav-link:hover {
+    color: var(--primary);
+}
+
+.player-nav-tabs .nav-link.active {
+    color: var(--primary) !important;
+}
+
+.player-nav-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 99px;
+}
+
+/* Lesson document viewer */
+.lesson-document-viewer {
+    max-width: 100%;
+}
+
+.quiz-iframe-shell {
+    min-height: 950px;
+}
+
+.quiz-iframe {
+    display: block;
+    width: 100%;
+    min-height: 950px;
+    border: 0;
+    background-color: #ffffff;
+}
+
+.lesson-document-frame-shell {
+    min-height: 640px;
+}
+
+.lesson-document-frame {
+    display: block;
+    width: 100%;
+    min-height: 640px;
+    border: 0;
+    background-color: #ffffff;
+}
+
+.lesson-document-meta .badge {
+    letter-spacing: 0.2px;
+}
+
+.lesson-document-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.lesson-document-stat {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+
+.lesson-document-stat-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.lesson-document-stat-value {
+    display: block;
+    margin-top: 4px;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.lesson-document-stat-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #64748b;
+}
+
+/* Accordion details */
+.accordion-button::after {
+    display: none !important; /* Hide bootstrap default arrow */
+}
+
+/* Header navbar minimal modifications */
+.header-utilities button {
+    transition: var(--transition);
+}
+
+.header-utilities button:hover {
+    background-color: #f1f5f9;
+}
+
+.star-rating-css {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.star-rating-css input[type="radio"] {
+    display: none;
+}
+
+.star-rating-css label {
+    cursor: pointer;
+    padding: 2px;
+    color: #ccc;
+}
+
+.star-rating-css label svg {
+    fill: none !important;
+    stroke: #cbd5e1 !important;
+    transition: stroke 0.15s ease-in-out, fill 0.15s ease-in-out;
+}
+
+.star-rating-css input[type="radio"]:checked ~ label svg,
+.star-rating-css input[type="radio"]:checked ~ label svg polygon,
+.star-rating-css label:hover svg,
+.star-rating-css label:hover svg polygon,
+.star-rating-css label:hover ~ label svg,
+.star-rating-css label:hover ~ label svg polygon {
+    fill: #ffc107 !important;
+    stroke: #ffc107 !important;
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 991.98px) {
+    .sidebar-curriculum-container {
+        min-height: auto;
+        position: relative;
+        top: 0;
+        border-left: 0 !important;
+        border-top: 1px solid #cbd5e1;
+    }
+
+    .lesson-document-frame-shell,
+    .lesson-document-frame {
+        min-height: 520px;
+    }
+
+    .lesson-document-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Sidebar Tabs & Notes Styles --- */
+.sidebar-nav-tabs .nav-link {
+    border: none !important;
+    background: transparent !important;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: var(--font-heading), sans-serif;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    padding-bottom: 10px;
+    border-bottom: 2px solid transparent !important;
+}
+
+.sidebar-nav-tabs .nav-link:hover {
+    color: var(--primary);
+}
+
+.sidebar-nav-tabs .nav-link.active {
+    color: var(--primary) !important;
+    border-bottom: 2px solid var(--primary) !important;
+}
+
+.note-item {
+    transition: all 0.2s ease;
+    border-color: #e2e8f0 !important;
+}
+
+.note-item:hover {
+    border-color: var(--primary-border) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.note-seek-btn {
+    transition: all 0.2s ease;
+}
+
+.note-seek-btn:hover {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-edit-note:hover {
+    color: var(--primary) !important;
+}
+
+.btn-delete-note:hover {
+    color: #dc3545 !important;
+}
+
+.note-input-container {
+    border-color: #e2e8f0 !important;
+}
+
+

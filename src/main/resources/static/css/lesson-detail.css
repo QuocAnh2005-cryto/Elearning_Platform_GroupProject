@@ -1,0 +1,482 @@
+/* =========================================================
+   LEARNING HUB — COMPACT QUIZ DASHBOARD (PURE FLOW)
+   ========================================================= */
+
+/* --- 1. PREMIUM HEADER CARD (BREADCRUMB & TITLE) --- */
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    backdrop-filter: blur(12px);
+}
+
+.quiz-topbar-inner {
+    width: min(100% - 48px, 1400px);
+    min-height: 76px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.quiz-brand img {
+    width: auto;
+    height: 40px;
+    object-fit: contain;
+}
+
+.quiz-brand .logo-text {
+    color: #1a56db;
+    font-size: 21px;
+}
+
+.quiz-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-back-curriculum {
+    min-height: 42px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back-curriculum svg {
+    width: 17px;
+    height: 17px;
+}
+
+.btn-back-curriculum:hover {
+    border-color: #1a56db;
+    background: #eff6ff;
+    color: #1a56db;
+    transform: translateY(-1px);
+}
+
+.quiz-user-button {
+    padding: 6px 8px 6px 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: transparent;
+    color: #1e293b;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.quiz-user-button:hover,
+.quiz-user-button[aria-expanded="true"] {
+    border-color: #e2e8f0;
+    background: #f8fafc;
+}
+
+.quiz-header-avatar {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #dbeafe;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.quiz-user-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.quiz-user-copy strong {
+    max-width: 180px;
+    overflow: hidden;
+    color: #1e293b;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.quiz-user-copy small {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.quiz-user-chevron {
+    width: 15px;
+    height: 15px;
+    color: #94a3b8;
+    transition: transform 0.2s ease;
+}
+
+.quiz-user-button[aria-expanded="true"] .quiz-user-chevron {
+    transform: rotate(180deg);
+}
+
+.quiz-main-content {
+    width: min(100% - 48px, 1400px);
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+.quiz-topbar .custom-user-dropdown-menu {
+    min-width: 220px;
+}
+
+.quiz-topbar .dropdown-item svg {
+    width: 16px;
+    height: 16px;
+}
+
+.premium-header-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 25px rgba(148, 163, 184, 0.05) !important;
+}
+
+.header-card-bg-glow {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(26, 86, 219, 0.04) 0%, rgba(255,255,255,0) 70%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Breadcrumb thanh lịch */
+.custom-breadcrumb .breadcrumb-item,
+.custom-breadcrumb .breadcrumb-item a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
+}
+
+.custom-breadcrumb .breadcrumb-item a:hover {
+    color: #1a56db;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+    color: #475569;
+}
+
+.custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: #cbd5e1;
+    content: "/";
+}
+
+/* --- 2. WORKSPACE CONTROLS & PILL FILTERS --- */
+.btn-filter-pill {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 6px 16px !important;
+    border-radius: 30px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease !important;
+}
+
+.btn-filter-pill:hover {
+    background: #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+.btn-filter-pill.active {
+    background: #1a56db !important;
+    color: #ffffff !important;
+    border-color: #1a56db !important;
+}
+
+.status-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* --- 3. THỂ QUIZ CARD NGANG --- */
+.quiz-item-horizontal-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.quiz-item-horizontal-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(26, 86, 219, 0.2) !important;
+    box-shadow: 0 12px 25px rgba(148, 163, 184, 0.08) !important;
+}
+
+.quiz-card-icon-status {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-card-icon-status svg {
+    width: 22px;
+    height: 22px;
+}
+
+.status-published { background: #bbf7d0; color: #166534; }
+.status-draft { background: #fef08a; color: #854d0e; }
+.status-archived { background: #e2e8f0; color: #475569; }
+
+.bg-success-light { background: #f0fdf4 !important; }
+.bg-warning-light { background: #fefce8 !important; }
+.bg-secondary-light { background: #f8fafc !important; }
+
+.btn-light-primary {
+    background: rgba(26, 86, 219, 0.06) !important;
+    color: #1a56db !important;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-light-primary:hover {
+    background: rgba(26, 86, 219, 0.12) !important;
+}
+
+/* --- 4. INLINE FORM FRAME & ANIMATION --- */
+.quiz-step-circle-mini {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1a56db;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.animate-slide-up {
+    animation: inlineFormSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes inlineFormSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Utilities */
+.fs-8 { font-size: 12px !important; }
+.tracking-tight { letter-spacing: -0.5px; }
+
+/* =========================================================
+   LEARNING HUB — ELITE PAGINATION CUSTOM
+   ========================================================= */
+.custom-pagination-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.custom-pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.custom-pagination .page-item .page-link {
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px !important; /* Biến thành nút tròn bo góc */
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hiệu ứng khi Hover */
+.custom-pagination .page-item .page-link:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+
+/* Trạng thái trang Hiện Tại (Active) */
+.custom-pagination .page-item.active .page-link {
+    background-color: #1a56db !important;
+    border-color: #1a56db !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25);
+}
+
+/* Trạng thái nút bị Vô Hiệu Hóa (Disabled) */
+.custom-pagination .page-item.disabled .page-link {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #cbd5e1;
+    pointer-events: none;
+    transform: none;
+}
+
+/* Chữ hiển thị số lượng bản ghi đi kèm */
+.pagination-info-text {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* --- 5. TINH CHỈNH ICON & ACTIONS TRONG CARD QUIZ --- */
+
+/* Làm mượt icon trạng thái */
+.quiz-card-icon-status {
+    transition: all 0.3s ease;
+}
+.quiz-item-horizontal-card:hover .quiz-card-icon-status {
+    transform: scale(1.05) rotate(3deg);
+}
+
+/* Base style cho các nút Icon tròn */
+.btn-action-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-action-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Hiệu ứng Hover cho từng loại nút riêng biệt */
+.btn-action-icon.btn-view:hover {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.btn-action-icon.btn-archive:hover {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+    color: #334155;
+    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
+}
+
+.btn-action-icon.btn-edit:hover {
+    background-color: #fefce8;
+    border-color: #eab308;
+    color: #854d0e;
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.15);
+}
+
+.btn-action-icon.btn-delete:hover {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    color: #b91c1c;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.custom-pagination .page-item.disabled span.page-link {
+    background: transparent;
+    border: none;
+    padding: 0 8px;
+    cursor: not-allowed;
+}
+
+@media (max-width: 767.98px) {
+    .quiz-topbar-inner,
+    .quiz-main-content {
+        width: min(100% - 28px, 1400px);
+    }
+
+    .quiz-topbar-inner {
+        min-height: 68px;
+    }
+
+    .quiz-brand .logo-text,
+    .quiz-user-copy,
+    .quiz-user-chevron {
+        display: none;
+    }
+
+    .quiz-topbar-actions {
+        gap: 8px;
+    }
+
+    .btn-back-curriculum {
+        min-height: 38px;
+        padding: 0 12px;
+    }
+
+    .quiz-header-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .quiz-main-content {
+        padding-top: 20px;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .quiz-brand img {
+        height: 34px;
+    }
+
+    .btn-back-curriculum span {
+        display: none;
+    }
+
+    .btn-back-curriculum {
+        width: 38px;
+        padding: 0;
+    }
+}

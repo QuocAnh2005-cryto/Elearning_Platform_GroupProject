@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (window.top !== window.self) {
+            window.top.location.href = window.self.location.href;
+        }
+    </script>
+    <title>Đăng nhập | LearningHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="auth-image">
+
+        <a th:href="@{/}" class="btn-home-back" style="padding: 8px 12px; background: rgba(255, 255, 255, 0.9); border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <img th:src="@{/images/logo-icon.png}" alt="E-Learning Logo" style="height: 24px;">
+            <span style="color: #333; font-weight: 600; font-size: 16px;">LearningHub</span>
+        </a>
+
+        <div class="overlay"></div>
+        <div class="brand-overlay">
+            <div class="logo-white">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>LearningHub</span>
+            </div>
+            <div class="image-text">
+                <h2>Nâng tầm tri thức Việt.</h2>
+                <p>Đồng hành cùng bạn trên con đường phát triển sự nghiệp bền vững với hàng nghìn khóa học chuyên sâu.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <h1>Chào mừng trở lại</h1>
+                <p>Tiếp tục hành trình học tập của bạn tại LearningHub.</p>
+            </div>
+
+            <div th:if="${param.error}" class="alert-msg">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Email hoặc mật khẩu không chính xác.</span>
+            </div>
+
+            <form th:action="@{/login}"
+                  th:object="${loginRequest}"
+                  method="POST"
+                  class="main-form">
+                <div class="form-group"> <label>Địa chỉ Email</label>
+                    <div class="input-field">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" th:field="*{email}" placeholder="Nhập email của bạn" required>
+                        <small class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                    </div>
+                </div>
+
+                <div class="form-group"> <label>Mật khẩu</label>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" th:field="*{password}" placeholder="Nhập mật khẩu của bạn" required>
+                        <small class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+                        <i class="fa-regular fa-eye toggle-pass" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <div class="form-utils">
+                    <label class="custom-check">
+                        <input type="checkbox" name="remember-me">
+                        <span class="checkmark"></span>
+                        <span class="text">Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a th:href="@{/forgot-password}" class="link-forgot">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Đăng nhập</button>
+
+                <div class="divider">
+                    <span>Hoặc đăng nhập với</span>
+                </div>
+
+                <a
+                        th:href="@{/oauth2/authorization/google}"
+                        class="btn-google">
+
+
+                    <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                    </svg>
+                    <span>Google</span>
+
+                </a>
+
+            </form>
+
+            <div class="form-footer">
+                Chưa có tài khoản? <a th:href="@{/register}">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-sm"
+         th:classappend="${toastType == 'error' || errorMessage != null} ? 'bg-danger' : 'bg-success'"
+         role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i th:if="${toastType != 'error' && errorMessage == null}" data-lucide="check-circle" style="width:18px; height:18px;"></i>
+                <i th:if="${toastType == 'error' || errorMessage != null}" data-lucide="alert-circle" style="width:18px; height:18px;"></i>
+
+                <span th:text="${errorMessage != null ? errorMessage : toastMessage}">Nội dung thông báo</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        const hasToastMessage = /*[[${toastMessage != null}]]*/ false;
+        const hasErrorMessage = /*[[${errorMessage != null}]]*/ false; // Thêm biến kiểm tra lỗi
+
+        // 3. XỬ LÝ HIỂN THỊ TOAST (Cả thành công và thất bại)
+        if (hasToastMessage || hasErrorMessage) {
+            const toastEl = document.getElementById('liveToast');
+            if (toastEl) {
+                const toast = new bootstrap.Toast(toastEl, { delay: 4000 }); // Tăng lên 4s để kịp đọc lỗi
+                toast.show();
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

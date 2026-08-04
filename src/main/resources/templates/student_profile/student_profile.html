@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt tài khoản | Learning Hub</title>
+    
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Central Stylesheets -->
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/student_profile.css}">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-page">
+
+    <!-- Header Navigation -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <!-- Main Content Layout -->
+    <main class="py-5">
+        <div class="container" style="max-width: 860px;">
+            
+            <!-- Success / Error flash alerts from Spring Boot -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <span th:text="${success}">Cập nhật thành công!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <span th:text="${error}">Lỗi xảy ra.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <header class="mb-4">
+                <h1 class="display-6 fw-bold text-dark mb-4">Cài đặt tài khoản</h1>
+                
+                <!-- Navigation Tabs using Bootstrap 5 data-attributes -->
+                <ul class="nav nav-tabs flex-nowrap overflow-x-auto" id="profileSettingsTab" role="tablist" style="scrollbar-width: none;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active whitespace-nowrap" id="account-tab" data-bs-toggle="tab" data-bs-target="#account-pane" type="button" role="tab" aria-controls="account-pane" aria-selected="true">Tài khoản</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link whitespace-nowrap" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes-pane" type="button" role="tab" aria-controls="notes-pane" aria-selected="false">Ghi chú &amp; Điểm nổi bật</button>
+                    </li>
+                </ul>
+            </header>
+
+            <div class="tab-content" id="profileSettingsTabContent">
+                <!-- 1. TÀI KHOẢN PANE -->
+                <div class="tab-pane fade show active" id="account-pane" role="tabpanel" aria-labelledby="account-tab">
+                    
+                    <!-- Single unified form for updating personal info and avatar via Spring Boot -->
+                    <div class="d-flex flex-column gap-4">
+                        <form th:action="@{/student/profile/update}" method="post" enctype="multipart/form-data" style="display: contents;">
+                            
+                            <!-- Personal Information Section -->
+                            <section class="border-card rounded-4 p-4 p-md-5 order-1">
+                                <h2 class="h4 fw-bold mb-1">Thông tin cá nhân</h2>
+                                <p class="text-muted mb-4 fs-7">Cập nhật thông tin cá nhân và cách người khác nhìn thấy bạn.</p>
+                                
+                                <div class="row g-3">
+                                    <!-- Last Name (Họ và tên đệm) -->
+                                    <div class="col-md-6 d-flex flex-column gap-2">
+                                        <label class="fw-bold text-dark fs-7" for="last-name">Họ và tên đệm</label>
+                                        <input class="form-control p-3 border-secondary-subtle" id="last-name" name="lastName" type="text" 
+                                               th:value="${currentUser.lastName}" required/>
+                                    </div>
+                                    <!-- First Name (Tên) -->
+                                    <div class="col-md-6 d-flex flex-column gap-2">
+                                        <label class="fw-bold text-dark fs-7" for="first-name">Tên</label>
+                                        <input class="form-control p-3 border-secondary-subtle" id="first-name" name="firstName" type="text" 
+                                               th:value="${currentUser.firstName}" required/>
+                                    </div>
+                                    <!-- Email Field -->
+                                    <div class="col-md-12 d-flex flex-column gap-2">
+                                        <label class="fw-bold text-dark fs-7" for="email">Địa chỉ email</label>
+                                        <input class="form-control p-3 border-secondary-subtle" id="email" name="email" type="email" 
+                                               th:value="${currentUser.email}" required/>
+                                    </div>
+                                    <!-- Phone Number -->
+                                    <div class="col-md-12 d-flex flex-column gap-2">
+                                        <label class="fw-bold text-dark fs-7" for="phone">Số điện thoại</label>
+                                        <input class="form-control p-3 border-secondary-subtle" id="phone" name="phone" type="tel" 
+                                               th:value="${currentUser.phone}" placeholder="Nhập số điện thoại của bạn"/>
+                                    </div>
+                                    <!-- Submit Button -->
+                                    <div class="col-12 pt-2">
+                                        <button class="btn bg-coursera-blue px-4 py-3 fw-bold rounded-3" type="submit">
+                                            Lưu Thay đổi
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Profile Picture Section -->
+                            <section class="border-card rounded-4 p-4 p-md-5 order-3">
+                                <h2 class="h4 fw-bold mb-4">Ảnh hồ sơ</h2>
+                                <div class="d-flex flex-column flex-sm-row align-items-center gap-4 mb-4">
+                                    
+                                    <!-- Hidden Inputs for File and Deletion -->
+                                    <input type="file" name="avatarFile" id="avatarFileInput" accept="image/*" class="d-none"/>
+                                    <input type="hidden" name="deleteAvatar" id="deleteAvatarInput" value="false"/>
+
+                                    <!-- Avatar Container -->
+                                    <div id="avatarContainer" class="rounded-circle bg-primary bg-gradient d-flex align-items-center justify-content-center text-white fs-1 fw-medium shrink-0 overflow-hidden" 
+                                         style="width: 96px; height: 96px; min-width: 96px;">
+                                        <img th:if="${currentUser.getFullAvatarUrl() != null}" 
+                                             th:src="${currentUser.getFullAvatarUrl()}" 
+                                             th:alt="${currentUser.lastName + ' ' + currentUser.firstName}" 
+                                             class="w-100 h-100 object-fit-cover" id="studentAvatarImg"/>
+                                        <span th:if="${currentUser.getFullAvatarUrl() == null}" 
+                                              th:text="${currentUser.lastName != null and !currentUser.lastName.isEmpty() ? currentUser.lastName.substring(0, 1).toUpperCase() : 'H'}"
+                                              id="studentAvatarInitial">H</span>
+                                    </div>
+                                    
+                                    <div class="d-flex flex-column gap-3">
+                                        <p class="text-muted fs-7 mb-0">Kích thước tối đa: 1MB. Các định dạng được hỗ trợ: JPG, GIF hoặc PNG.</p>
+                                        <div class="d-flex gap-3">
+                                            <button class="btn btn-outline-secondary px-3 py-2 fw-bold" type="button" id="btn-upload-avatar">
+                                                Tải ảnh lên
+                                            </button>
+                                            <button class="btn btn-link text-dark fw-bold text-decoration-none px-3 py-2" type="button" id="btn-delete-avatar">
+                                                Xóa ảnh
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Avatar Save Button (acts as form submit) -->
+                                <button class="btn btn-secondary bg-opacity-25 text-white px-4 py-3 fw-bold rounded-3" disabled type="submit" id="btn-save-avatar" style="background-color: #a5b4cc;">
+                                    Lưu Thay đổi
+                                </button>
+                            </section>
+
+                            <!-- Interface Section -->
+                            <section class="border-card rounded-4 p-4 p-md-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 order-4">
+                                <div style="max-width: 480px;">
+                                    <h2 class="h4 fw-bold mb-1">Giao diện</h2>
+                                    <p class="text-muted fs-7 mb-0">Tùy chỉnh giao diện của Coursera thông qua các tùy chọn thiết kế giao diện.</p>
+                                </div>
+                                <div class="position-relative" style="min-width: 240px;">
+                                    <select class="form-select p-3 fs-6 rounded-3 border-secondary-subtle" id="interface-mode">
+                                        <option>Chế độ sáng</option>
+                                        <option>Chế độ tối</option>
+                                    </select>
+                                </div>
+                            </section>
+
+
+
+                        </form>
+
+                        <!-- Change or Set Password Section -->
+                        <div class="order-2">
+                            <section class="border-card rounded-4 p-4 p-md-5">
+                                <h2 class="h4 fw-bold mb-4" th:text="${currentUser.hasPassword ? 'Thay đổi mật khẩu' : 'Tạo mật khẩu'}">Thay đổi mật khẩu</h2>
+                                <p class="text-muted fs-7 mb-4" th:unless="${currentUser.hasPassword}">Tạo mật khẩu để có thể đăng nhập bằng email và mật khẩu bên cạnh tài khoản Google của bạn.</p>
+                                <form th:action="@{/student/profile/change-password}" method="post">
+                                    <div class="row g-3">
+                                        <div class="col-md-12 d-flex flex-column gap-2" th:if="${currentUser.hasPassword}">
+                                            <label class="fw-bold text-dark fs-7" for="oldPassword">Mật khẩu hiện tại</label>
+                                            <input class="form-control p-3 border-secondary-subtle" id="oldPassword" name="oldPassword" type="password" required placeholder="Nhập mật khẩu hiện tại"/>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column gap-2">
+                                            <label class="fw-bold text-dark fs-7" for="newPassword">Mật khẩu mới</label>
+                                            <input class="form-control p-3 border-secondary-subtle" id="newPassword" name="newPassword" type="password" required placeholder="Nhập mật khẩu mới"/>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column gap-2">
+                                            <label class="fw-bold text-dark fs-7" for="confirmPassword">Xác nhận mật khẩu</label>
+                                            <input class="form-control p-3 border-secondary-subtle" id="confirmPassword" name="confirmPassword" type="password" required placeholder="Nhập lại mật khẩu mới"/>
+                                        </div>
+                                        <div class="col-12 pt-2">
+                                            <button class="btn btn-outline-primary border-2 px-4 py-3 fw-bold rounded-3" type="submit" style="border-color: #0056d2; color: #0056d2;" th:text="${currentUser.hasPassword ? 'Cập nhật mật khẩu' : 'Tạo mật khẩu'}">
+                                                Cập nhật mật khẩu
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </section>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 3. GHI CHÚ PANE -->
+                <div class="tab-pane fade" id="notes-pane" role="tabpanel" aria-labelledby="notes-tab">
+                    <section class="border-card rounded-4 p-4 p-md-5">
+                        <h2 class="h4 fw-bold mb-3">Ghi chú &amp; Điểm nổi bật</h2>
+                        <p class="text-muted fs-7 mb-4">Quản lý và xem lại các ghi chú, nội dung nổi bật bạn đã đánh dấu trong quá trình học.</p>
+                        
+                        <!-- Fallback empty state -->
+                        <div th:if="${lessonNotes == null or lessonNotes.isEmpty()}" class="text-center py-5 text-muted">
+                            <i data-lucide="book-open" class="mb-3" style="width: 48px; height: 48px; color: #a5b4cc;"></i>
+                            <p class="mb-0">Bạn chưa có ghi chú nào nổi bật. Hãy ghi chú trong bài học!</p>
+                        </div>
+
+                        <!-- Notes list grouped by course -->
+                        <div th:if="${lessonNotes != null and !lessonNotes.isEmpty()}" class="d-flex flex-column gap-4">
+                            <div th:each="courseNote : ${lessonNotes}" class="course-notes-card border border-light-subtle rounded-4 p-4 bg-white shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-light-subtle">
+                                    <h3 class="h6 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                        <i data-lucide="folder-open" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                        <span th:text="${courseNote.courseTitle}">Tên khóa học</span>
+                                    </h3>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1.5 rounded-pill fs-8 fw-semibold" 
+                                          th:text="${courseNote.notes.size() + ' ghi chú'}">
+                                        0 ghi chú
+                                    </span>
+                                </div>
+
+                                <div class="d-flex flex-column gap-3">
+                                    <div th:each="noteDetail : ${courseNote.notes}" 
+                                         th:id="'note-card-' + ${noteDetail.id}"
+                                         class="note-item p-3 border border-secondary-subtle rounded-3 bg-light bg-opacity-50 position-relative transition">
+                                        
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                <span class="fw-bold text-dark fs-7" th:text="${noteDetail.lessonTitle}">Tên bài học</span>
+                                                <a th:href="@{/course/{courseId}/section/{sectionId}/lesson/{lessonId}(courseId=${courseNote.courseId}, sectionId=${noteDetail.sectionId}, lessonId=${noteDetail.lessonId}, t=${noteDetail.videoTimeSeconds})}"
+                                                   target="_blank"
+                                                   class="btn btn-sm btn-outline-primary rounded-pill py-1 px-2.5 fs-8 d-inline-flex align-items-center gap-1">
+                                                    <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+                                                    <span th:text="${noteDetail.formattedTime}">00:00</span>
+                                                </a>
+                                            </div>
+                                            <button class="btn btn-link text-danger p-1 border-0 bg-transparent hover-scale delete-note-btn" 
+                                                    th:data-note-id="${noteDetail.id}">
+                                                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <p class="text-dark fs-6 mb-2 whitespace-pre-wrap" th:text="${noteDetail.noteContent}">Nội dung ghi chú</p>
+                                        
+                                        <div class="text-muted fs-8">
+                                            <span>Đã lưu ngày: </span>
+                                            <span th:text="${#temporals.format(noteDetail.createdAt, 'dd/MM/yyyy HH:mm')}">17/07/2026 17:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/student_profile.js}"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

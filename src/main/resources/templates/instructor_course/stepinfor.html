@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="content">
+  <form th:action="@{/instructor/save}"
+        method="POST" enctype="multipart/form-data" id="courseInfoForm" th:object="${courseRequest}" novalidate>
+      <input type="hidden" th:field="*{id}">
+      <input type="hidden" th:field="*{introVideoUrl}" id="introVideoBlobName">
+    <div class="card">
+      <div class="card-title">Giới Thiệu Khóa Học</div>
+
+      <!-- Tiêu đề -->
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Tiêu Đề Khóa Học <span class="required">*</span></label>
+        <input type="text" name="title" class="form-control" id="courseTitleInput"
+               th:field="*{title}"
+               th:classappend="${#fields.hasErrors('title')} ? ' is-invalid' : ''"
+               placeholder="Tiêu đề từ 8 đến 60 ký tự" required/>
+        <div class="form-hint">Tối đa 60 ký tự</div>
+        <p class="text-danger"
+           th:if="${#fields.hasErrors('title')}"
+           th:errors="*{title}">
+        </p>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Mô Tả Khóa Học</label>
+        <div class="rich-editor" id="courseDescEditor" contenteditable="true"
+             th:utext="*{description}"
+             th:classappend="${#fields.hasErrors('description')} ? ' is-invalid' : ''"
+             data-placeholder="Nhập mô tả đầy đủ cho khóa học..."></div>
+        <input type="hidden" th:field="*{description}" id="descHidden" required/>
+        <p
+          class="text-danger"
+          th:if="${#fields.hasErrors('description')}"
+          th:errors="*{description}"></p>
+      </div>
+
+      <!-- Level & Category -->
+      <div class="form-grid" style="margin-top:16px;">
+        <div class="form-group">
+          <label>Trình Độ Khóa Học</label>
+          <select th:field="*{level}" class="form-control"
+                  th:classappend="${#fields.hasErrors('level')} ? ' is-invalid' : ''">
+            <option value="">Chọn Trình Độ</option>
+            <option th:each="l : ${courselevels}"
+                    th:value="${l.name()}"
+                    th:selected="${courseRequest.level != null and l.name() == courseRequest.level}"
+                    th:text="${{
+                                    BEGINNER:'Người mới bắt đầu',
+                                    INTERMEDIATE:'Trung cấp',
+                                    ADVANCED:'Nâng cao'
+                                }[l.name()]}">
+            </option>
+          </select>
+           <p class="text-danger"
+              th:if="${#fields.hasErrors('level')}"
+              th:errors="*{level}"></p>
+        </div>
+        <div class="form-group">
+          <label>Danh Mục Chính Khóa Học</label>
+          <select name="parentCategory" class="form-control" id="parentCategory">
+            <option value="">Chọn Danh Mục</option>
+            <option th:each="ca : ${categoryparents}"
+                    th:value="${ca.id}"
+                    th:text="${ca.name}">
+
+            </option>
+          </select>
+          <label>Danh Mục Phụ Khóa Học</label>
+          <select th:field="*{categoryId}" class="form-control" id="categoryId"
+                  th:classappend="${#fields.hasErrors('categoryId')} ? ' is-invalid' : ''">
+            <option value="">Chọn Danh Mục</option>
+            <option th:each="c : ${categorychilds}"
+                    th:value="${c.id}"
+                    th:text="${c.name}"
+                    th:attr="data-parent-id=${c.parentId}">
+            </option>
+          </select>
+          <p class="text-danger"
+             th:if="${#fields.hasErrors('categoryId')}"
+             th:errors="*{categoryId}"></p>
+        </div>
+      </div>
+
+      <!-- Giá khóa học -->
+      <div class="form-group" style="margin-top:16px;">
+        <label>Giá Khóa Học</label>
+        <input type="text"
+               class="form-control"
+               id="price"
+               name="price"
+               th:value="${courseRequest?.price != null ? courseRequest.price.stripTrailingZeros().toPlainString() : ''}"
+               th:classappend="${#fields.hasErrors('price')} ? ' is-invalid' : ''"
+               placeholder="Nhập giá khóa học (VNĐ)"
+               inputmode="numeric"
+               pattern="[0-9]*"
+               autocomplete="off"
+               data-price-input/>
+        <div class="form-hint">Nhập 0 nếu khóa học miễn phí; giá thu phí phải lớn hơn 2.000 VNĐ và chia hết cho 1.000</div>
+        <p class="text-danger"
+           th:if="${#fields.hasErrors('price')}"
+           th:errors="*{price}"></p>
+      </div>
+
+
+      <!-- Thumbnail -->
+      <div class="form-group" style="margin-top:16px;">
+        <label>Hình Thu Nhỏ Của Khóa Học</label>
+
+        <div class="thumbnail-upload" onclick="document.getElementById('thumbnailInput').click()">
+
+           <img id="thumbnailPreview"
+                src=""
+                th:src="${courseRequest?.thumbnailUrl != null and courseRequest?.thumbnailUrl != '' ? urlAvatar + courseRequest.thumbnailUrl : ''}"
+                th:style="${courseRequest?.thumbnailUrl == null or courseRequest?.thumbnailUrl == ''} ? 'display:none;' : ''"
+                alt="Thumbnail Preview"/>
+
+          <div id="uploadPlaceholder"
+               th:style="${courseRequest?.thumbnailUrl != null and courseRequest?.thumbnailUrl != ''} ? 'display:none;' : ''">
+            <div class="upload-icon"></div>
+            <p>Nhấn để chọn ảnh thumbnail</p>
+            <small>Khuyến nghị tỉ lệ 16:9</small>
+          </div>
+
+          <div class="overlay">
+            <span>Thay đổi ảnh</span>
+          </div>
+        </div>
+
+        <input type="file"
+               id="thumbnailInput"
+               name="thumbnailFile"
+               accept="image/*"
+               style="display:none;">
+        <p
+                class="text-danger"
+                th:if="${#fields.hasErrors('thumbnailFile')}"
+        th:errors="*{thumbnailFile}"></p>
+      </div>
+
+      <!-- Course intro video: video gioi thieu chung cua khoa hoc, DB chi luu blobName. -->
+      <div class="form-group" style="margin-top:16px;">
+        <label>Video Giới Thiệu Khóa Học</label>
+        <div class="file-upload-area"
+             style="margin-top:8px;"
+             onclick="document.getElementById('introVideoInput').click()">
+          <div class="upload-icon"></div>
+          <p>Nhấn để tải video giới thiệu khóa học</p>
+          <p style="font-size:.75rem;color:#94a3b8;margin-top:4px;">MP4, MOV, AVI. Video này hiển thị ở phần tổng quan khóa học.</p>
+          <span class="choose-btn">Chọn Video Giới Thiệu</span>
+        </div>
+        <input type="file" id="introVideoInput" accept="video/*" style="display:none;">
+        <div id="introVideoPreview" style="margin-top:12px;">
+          <div th:if="${courseRequest?.introVideoPreviewUrl != null and courseRequest?.introVideoPreviewUrl != ''}"
+               style="padding:12px;border:1px dashed #cbd5e1;border-radius:8px;background:#f8fafc;">
+            <p style="font-size:13px;color:#475569;margin-bottom:8px;">Video giới thiệu hiện tại</p>
+            <video controls style="width:100%;max-height:220px;border-radius:8px;background:#0f172a;" preload="metadata" playsinline>
+              <source th:src="${courseRequest.introVideoPreviewUrl}" type="video/mp4"/>
+              Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+          </div>
+        </div>
+        <div id="introVideoUploadProgress" style="display:none;margin-top:12px;">
+          <div style="height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;">
+            <div id="introVideoUploadProgressBar" style="width:0%;height:100%;background:#2563eb;transition:width .2s ease;"></div>
+          </div>
+          <div id="introVideoUploadProgressText" style="font-size:12px;color:#64748b;margin-top:6px;">0%</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Nút Lưu -->
+    <div style="text-align:right;margin-top:16px;">
+      <button th:if="${courseRequest?.id == null}" type="submit" class="btn btn-primary btn-lg" name="trangthai" value="save_continue">Lưu & Tiếp Theo</button>
+      <button th:if="${courseRequest?.id != null}" type="submit" class="btn btn-primary btn-lg" name="trangthai" value="save_continue">Lưu & Sửa Chương Trình</button>
+      <button th:if="${courseRequest?.id != null}" type="submit" class="btn btn-primary btn-lg" name="trangthai" value="save_publish">Lưu & Gửi Request</button>
+    </div>
+  </form>
+
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const form = document.getElementById('courseInfoForm');
+      const editor = document.getElementById('courseDescEditor');
+
+      if (form && editor) {
+        form.addEventListener('submit', async function (event) {
+          document.getElementById('descHidden').value = editor.innerHTML;
+          clearCourseInfoErrors();
+          const validationResult = validateCourseInfoForm(form, editor);
+          if (!validationResult.valid) {
+            event.preventDefault();
+            showCourseInfoError(validationResult.field, validationResult.message, validationResult.element);
+            if (validationResult.element) {
+              validationResult.element.focus();
+            }
+            return;
+          }
+
+          const introInput = document.getElementById('introVideoInput');
+          const introBlobInput = document.getElementById('introVideoBlobName');
+          const submitter = event.submitter;
+          const introFile = introInput?.files?.[0];
+
+          if (!introFile || form.dataset.introUploaded === 'true') {
+            return;
+          }
+
+          event.preventDefault();
+          if (form.dataset.submitting === 'true') {
+            return;
+          }
+
+          form.dataset.submitting = 'true';
+          if (submitter) {
+            submitter.disabled = true;
+            submitter.dataset.originalText = submitter.textContent;
+            submitter.textContent = 'Đang lưu khoá học...';
+          }
+
+          try {
+            updateIntroVideoUploadProgress(0);
+            introBlobInput.value = await uploadCourseIntroVideoDirectToAzure(
+              introFile,
+              document.querySelector('input[name="id"]')?.value,
+              updateIntroVideoUploadProgress
+            );
+            updateIntroVideoUploadProgress(100);
+            form.dataset.introUploaded = 'true';
+            if (submitter) {
+              submitter.disabled = false;
+              submitter.textContent = submitter.dataset.originalText || submitter.textContent;
+            }
+            form.requestSubmit(submitter || undefined);
+          } catch (error) {
+            showCourseInfoError('introVideo', error.message || 'Không tải được video giới thiệu.', introInput);
+            form.dataset.submitting = 'false';
+            if (submitter) {
+              submitter.disabled = false;
+              submitter.textContent = submitter.dataset.originalText || 'Lưu';
+            }
+          }
+        });
+      }
+
+      function validateCourseInfoForm(form, editor) {
+        const titleInput = document.getElementById('courseTitleInput');
+        const levelInput = form.querySelector('[name="level"]');
+        const categoryInput = document.getElementById('categoryId');
+        const priceInput = document.querySelector('[data-price-input]');
+        const title = titleInput?.value?.trim() || '';
+        const descriptionText = getPlainTextFromHtml(editor?.innerHTML || '');
+        const priceText = priceInput?.value?.trim() || '';
+
+        if (title.length < 10 || title.length > 120) {
+          return {
+            valid: false,
+            field: 'title',
+            element: titleInput,
+            message: 'Tiêu đề khóa học phải từ 10 đến 120 ký tự.'
+          };
+        }
+
+        if (descriptionText.length < 50) {
+          return {
+            valid: false,
+            field: 'description',
+            element: editor,
+            message: 'Mô tả khóa học phải có tối thiểu 50 ký tự.'
+          };
+        }
+
+        if (!levelInput?.value) {
+          return {
+            valid: false,
+            field: 'level',
+            element: levelInput,
+            message: 'Vui lòng chọn trình độ khóa học.'
+          };
+        }
+
+        if (!categoryInput?.value) {
+          return {
+            valid: false,
+            field: 'categoryId',
+            element: categoryInput,
+            message: 'Vui lòng chọn danh mục khóa học.'
+          };
+        }
+
+        if (!priceText) {
+          return {
+            valid: false,
+            field: 'price',
+            element: priceInput,
+            message: 'Vui lòng nhập giá khóa học.'
+          };
+        }
+
+        const price = Number(priceText);
+        if (!Number.isFinite(price) || price < 0) {
+          return {
+            valid: false,
+            field: 'price',
+            element: priceInput,
+            message: 'Giá khóa học không được âm.'
+          };
+        }
+
+        if (price !== 0 && price < 2000) {
+          return {
+            valid: false,
+            field: 'price',
+            element: priceInput,
+            message: 'Giá khóa học phải từ 2.000 VNĐ trở lên hoặc bằng 0 nếu miễn phí.'
+          };
+        }
+
+        if (price % 1000 !== 0) {
+          return {
+            valid: false,
+            field: 'price',
+            element: priceInput,
+            message: 'Giá khóa học phải chia hết cho 1.000 VNĐ.'
+          };
+        }
+
+        // Validate thumbnail
+        const thumbnailInput = document.getElementById('thumbnailInput');
+        const previewImg = document.getElementById('thumbnailPreview');
+        const hasNewThumbnail = thumbnailInput && thumbnailInput.files && thumbnailInput.files.length > 0;
+        const hasExistingThumbnail = previewImg && previewImg.style.display !== 'none' && previewImg.getAttribute('src') !== '';
+        if (!hasNewThumbnail && !hasExistingThumbnail) {
+          return {
+            valid: false,
+            field: 'thumbnailFile',
+            element: document.querySelector('.thumbnail-upload'),
+            message: 'Vui lòng chọn hình thu nhỏ cho khóa học.'
+          };
+        }
+
+        // Validate intro video
+        const introVideoInput = document.getElementById('introVideoInput');
+        const introVideoBlob = document.getElementById('introVideoBlobName')?.value || '';
+        const introVideoPreview = document.getElementById('introVideoPreview');
+        const hasNewVideo = introVideoInput && introVideoInput.files && introVideoInput.files.length > 0;
+        const hasExistingVideo = (introVideoBlob !== '') || (introVideoPreview && introVideoPreview.querySelector('video') !== null);
+        if (!hasNewVideo && !hasExistingVideo) {
+          return {
+            valid: false,
+            field: 'introVideo',
+            element: document.querySelector('.file-upload-area'),
+            message: 'Vui lòng chọn video giới thiệu cho khóa học.'
+          };
+        }
+
+        return { valid: true };
+      }
+
+      function showCourseInfoError(field, message, element) {
+        if (!field || !message) {
+          return;
+        }
+
+        clearCourseInfoError(field);
+
+        const target = element || getCourseInfoFieldElement(field);
+        if (target) {
+          target.classList.add('is-invalid');
+          target.setAttribute('aria-invalid', 'true');
+        }
+
+        const error = document.createElement('p');
+        error.className = 'text-danger js-client-error';
+        error.dataset.clientErrorFor = field;
+        error.textContent = message;
+
+        if (target) {
+          target.after(error);
+          return;
+        }
+
+        form.appendChild(error);
+      }
+
+      function clearCourseInfoError(field) {
+        const target = getCourseInfoFieldElement(field);
+        if (target) {
+          target.classList.remove('is-invalid');
+          target.removeAttribute('aria-invalid');
+        }
+
+        document
+          .querySelectorAll(`[data-client-error-for="${field}"]`)
+          .forEach(error => error.remove());
+      }
+
+      function clearCourseInfoErrors() {
+        ['title', 'description', 'level', 'categoryId', 'price', 'introVideo', 'thumbnailFile'].forEach(clearCourseInfoError);
+      }
+
+      function getCourseInfoFieldElement(field) {
+        return {
+          title: document.getElementById('courseTitleInput'),
+          description: document.getElementById('courseDescEditor'),
+          level: form.querySelector('[name="level"]'),
+          categoryId: document.getElementById('categoryId'),
+          price: document.querySelector('[data-price-input]'),
+          introVideo: document.getElementById('introVideoInput'),
+          thumbnailFile: document.querySelector('.thumbnail-upload')
+        }[field] || null;
+      }
+
+      function getPlainTextFromHtml(html) {
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        return (container.textContent || container.innerText || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function updateIntroVideoUploadProgress(percent) {
+        const container = document.getElementById('introVideoUploadProgress');
+        const bar = document.getElementById('introVideoUploadProgressBar');
+        const text = document.getElementById('introVideoUploadProgressText');
+        const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+
+        if (container) {
+          container.style.display = 'block';
+        }
+        if (bar) {
+          bar.style.width = `${safePercent}%`;
+        }
+        if (text) {
+          text.textContent = `${safePercent}%`;
+        }
+      }
+
+      async function uploadCourseIntroVideoDirectToAzure(file, courseId, onProgress) {
+        const requestBody = new FormData();
+        requestBody.append('fileName', file.name);
+        if (courseId) {
+          requestBody.append('courseId', courseId);
+        }
+
+        const sasResponse = await fetch('/instructor/course-intro-upload-url', {
+          method: 'POST',
+          body: requestBody
+        });
+        if (!sasResponse.ok) {
+          throw new Error('Không lấy được đường dẫn tải lên video giới thiệu.');
+        }
+
+        const uploadInfo = await sasResponse.json();
+        await uploadBlockBlobToAzure(uploadInfo.uploadUrl, file, onProgress);
+        return uploadInfo.blobName;
+      }
+
+      async function uploadBlockBlobToAzure(uploadUrl, file, onProgress) {
+        const blockSize = 8 * 1024 * 1024;
+        const concurrency = 4;
+        const blockIds = [];
+        const blockLoadedBytes = [];
+        const totalBlocks = Math.ceil(file.size / blockSize);
+        let nextBlockIndex = 0;
+
+        function reportProgress() {
+          if (typeof onProgress !== 'function') {
+            return;
+          }
+          const uploadedBytes = blockLoadedBytes.reduce((sum, loaded) => sum + (loaded || 0), 0);
+          onProgress(Math.min(99, uploadedBytes * 100 / file.size));
+        }
+
+        async function uploadNextBlock() {
+          const blockIndex = nextBlockIndex++;
+          if (blockIndex >= totalBlocks) {
+            return;
+          }
+
+          const start = blockIndex * blockSize;
+          const end = Math.min(start + blockSize, file.size);
+          const block = file.slice(start, end);
+          const blockId = btoa(String(blockIndex).padStart(6, '0'));
+          blockIds[blockIndex] = blockId;
+
+          await uploadBlockWithProgress(appendAzureSasParams(uploadUrl, {
+            comp: 'block',
+            blockid: blockId
+          }), block, function (loaded) {
+            blockLoadedBytes[blockIndex] = loaded;
+            reportProgress();
+          });
+
+          await uploadNextBlock();
+        }
+
+        const workers = Array.from(
+          { length: Math.min(concurrency, totalBlocks) },
+          uploadNextBlock
+        );
+        await Promise.all(workers);
+
+        const blockListXml = `<?xml version="1.0" encoding="utf-8"?><BlockList>${blockIds
+          .map(blockId => `<Latest>${blockId}</Latest>`)
+          .join('')}</BlockList>`;
+
+        const commitResponse = await fetch(appendAzureSasParams(uploadUrl, {
+          comp: 'blocklist'
+        }), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/xml',
+            'x-ms-blob-content-type': file.type || 'application/octet-stream'
+          },
+          body: blockListXml
+        });
+
+        if (!commitResponse.ok) {
+          throw new Error('Không thể tải video lên');
+        }
+
+        if (typeof onProgress === 'function') {
+          onProgress(100);
+        }
+      }
+
+      function uploadBlockWithProgress(url, block, onBlockProgress) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('PUT', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+
+          xhr.upload.onprogress = function (event) {
+            if (event.lengthComputable && typeof onBlockProgress === 'function') {
+              onBlockProgress(event.loaded);
+            }
+          };
+
+          xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              if (typeof onBlockProgress === 'function') {
+                onBlockProgress(block.size);
+              }
+              resolve();
+              return;
+            }
+            reject(new Error('Upload video gioi thieu len Azure that bai.'));
+          };
+
+          xhr.onerror = function () {
+            reject(new Error('Khong upload truc tiep len Azure duoc. Kiem tra CORS cua Azure Blob.'));
+          };
+
+          xhr.send(block);
+        });
+      }
+
+      function appendAzureSasParams(uploadUrl, params) {
+        const url = new URL(uploadUrl);
+        Object.entries(params).forEach(([key, value]) => {
+          url.searchParams.set(key, value);
+        });
+        return url.toString();
+      }
+
+      const priceInput = document.querySelector('[data-price-input]');
+      if (priceInput) {
+        if (/^\d+\.0+$/.test(priceInput.value)) {
+          priceInput.value = priceInput.value.replace(/\.0+$/, '');
+        }
+        priceInput.addEventListener('beforeinput', function (event) {
+          if (event.data && !/^\d+$/.test(event.data)) {
+            event.preventDefault();
+          }
+        });
+        priceInput.addEventListener('input', function () {
+          this.value = this.value.replace(/\D/g, '');
+        });
+      }
+
+
+
+      // Ẩn category con
+      const parent = document.getElementById('parentCategory');
+      const child = document.getElementById('categoryId');
+
+      function filterChildCategories(parentId, resetChild) {
+        document.querySelectorAll('#categoryId option[data-parent-id]')
+                .forEach(opt => {
+                  opt.hidden = parentId && opt.getAttribute('data-parent-id') !== parentId;
+                });
+
+        if (resetChild) {
+          child.value = '';
+        }
+      }
+
+      if (parent && child) {
+        const selectedChild = child.querySelector('option:checked[data-parent-id]');
+
+        if (selectedChild) {
+          parent.value = selectedChild.getAttribute('data-parent-id');
+        }
+
+        filterChildCategories(parent.value, false);
+
+        parent.addEventListener('change', function () {
+          filterChildCategories(this.value, true);
+        });
+      }
+
+      // thumbnail preview
+      const thumbnailInput = document.getElementById("thumbnailInput");
+      if (thumbnailInput) {
+        thumbnailInput.addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById("thumbnailPreview").src = e.target.result;
+              document.getElementById("thumbnailPreview").style.display = "block";
+              document.getElementById("uploadPlaceholder").style.display = "none";
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      const introVideoInput = document.getElementById('introVideoInput');
+      const introVideoPreview = document.getElementById('introVideoPreview');
+      if (introVideoInput && introVideoPreview) {
+        introVideoInput.addEventListener('change', function () {
+          const file = this.files[0];
+          if (!file) return;
+          document.getElementById('introVideoBlobName').value = '';
+          document.getElementById('courseInfoForm').dataset.introUploaded = 'false';
+          const url = URL.createObjectURL(file);
+          introVideoPreview.innerHTML = `
+            <div style="padding:12px;border:1px dashed #cbd5e1;border-radius:8px;background:#f8fafc;">
+              <p style="font-size:13px;color:#475569;margin-bottom:8px;">Video giới thiệu mới</p>
+              <video controls src="${url}" style="width:100%;max-height:220px;border-radius:8px;background:#0f172a;"></video>
+            </div>`;
+        });
+      }
+
+    });
+  </script>
+</div>
+</html>

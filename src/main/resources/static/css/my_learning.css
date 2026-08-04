@@ -1,0 +1,184 @@
+/* --- Custom Styles for 'Việc Học Của Tôi' (My Learning Dashboard) --- */
+
+:root {
+    --navy-blue: #0f2d59;
+    --navy-hover: #1e3a8a;
+    --orange-pro-bg: #fbf5ee;
+    --orange-pro-text: #8c5d3a;
+    --orange-pro-border: #ebd9c8;
+}
+
+/* Page Layout Overrides */
+body {
+    background-color: #f8fafc !important; /* Premium off-white/gray background */
+}
+
+/* Breadcrumb Styling */
+.breadcrumb-item + .breadcrumb-item::before {
+    color: var(--text-light) !important;
+}
+
+/* Filters Layout */
+.active-filter {
+    background-color: var(--navy-blue) !important;
+    border-color: var(--navy-blue) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(15, 45, 89, 0.15) !important;
+    transition: var(--transition) !important;
+}
+
+.active-filter:hover {
+    background-color: var(--navy-hover) !important;
+    border-color: var(--navy-hover) !important;
+    transform: translateY(-2px);
+}
+
+.outline-filter {
+    background-color: #ffffff !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+    transition: var(--transition) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.outline-filter:hover {
+    background-color: #f8fafc !important;
+    border-color: #94a3b8 !important;
+    color: var(--navy-blue) !important;
+    transform: translateY(-2px);
+}
+
+/* Course Cards */
+.course-card {
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border) !important;
+    background-color: #ffffff;
+    transition: var(--transition);
+    height: 100%;
+}
+
+.course-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+}
+
+.course-card img {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-card:hover img {
+    transform: scale(1.04);
+}
+
+.course-card-title {
+    font-size: 16.5px !important;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.4;
+    transition: var(--transition);
+}
+
+.course-card:hover .course-card-title {
+    color: var(--primary);
+}
+
+/* Badges */
+.badge-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px !important;
+    font-weight: 700;
+    color: var(--orange-pro-text);
+    background-color: var(--orange-pro-bg);
+    border: 1px solid var(--orange-pro-border);
+    border-radius: var(--radius-full);
+}
+
+.badge-top-rated {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px !important;
+    font-weight: 700;
+    color: #ef4444;
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: var(--radius-full);
+}
+
+.text-muted-dark {
+    color: #475569;
+}
+
+/* Explore Card (Dashed Border Card) */
+.explore-card {
+    border: 2px dashed #cbd5e1 !important;
+    border-radius: var(--radius-lg) !important;
+    background-color: #ffffff !important;
+    transition: var(--transition);
+    cursor: pointer;
+    min-height: 380px;
+}
+
+.explore-card .plus-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background-color: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.explore-card .plus-icon-wrapper i {
+    transition: var(--transition);
+}
+
+.explore-card:hover {
+    border-color: var(--primary) !important;
+    background-color: #eff6ff !important; /* light blue tint */
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px -3px rgba(26, 86, 219, 0.05) !important;
+}
+
+.explore-card:hover .plus-icon-wrapper {
+    background-color: var(--primary) !important;
+    transform: scale(1.1);
+}
+
+.explore-card:hover .plus-icon-wrapper i {
+    color: #ffffff !important;
+}
+
+/* Pagination Custom Overrides */
+.page-nav-btn, .page-num-btn {
+    width: 38px;
+    height: 38px;
+    background-color: #ffffff !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-muted) !important;
+    transition: var(--transition) !important;
+}
+
+.page-item.active .page-num-btn {
+    background-color: var(--navy-blue) !important;
+    border-color: var(--navy-blue) !important;
+    color: #ffffff !important;
+}
+
+.page-item:not(.active) .page-num-btn:hover, .page-nav-btn:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: var(--text-main) !important;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px !important;
+    }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<!--
+    FRAGMENT: step-quiz
+    Dùng trong: course-editor.html
+    th:replace="~{course-editor/step-quiz :: content}"
+-->
+<div th:fragment="content">
+
+    <div class="card">
+        <div class="card-title">❓ Câu Hỏi Ôn Tập</div>
+
+        <div class="alert alert-info">
+            ℹ️ Thêm các câu hỏi trắc nghiệm để giúp học viên ôn tập sau mỗi chương.
+        </div>
+
+        <div style="text-align:right;margin-bottom:16px;">
+            <button type="button" class="btn btn-primary" id="addQuizBtn">+ Thêm Câu Hỏi</button>
+        </div>
+
+        <!-- Danh sách câu hỏi từ backend -->
+        <div id="quizList">
+            <div th:if="${quizzes != null and not #lists.isEmpty(quizzes)}" class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Câu Hỏi</th>
+                        <th>Đáp Án Đúng</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="q, i : ${quizzes}">
+                        <td th:text="${i.count}">1</td>
+                        <td th:text="${q.question}">Câu hỏi</td>
+                        <td>
+                            <span th:switch="${q.correctIndex}">
+                                <span th:case="0" th:text="'A: ' + ${q.optionA}"></span>
+                                <span th:case="1" th:text="'B: ' + ${q.optionB}"></span>
+                                <span th:case="2" th:text="'C: ' + ${q.optionC}"></span>
+                                <span th:case="3" th:text="'D: ' + ${q.optionD}"></span>
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline"
+                                    th:data-quiz-id="${q.id}"
+                                    onclick="openEditQuizModal(this.dataset.quizId)">✏️</button>
+                            <form th:action="@{/instructor/quizzes/{id}/delete(id=${q.id})}" method="POST"
+                                  style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Xóa câu hỏi này?')">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${quizzes == null or #lists.isEmpty(quizzes)}"
+                 class="table-empty" style="padding:32px;">
+                Chưa có câu hỏi nào. Nhấn nút trên để thêm.
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút điều hướng -->
+    <div class="gap-row" style="margin-top:16px;">
+        <a th:href="@{/instructor/{id}/curriculum(id=${courseRequest.id})}"
+           class="btn btn-outline">← Quay Lại</a>
+        <a th:href="@{/instructor/{id}/submit-review(id=${courseRequest.id})}"
+           class="btn btn-primary">Tiếp Theo →</a>
+    </div>
+
+</div>
+</html>

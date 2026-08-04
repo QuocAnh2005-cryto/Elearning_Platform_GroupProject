@@ -1,0 +1,634 @@
+/* =========================================================
+   LEARNING HUB — PREMIUM QUIZ CONSOLE (REDESIGNED + PAGINATION)
+   ========================================================= */
+
+:root {
+    --navy-brand: #1a56db;
+    --navy-dark: #0f172a;
+    --border-light: #e2e8f0;
+    --bg-page: #f8fafc;
+}
+
+body.bg-quiz-dashboard {
+    background-color: var(--bg-page);
+    font-family: 'Inter', sans-serif;
+    color: #475569;
+}
+
+.font-heading {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* --- ĐỒNG BỘ THƯƠNG HIỆU --- */
+.brand-color {
+    color: var(--navy-brand) !important;
+}
+.bg-brand-light {
+    background-color: rgba(26, 86, 219, 0.06) !important;
+}
+
+/* --- TOP NAVIGATION BAR --- */
+.editor-navbar {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.btn-nav-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
+
+.btn-nav-back:hover {
+    background: #f1f5f9;
+    color: var(--navy-brand);
+}
+
+.editor-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(26, 86, 219, 0.2);
+}
+
+.custom-dropdown .dropdown-item:hover {
+    background-color: #f1f5f9;
+}
+
+/* --- BANNER HERO AREA --- */
+.quiz-hero-banner {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.meta-spec-card {
+    min-width: 140px;
+}
+
+.meta-icon-box {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meta-icon-box svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* --- QUESTION ROW COMPONENT --- */
+.question-row-card {
+    border-color: var(--border-light) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-row-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(26, 86, 219, 0.2) !important;
+    box-shadow: 0 10px 25px rgba(148, 163, 184, 0.08) !important;
+}
+
+.question-number-badge {
+    width: 42px;
+    height: 42px;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.question-row-card:hover .question-number-badge {
+    background: var(--navy-brand);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25);
+}
+
+/* --- HỆ THỐNG NÚT CRUD TÁC VỤ --- */
+.execution-actions-zone {
+    flex-shrink: 0;
+}
+
+.btn-crud-action {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-crud-action svg {
+    width: 17px;
+    height: 17px;
+}
+
+.btn-edit { color: var(--navy-brand); }
+.btn-edit:hover {
+    background-color: rgba(26, 86, 219, 0.08);
+    border-color: var(--navy-brand);
+}
+
+.btn-copy { color: #0284c7; }
+.btn-copy:hover {
+    background-color: rgba(2, 132, 199, 0.08);
+    border-color: #0284c7;
+}
+
+.btn-delete { color: #ef4444; }
+.btn-delete:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    transform: scale(1.05);
+}
+
+/* --- FIXED CONTROL BAR + TÁI CẤU TRÚC PHÂN BỔ --- */
+.bottom-sticky-control-bar {
+    border-top: 1px solid var(--border-light) !important;
+}
+
+.custom-divider-v {
+    width: 1px;
+    height: 28px;
+    background-color: var(--border-light);
+}
+
+/* Tinh chỉnh thanh phân trang (Pagination) */
+.pagination .page-link {
+    background: transparent;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.pagination .page-link:hover {
+    background-color: #f1f5f9;
+    color: var(--navy-brand);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--navy-brand) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(26, 86, 219, 0.2);
+}
+
+.pagination .page-item.disabled .page-link {
+    background: transparent;
+    color: #cbd5e1;
+    cursor: not-allowed;
+}
+
+/* Nút hành động chính */
+.btn-action-preview {
+    background: #f1f5f9;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s;
+}
+
+.btn-action-preview:hover {
+    background: #e2e8f0;
+}
+
+.btn-primary-solid {
+    background: var(--navy-brand);
+    color: #ffffff !important; /* Ép cứng chữ màu trắng */
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-solid:hover {
+    background: #1447bc; /* Nền xanh dương đậm đầm hơn */
+    color: #ffffff !important; /* GIỮ NGUYÊN chữ trắng sáng, không bị Bootstrap làm xám chữ */
+    box-shadow: 0 4px 14px rgba(20, 71, 188, 0.3); /* Tăng nhẹ bóng đổ màu xanh cho hiệu ứng Premium */
+}
+
+.shadow-blue {
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.2);
+}
+
+.bg-dark-navy {
+    background-color: var(--navy-dark);
+}
+
+/* Helper Utilities */
+.fs-7 { font-size: 14px !important; }
+.fs-8 { font-size: 12px !important; }
+.bg-success-light { background-color: rgba(16, 185, 129, 0.06) !important; }
+.shadow-xs { box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.letter-spacing-1 { letter-spacing: 0.5px; }
+
+/* --- CHỌN LOẠI CÂU HỎI (TYPE SELECTOR CARD) --- */
+.type-selector-card {
+    cursor: pointer;
+    background-color: #ffffff;
+    border-color: var(--border-light) !important;
+    transition: all 0.2s ease;
+}
+
+.type-selector-card:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1 !important;
+}
+
+/* Khi radio được check, làm nổi bật viền xanh Navy thương hiệu */
+.type-selector-card:has(.type-radio-input:checked) {
+    border-color: var(--navy-brand) !important;
+    background-color: rgba(26, 86, 219, 0.02);
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.05);
+}
+
+/* Biến đổi Input check đáp án đúng trông sang trọng hơn */
+.correct-input-control {
+    width: 24px !important;
+    height: 24px !important;
+    cursor: pointer;
+    border-color: #cbd5e1 !important;
+    margin-top: 0 !important;
+}
+
+.correct-input-control:checked {
+    background-color: #10b981 !important; /* Đổi sang màu Xanh Lá khi chọn đúng để biểu thị sự chính xác */
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15) !important;
+}
+
+/* NÚT XÓA DÒNG ĐÁP ÁN TẬP TRUNG CHUYÊN BIỆT */
+.btn-delete-answer {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    background-color: #ffffff;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-answer svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-delete-answer:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    color: #ef4444;
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: var(--navy-brand) !important;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1) !important;
+}
+
+/* --- SỬA LỖI VIỀN SÁNG (FOCUS RING) TRONG INPUT GROUP --- */
+.input-group {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Khi input được chọn, ép toàn bộ cụm input-group đổi màu viền đồng bộ */
+.input-group:has(.form-control:focus) {
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.15) !important;
+    border-radius: 0.375rem; /* Đồng bộ bo góc tùy theo cấu hình bootstrap */
+}
+
+.input-group .form-control:focus {
+    border-color: var(--navy-brand) !important;
+    box-shadow: none !important; /* Tắt viền bóng mặc định bị lỗi của riêng ô input */
+    z-index: 3; /* Đẩy lên trên để đường border viền không bị che khuất */
+}
+
+/* Đảm bảo ô icon đi kèm cũng đổi màu viền tương ứng khi focus input */
+.input-group:has(.form-control:focus) .input-group-text {
+    border-color: var(--navy-brand) !important;
+    color: var(--navy-brand) !important;
+}
+
+
+
+/* --- TỐI ƯU GEAR TUYỆT ĐỐI KHÔNG LẤN LAYOUT + GIỮ ICON TO RÕ --- */
+.btn-quiz-settings {
+    position: absolute;
+    left: 0;
+    top: 2px; /* Nhích lên một chút để căn giữa hoàn hảo với dòng badge bên cạnh */
+    width: 38px; /* Khung bọc vừa vặn, thanh lịch */
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    background-color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0; /* Xóa bỏ padding mặc định để giải phóng không gian cho icon */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-quiz-settings i, .btn-quiz-settings svg {
+    width: 22px !important; /* Ép cứng icon to rõ đúng kích thước bạn muốn */
+    height: 22px !important;
+    color: var(--navy-brand);
+    flex-shrink: 0; /* Ngăn chặn hoàn toàn việc icon bị bóp nhỏ bởi khung ngoài */
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hiệu ứng hover tinh tế */
+.btn-quiz-settings:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.12) !important;
+}
+
+.btn-quiz-settings:hover i, .btn-quiz-settings:hover svg {
+    transform: rotate(90deg);
+}
+
+/* Điều chỉnh dáng dấp dòng đáp án khi đổi sang Textarea */
+.answer-row-item {
+    align-items: start !important; /* Đẩy các nút hành động lên đầu dòng */
+}
+
+.answer-row-item .input-group-text {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+}
+
+.answer-text-input {
+    overflow-y: hidden; /* Giấu thanh cuộn xấu xí */
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+/* Đảm bảo chiều cao nút xóa tương thích nhẹ nhàng */
+.btn-delete-answer.mt-1 {
+    margin-top: 4px !important;
+}
+
+/* =========================================================
+   NEW ELITE QUIZ CARD GRID INTERFACE
+   ========================================================= */
+
+.question-premium-card {
+    border: 1px solid var(--border-light) !important;
+    background: #ffffff;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.question-premium-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06) !important;
+    border-color: rgba(26, 86, 219, 0.2) !important;
+}
+
+/* Thẻ Tag số thứ tự */
+.question-index-tag {
+    font-size: 14px;
+    letter-spacing: -0.2px;
+}
+
+/* Phân ranh giới nút bấm hành động */
+.action-divider-v {
+    width: 1px;
+    height: 18px;
+    background-color: #cbd5e1;
+}
+
+/* Nút Sửa cao cấp góc phải */
+.btn-edit-premium {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155 !important;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-premium:hover {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a !important;
+}
+
+/* Hộp tròn trạng thái của từng dòng đáp án */
+.answer-status-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.answer-status-indicator.is-normal {
+    border: 2px solid #cbd5e1;
+}
+
+.answer-status-indicator.is-correct {
+    background-color: #10b981;
+    color: #ffffff;
+    border: 2px solid #10b981;
+}
+
+/* Tinh chỉnh màu chữ và khung khi đáp án đó ĐÚNG */
+.answer-preview-item {
+    transition: all 0.2s ease;
+}
+
+.bg-success-light-subtle {
+    background-color: rgba(16, 185, 129, 0.04) !important;
+}
+
+.answer-correct-border {
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+.text-success-dark {
+    color: #065f46 !important;
+}
+
+/* Khung hiển thị hộp giải thích */
+.explanation-alert-box {
+    background-color: #f8fafc;
+    border-color: #e2e8f0 !important;
+}
+
+/* Giữ nút CRUD tròn đồng đều ở Header */
+.btn-crud-action {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+}
+
+/* --- XỬ LÝ HIỂN THỊ VĂN BẢN NHIỀU DÒNG TỪ TEXTAREA --- */
+.text-wrap-pre {
+    white-space: pre-wrap;       /* Giữ nguyên dấu xuống dòng (\n) và khoảng trắng */
+    word-break: break-word;      /* Tự động ngắt hàng nếu từ quá dài, tránh tràn khung */
+    display: block;              /* Ép khối để nhận diện cấu trúc dòng chuẩn xác */
+}
+
+/* Tinh chỉnh cho dòng đáp án luôn bằng nhau và căn đỉnh */
+.answer-preview-item {
+    transition: all 0.2s ease;
+    align-items: flex-start !important; /* Đảm bảo icon check luôn nằm ở đỉnh dòng đầu tiên */
+    height: 100%; /* Đảm bảo nhận diện chuẩn chiều cao từ thẻ col cha */
+}
+
+.answer-status-indicator {
+    margin-top: 3px; /* Cân đối icon check thẳng hàng với dòng chữ đầu tiên của textarea */
+    flex-shrink: 0; /* Không cho icon bị bóp méo khi nội dung chữ bên phải quá dài */
+}
+
+.text-wrap-pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: block;
+    width: 100%; /* Cấp toàn bộ không gian ngang còn lại cho văn bản */
+}
+
+
+/* =========================================================
+   EXCEL IMPORT MODAL EXTENSION STYLE
+   ========================================================= */
+
+.import-icon-header {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Khung kéo thả thiết kế Premium nét đứt */
+.excel-drag-drop-zone {
+    border: 2px dashed rgba(26, 86, 219, 0.25);
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.excel-drag-drop-zone:hover {
+    border-color: var(--navy-brand);
+    background-color: rgba(26, 86, 219, 0.01);
+}
+
+.excel-big-icon {
+    width: 64px;
+    height: 64px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Custom dáng Radio Input trong Modal sang màu xanh lá mặc định */
+.type-selector-card:has(.type-radio-input:checked) {
+    border-color: var(--navy-brand) !important;
+}
+
+/* Điểm nhấn đặc biệt đối với hành động nguy hiểm (Ghi đè) */
+.type-selector-card:has(.danger-check:checked) {
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.02);
+}
+
+.type-selector-card:has(.danger-check:checked) .text-danger-hover {
+    color: #b91c1c !important;
+}
+
+.danger-check:checked {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Nút download mẫu góc trái */
+.btn-download-sample {
+    color: #475569;
+    transition: color 0.2s ease;
+}
+.btn-download-sample:hover {
+    color: #15803d;
+}
+
+/* Đồng bộ nút màu xanh lá cây của Bootstrap dành cho Export/Import */
+.btn-outline-success {
+    color: #16a34a;
+    border-color: #bbf7d0;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-success:hover {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+}
+
+/* --- KIỂU DÁNG CHO ĐƯỜNG LINK HƯỚNG DẪN TRÊN HEADER --- */
+.btn-trigger-guide {
+    transition: color 0.2s ease, opacity 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-trigger-guide:hover {
+    color: #1447bc !important; /* Màu Navy đậm khi hover */
+    text-decoration: underline !important;
+}
+
+/* --- ĐỊNH DẠNG LAYOUT MODAL TEXT HƯỚNG DẪN CHUYÊN SÂU --- */
+.layout-guide-body {
+    line-height: 1.6;
+}
+
+/* Vòng tròn số thứ tự nhỏ đầu dòng hướng dẫn */
+.step-num-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--navy-brand);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* Sửa lỗi hiển thị phông đen mờ (backdrop) đè lên nhau khi mở liên tiếp 2 modal */
+body.modal-open {
+    overflow: hidden !important;
+}

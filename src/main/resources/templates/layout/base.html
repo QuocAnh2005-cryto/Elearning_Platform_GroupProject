@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title layout:title-pattern="$CONTENT_TITLE - EduCourse">EduCourse</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+    <!-- Base CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <!-- Page-specific CSS (override in child templates) -->
+    <th:block layout:fragment="page-css"></th:block>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER / NAV ═══════════════════════════════ -->
+<header class="main-header" th:fragment="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a th:href="@{/}" class="logo">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">EduCourse</span>
+            </a>
+        </div>
+
+        <div class="navbar-search">
+            <form th:action="@{/courses}" method="get" class="search-form">
+                <input type="text" name="q" placeholder="Tìm kiếm khóa học..."
+                       class="search-input" th:value="${param.q}"/>
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+        </div>
+
+        <nav class="navbar-links">
+            <a th:href="@{/courses}" class="nav-link">Khóa học</a>
+
+            <!-- Guest links -->
+            <div th:if="${!#authorization.expression('isAuthenticated()')}" class="auth-links">
+                <a th:href="@{/auth/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/auth/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+
+            <!-- Authenticated user menu -->
+            <div th:if="${#authorization.expression('isAuthenticated()')}" class="user-menu">
+                <a th:href="@{/cart}" class="nav-link cart-link">
+                    🛒 <span class="cart-badge" th:text="${cartCount ?: 0}">0</span>
+                </a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle">
+                        <img th:src="${currentUser?.getFullAvatarUrl() ?: '/images/avatar.png'}"
+                             alt="Avatar" class="avatar-sm"/>
+                        <span th:text="${currentUser?.fullName ?: 'Tài khoản'}">Tài khoản</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/my-learning}">📚 Học của tôi</a></li>
+                        <li><a th:href="@{/user/profile}">👤 Hồ sơ</a></li>
+                        <li><a th:href="@{/purchase-history}">🧾 Lịch sử mua</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post">
+                                <button type="submit" class="logout-btn">🚪 Đăng xuất</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile hamburger -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+</header>
+
+<!-- ═══════════════════════════════ MAIN CONTENT ════════════════════════════════ -->
+<main class="main-content">
+    <div layout:fragment="content">
+        <!-- Child template content goes here -->
+    </div>
+</main>
+
+<!-- ═══════════════════════════════ FOOTER ══════════════════════════════════════ -->
+<footer class="main-footer" th:fragment="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <a th:href="@{/}" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">LearningHub</span>
+            </a>
+            <p class="footer-tagline">Học không giới hạn, phát triển không ngừng.</p>
+        </div>
+
+        <div class="footer-links">
+            <div class="footer-col">
+                <h4>Học tập</h4>
+                <ul>
+                    <li><a th:href="@{/courses}">Tất cả khóa học</a></li>
+                    <li><a th:href="@{/student/my-learning}">Khóa học của tôi</a></li>
+                    <li><a th:href="@{/cart}">Giỏ hàng</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Tài khoản</h4>
+                <ul>
+                    <li><a th:href="@{/student/profile}">Hồ sơ cá nhân</a></li>
+                    <li><a th:href="@{/student/purchase-history}">Lịch sử mua hàng</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Hỗ trợ</h4>
+                <ul>
+                    <li><a href="#">Trung tâm trợ giúp</a></li>
+                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> LearningHub. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Base JS -->
+<script th:src="@{/js/main.js}"></script>
+
+<!-- Page-specific JS (override in child templates) -->
+<th:block layout:fragment="page-js"></th:block>
+
+</body>
+</html>

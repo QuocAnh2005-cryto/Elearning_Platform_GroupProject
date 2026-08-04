@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Quản lý Khóa học</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/course.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <form th:action="@{/manager/course/list}" method="get" class="page-header page-header-flex">
+            <div>
+                <h1>Phê duyệt Khóa học</h1>
+                <p>Xem xét, phê duyệt và quản lý các khóa học trên nền tảng.</p>
+            </div>
+            <div class="header-actions">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm khóa học..." class="search-input form-control">
+                <select name="status" class="search-input search-select form-select" onchange="this.form.submit()">
+                    <option value="" th:selected="${status == null}">Tất cả trạng thái</option>
+                    <option th:each="st : ${statuses}" 
+                            th:if="${st.name() == 'PENDING' or st.name() == 'RESUBMIT' or st.name() == 'PUBLISHED' or st.name() == 'REJECTED'}"
+                            th:value="${st}" 
+                            th:text="${st.label}" 
+                            th:selected="${status == st}"></option>
+                </select>
+                <select name="categoryId" class="search-input search-select form-select" onchange="this.form.submit()">
+                    <option value="" th:selected="${categoryId == null}">Tất cả danh mục</option>
+                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId == cat.id}">Danh mục</option>
+                </select>
+                <button type="submit" class="hidden-btn">Search</button>
+            </div>
+        </form>
+
+        <div class="course-grid">
+            <div class="course-card" th:each="course : ${coursePage.content}">
+                <img th:src="${course.thumbnailPath}" class="course-image" alt="Course Thumbnail">
+                <div class="course-body">
+                    <div class="course-meta">
+                        <span th:if="${course.status != null}" 
+                              th:class="${'badge badge-' + (course.status.name() == 'PUBLISHED' ? 'success' : (course.status.name() == 'PENDING' ? 'warning' : (course.status.name() == 'RESUBMIT' ? 'info' : 'danger')))}"
+                              th:text="${course.statusLabel}">Trạng thái</span>
+                        <span class="course-price" th:text="${course.price != null ? #numbers.formatDecimal(course.price, 0, 'POINT', 0, 'COMMA') + ' đ' : 'Miễn phí'}">$49.99</span>
+                    </div>
+                    <div class="course-title" th:text="${course.title}">Các Mẫu React Nâng Cao</div>
+                    <div class="course-instructor" th:text="${course.instructor != null ? course.instructor.firstName + ' ' + course.instructor.lastName : 'Không rõ'}">Michael Chang</div>
+                    <div class="course-category d-flex align-items-center gap-1 mt-2 text-muted">
+                        <span th:text="${course.category != null ? course.category.name : 'Chưa phân loại'}">Danh mục</span>
+                    </div>
+                </div>
+                <div class="course-footer">
+                    <div class="actions">
+                        <i class="ph ph-eye"></i>
+                        <a th:href="@{/manager/course/detail/{id}(id=${course.id})}" class="action-link">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${coursePage.isEmpty()}" class="empty-grid-message">
+                Không tìm thấy khóa học nào.
+            </div>
+        </div>
+
+        <!-- ══════════ PAGINATION ══════════ -->
+        <div class="pagination-circle-container" th:if="${coursePage.totalPages > 1}">
+            <div class="pagination-circle-buttons">
+                <!-- Previous -->
+                <a th:if="${coursePage.hasPrevious()}"
+                    th:href="@{/manager/course/list(keyword=${keyword}, status=${status}, categoryId=${categoryId}, page=${coursePage.number - 1}, size=${coursePage.size})}"
+                    class="page-circle-btn">
+                    <i class="ph ph-caret-left"></i>
+                </a>
+                <span th:unless="${coursePage.hasPrevious()}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-left"></i>
+                </span>
+
+                <!-- Page numbers -->
+                <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                    th:href="@{/manager/course/list(keyword=${keyword}, status=${status}, categoryId=${categoryId}, page=${i}, size=${coursePage.size})}"
+                    th:class="${coursePage.number == i ? 'page-circle-btn active' : 'page-circle-btn'}"
+                    th:text="${i + 1}">1</a>
+
+                <!-- Next -->
+                <a th:if="${coursePage.hasNext()}"
+                    th:href="@{/manager/course/list(keyword=${keyword}, status=${status}, categoryId=${categoryId}, page=${coursePage.number + 1}, size=${coursePage.size})}"
+                    class="page-circle-btn">
+                    <i class="ph ph-caret-right"></i>
+                </a>
+                <span th:unless="${coursePage.hasNext()}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-right"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

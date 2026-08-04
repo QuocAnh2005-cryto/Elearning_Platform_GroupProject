@@ -1,0 +1,269 @@
+/* =========================================================
+   LEARNING HUB — FAVORITES SURVEY STYLESHEET
+   Premium Glassmorphic Design System
+   ========================================================= */
+
+:root {
+    --primary: #1a56db;
+    --primary-hover: #1e40af;
+    --primary-light: #eff6ff;
+    --primary-glow: rgba(26, 86, 219, 0.15);
+    --border: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --shadow-sm: 0 4px 10px rgba(0,0,0,0.03);
+    --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.08);
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    background-color: #fafbfc;
+}
+
+/* Header customization for standalone survey page */
+.survey-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+}
+
+.survey-container {
+    max-width: 960px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.survey-title-section {
+    margin-bottom: 40px;
+}
+
+.survey-title-section h1 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+}
+
+.survey-subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 15px auto 0;
+    line-height: 1.6;
+}
+
+/* Survey Card Selection layout */
+.parent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 24px;
+    margin-bottom: 50px;
+}
+
+.parent-card {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.parent-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-glow);
+}
+
+.parent-card-active,
+.favorite-checkbox:checked + .parent-card {
+    border-color: var(--primary) !important;
+    background-color: var(--primary-light) !important;
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.card-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 24px;
+    transition: var(--transition);
+}
+
+.parent-card:hover .card-icon-box {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.card-desc {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* UI 2: Child Category Grid styles */
+.child-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 50px;
+}
+
+.child-card-label {
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+}
+
+.child-card-content {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: var(--transition);
+    height: 100%;
+}
+
+.child-card-content:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-glow);
+}
+
+.favorite-checkbox:checked + .child-card-content {
+    border-color: var(--primary) !important;
+    background-color: var(--primary-light) !important;
+}
+
+.child-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.child-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.child-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+.child-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    color: transparent;
+    font-size: 12px;
+}
+
+.child-card-content:hover .child-badge {
+    border-color: var(--primary);
+}
+
+.favorite-checkbox:checked + .child-card-content .child-badge {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+/* Actions Section */
+.survey-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 30px;
+}
+
+.btn-survey-back {
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+.btn-survey-back:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.btn-survey-next {
+    background: var(--primary);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 36px;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.2);
+}
+.btn-survey-next:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 6px 18px rgba(26, 86, 219, 0.35);
+    transform: translateY(-1.5px);
+}
+.btn-survey-next:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.step-indicator {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: block;
+}

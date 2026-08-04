@@ -1,0 +1,362 @@
+/* ===== Error Pages — Shared Stylesheet ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.error-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f5f7fa;
+    color: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* --- Subtle background pattern --- */
+body.error-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Main container --- */
+.error-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+    text-align: center;
+}
+
+/* --- Big Error Code --- */
+.error-code {
+    font-size: 10rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    margin-bottom: 0.25rem;
+    position: relative;
+    display: inline-block;
+}
+
+/* Color variants for each error type */
+.error-code.code-400 { color: #f59e0b; }
+.error-code.code-403 { color: #ef4444; }
+.error-code.code-404 { color: #3b82f6; }
+.error-code.code-500 { color: #8b5cf6; }
+
+/* Subtle shadow behind error code */
+.error-code::after {
+    content: attr(data-code);
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: -1;
+    opacity: 0.06;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    color: currentColor;
+}
+
+/* --- Label tag (e.g. "Không tìm thấy trang") --- */
+.error-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+}
+
+.error-label.label-400 {
+    background: #fef3c7;
+    color: #92400e;
+}
+.error-label.label-403 {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.error-label.label-404 {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.error-label.label-500 {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+/* --- Title & description --- */
+.error-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.error-description {
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Error detail info bar --- */
+.error-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.error-info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.error-info-item .info-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+}
+
+.error-info-item .info-value {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #334155;
+    word-break: break-all;
+    max-width: 200px;
+    text-align: center;
+}
+
+/* --- Action buttons --- */
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.btn-error-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-error-primary:hover {
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.btn-error-primary.btn-400 { background: #f59e0b; box-shadow: 0 4px 14px rgba(245,158,11,0.35); }
+.btn-error-primary.btn-400:hover { box-shadow: 0 6px 20px rgba(245,158,11,0.45); }
+.btn-error-primary.btn-403 { background: #ef4444; box-shadow: 0 4px 14px rgba(239,68,68,0.35); }
+.btn-error-primary.btn-403:hover { box-shadow: 0 6px 20px rgba(239,68,68,0.45); }
+.btn-error-primary.btn-404 { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.35); }
+.btn-error-primary.btn-404:hover { box-shadow: 0 6px 20px rgba(59,130,246,0.45); }
+.btn-error-primary.btn-500 { background: #8b5cf6; box-shadow: 0 4px 14px rgba(139,92,246,0.35); }
+.btn-error-primary.btn-500:hover { box-shadow: 0 6px 20px rgba(139,92,246,0.45); }
+
+.btn-error-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+    background: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-error-secondary:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    transform: translateY(-2px);
+}
+
+/* --- Stack trace toggle --- */
+.stacktrace-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    background: none;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    transition: color 0.2s;
+}
+
+.stacktrace-toggle:hover {
+    color: #64748b;
+}
+
+.stacktrace-toggle .toggle-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.stacktrace-toggle.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* --- Stack trace panel --- */
+.stacktrace-panel {
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.stacktrace-panel.open {
+    max-height: 500px;
+    opacity: 1;
+}
+
+.stacktrace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.stacktrace-header .st-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #64748b;
+}
+
+.stacktrace-header .st-copy {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #94a3b8;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s;
+}
+
+.stacktrace-header .st-copy:hover {
+    color: #475569;
+}
+
+.stacktrace-body {
+    padding: 1rem 1.2rem;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.72rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for stacktrace */
+.stacktrace-body::-webkit-scrollbar {
+    width: 5px;
+}
+.stacktrace-body::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+.stacktrace-body::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}
+
+/* --- Divider line --- */
+.error-divider {
+    width: 60px;
+    height: 3px;
+    border: none;
+    border-radius: 2px;
+    margin: 0 auto 2rem;
+}
+
+.error-divider.divider-400 { background: #f59e0b; }
+.error-divider.divider-403 { background: #ef4444; }
+.error-divider.divider-404 { background: #3b82f6; }
+.error-divider.divider-500 { background: #8b5cf6; }
+
+/* --- Timestamp / Request ID --- */
+.error-timestamp {
+    font-size: 0.72rem;
+    color: #cbd5e1;
+    margin-top: 2rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+    .error-code {
+        font-size: 6rem;
+    }
+    .error-title {
+        font-size: 1.35rem;
+    }
+    .error-info {
+        gap: 1rem;
+    }
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}

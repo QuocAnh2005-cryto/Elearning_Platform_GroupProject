@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${instructor.fullName} + ' - Giảng viên LearningHub'">Hồ Sơ Giảng Viên</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/instructor-profile.css}">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header th:replace="fragments/header :: header"></header>
+
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center text-md-start mb-4 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                    <!-- Avatar -->
+                    <div th:if="${instructor.avatarUrl == null or instructor.avatarUrl == ''}" class="instructor-avatar-large">
+                        <span th:text="${#strings.substring(instructor.fullName, 0, 1)}">T</span>
+                    </div>
+                    <img th:if="${instructor.avatarUrl != null and instructor.avatarUrl != ''}" 
+                         th:src="${instructor.avatarUrl}" alt="Avatar" class="instructor-avatar-large" onerror="this.onerror=null; this.src='/images/avatar.png';">
+                </div>
+                <div class="col-md-7 text-center text-md-start">
+                    <div class="badge-instructor">
+                        <i class="fa-solid fa-medal"></i> Giảng viên
+                    </div>
+                    <h1 class="fw-bold mb-2" th:text="${instructor.fullName}">Nguyễn Văn Tiến</h1>
+                    <p class="fs-5 mb-3 opacity-75">Giảng viên Lập trình & Khoa học Máy tính</p>
+                    
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rating-stars">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                    <i th:if="${i <= instructor.averageRating}" class="fa-solid fa-star"></i>
+                                    <i th:if="${i > instructor.averageRating && (i - 1) < instructor.averageRating}" class="fa-solid fa-star-half-stroke"></i>
+                                    <i th:if="${(i - 1) >= instructor.averageRating}" class="fa-regular fa-star"></i>
+                                </span>
+                            </div>
+                            <span class="fw-bold" th:text="${instructor.averageRating}">4.8</span>
+                            <span class="opacity-75" th:text="'(' + ${#numbers.formatInteger(instructor.totalReviews, 0, 'COMMA')} + ' đánh giá)'">(1,240 đánh giá)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-user-group opacity-75"></i>
+                            <span th:text="${#numbers.formatInteger(instructor.totalStudents, 0, 'COMMA')} + ' học viên'">3,200 học viên</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center text-md-end mt-4 mt-md-0">
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="social-btn"><i class="fa-solid fa-globe"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="container stat-cards-container">
+        <div class="row g-3 justify-content-center">
+            <div class="col-4 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i class="fa-regular fa-star"></i></div>
+                    <div class="stat-card-value" th:text="${instructor.averageRating} + '/5'">4.8/5</div>
+                    <div class="stat-card-label">Đánh giá TB</div>
+                </div>
+            </div>
+            <div class="col-4 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i class="fa-solid fa-user-group"></i></div>
+                    <div class="stat-card-value" th:text="${#numbers.formatInteger(instructor.totalStudents, 0, 'COMMA')}">3,200</div>
+                    <div class="stat-card-label">Học viên</div>
+                </div>
+            </div>
+            <div class="col-4 col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i class="fa-solid fa-play"></i></div>
+                    <div class="stat-card-value" th:text="${instructor.totalCourses}">12</div>
+                    <div class="stat-card-label">Khóa học</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4 mb-5">
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <!-- About section -->
+                <div class="content-card">
+                    <h3 class="content-card-title">Giới Thiệu Bản Thân</h3>
+                    
+                    <div th:if="${instructor.bio != null and instructor.bio != ''}" th:utext="${instructor.bio}"></div>
+                    <div th:if="${instructor.bio == null or instructor.bio == ''}">
+                        <p>Với nhiều <strong>kinh nghiệm giảng dạy lập trình</strong> tại các trường đại học và trung tâm đào tạo hàng đầu Việt Nam, tôi đã giúp nhiều học viên nắm vững nền tảng lập trình và tư duy thuật toán.</p>
+                        <p>Tôi có niềm <strong>đam mê dạy học lập trình</strong> và luôn hướng tới phương pháp giảng dạy thực tiễn, giúp học viên áp dụng được ngay vào công việc thực tế.</p>
+                        
+                        <h5 class="fw-bold text-primary mt-4 mb-3">Chuyên môn</h5>
+                        <ul class="specialization-list">
+                            <li>Lập trình từ cơ bản đến nâng cao</li>
+                            <li>Cấu trúc dữ liệu & Giải thuật</li>
+                            <li>Lập trình hướng đối tượng (OOP)</li>
+                            <li>Competitive Programming & ACM/ICPC</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Courses section -->
+                <div class="content-card">
+                    <h3 class="content-card-title">
+                        Khóa Học Của Giảng Viên
+                        <span class="fs-6 fw-normal text-muted" th:text="${instructor.totalCourses} + ' khóa học'">12 khóa học</span>
+                    </h3>
+                    
+                    <div class="course-list">
+                        <!-- Course Item -->
+                        <div class="d-flex gap-4 p-4 border border-light-subtle rounded-3 bg-white shadow-sm flex-md-row flex-column align-items-start mb-4"
+                             th:each="course : ${instructor.courses}">
+                            
+                            <!-- Left: Thumbnail -->
+                            <a th:href="@{/course/detail(id=${course.id})}" class="course-thumbnail-link" style="width: 200px; flex-shrink: 0;">
+                                <img th:if="${course.thumbnailPath != null and course.thumbnailPath != ''}" 
+                                     th:src="${course.thumbnailPath}" alt="Thumbnail" class="w-100 object-fit-cover rounded" style="height: 120px;"
+                                     onerror="this.onerror=null; this.src='/images/course_thumbnail.png';">
+                                <div th:if="${course.thumbnailPath == null or course.thumbnailPath == ''}" class="w-100 bg-primary d-flex align-items-center justify-content-center text-white rounded" style="height: 120px; font-size: 2rem;">
+                                    <i class="fa-regular fa-circle-play"></i>
+                                </div>
+                            </a>
+
+                            <!-- Right: Info -->
+                            <div class="flex-grow-1 d-flex flex-column h-100 w-100">
+                                <div>
+                                    <a th:href="@{/course/detail(id=${course.id})}" class="text-decoration-none text-dark">
+                                        <h4 class="fw-bold fs-5 mb-2" th:text="${course.title}">Tiêu đề khóa học</h4>
+                                    </a>
+                                    <div class="d-flex align-items-center gap-1 mb-2">
+                                        <span class="fw-bold text-warning fs-7" th:text="${course.averageRating}">4.9</span>
+                                        <i class="fa-solid fa-star text-warning" style="font-size: 0.8rem;"></i>
+                                        <span class="text-muted fs-8 ms-1" th:text="'(' + ${course.ratingCount} + ' đánh giá)'">(1,200 đánh giá)</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-auto pt-2">
+                                    <div class="d-flex align-items-center gap-3 text-muted" style="font-size: 0.875rem;">
+                                        <span><i class="fa-solid fa-user-group me-1"></i> <span th:text="${#numbers.formatInteger(course.enrollmentsCount, 0, 'COMMA')} + ' học viên'">1,200 học viên</span></span>
+                                        <span><i class="fa-regular fa-clock me-1"></i> <span th:text="${course.totalLessonsCount} + ' bài học'">48 bài học</span></span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill" th:text="${course.level ?: 'Cơ bản'}">Cơ bản</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-3 ms-auto align-self-end">
+                                        <div class="fw-bold text-primary fs-5" th:text="${course.price == null || course.price == 0 ? 'Miễn phí' : #numbers.formatDecimal(course.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">499.000đ</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${#lists.isEmpty(instructor.courses)}" class="text-center py-4 text-muted border rounded-3 bg-light">
+                            Giảng viên này chưa có khóa học nào được xuất bản.
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-lg-4">
+                <!-- Contact info -->
+                <div class="content-card">
+                    <h3 class="content-card-title">Thông Tin Liên Hệ</h3>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span th:text="${instructor.email}">instructor_test1@elearning.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <span th:text="${instructor.phone ?: 'Chưa cập nhật'}">0905000001</span>
+                    </div>
+                    <button class="btn-contact">Liên Hệ Giảng Viên</button>
+                </div>
+
+                <!-- Rating summary -->
+                <div class="content-card">
+                    <h3 class="content-card-title">Đánh Giá Tổng Quan</h3>
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="rating-overview-score" th:text="${instructor.averageRating}">4.8</div>
+                        <div>
+                            <div class="rating-stars mb-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="text-muted fs-7" th:text="${#numbers.formatInteger(instructor.totalReviews, 0, 'COMMA')} + ' đánh giá'">1,240 đánh giá</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress bars -->
+                    <div class="rating-bars">
+                        <!-- 5 Star -->
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-label">5 <i class="fa-solid fa-star"></i></div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${instructor.percent5Stars} + '%'" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="rating-bar-percent" th:text="${instructor.percent5Stars} + '%'">72%</div>
+                        </div>
+                        <!-- 4 Star -->
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-label">4 <i class="fa-solid fa-star"></i></div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${instructor.percent4Stars} + '%'" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="rating-bar-percent" th:text="${instructor.percent4Stars} + '%'">19%</div>
+                        </div>
+                        <!-- 3 Star -->
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-label">3 <i class="fa-solid fa-star"></i></div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${instructor.percent3Stars} + '%'" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="rating-bar-percent" th:text="${instructor.percent3Stars} + '%'">6%</div>
+                        </div>
+                        <!-- 2 Star -->
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-label">2 <i class="fa-solid fa-star"></i></div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${instructor.percent2Stars} + '%'" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="rating-bar-percent" th:text="${instructor.percent2Stars} + '%'">2%</div>
+                        </div>
+                        <!-- 1 Star -->
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-label">1 <i class="fa-solid fa-star"></i></div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${instructor.percent1Stars} + '%'" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="rating-bar-percent" th:text="${instructor.percent1Stars} + '%'">1%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

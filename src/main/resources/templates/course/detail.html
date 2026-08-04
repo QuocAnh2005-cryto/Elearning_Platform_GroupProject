@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${course.title} + ' - Learning Hub'">Guitar điện cơ bản cùng Khoa (FPTU MUSIC) - Learning Hub
+    </title>
+    <meta name="description"
+        content="Khóa học guitar điện trực tuyến toàn diện tại Learning Hub. Dành cho người mới bắt đầu hoặc người chơi trung cấp muốn nâng cao kỹ năng chơi guitar điện cùng Trang Hiển Khoa.">
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet (Overriding Bootstrap defaults) -->
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- Custom CSS for course detail -->
+    <link rel="stylesheet" th:href="@{/css/detail.css}">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-page">
+
+<header th:replace="fragments/header :: header"></header>
+
+    <!-- Main Content Layout -->
+    <main class="main-content py-5"
+        th:with="firstSection=${course.sections != null && !course.sections.isEmpty() ? course.sections.iterator().next() : null},
+                   firstLesson=${firstSection != null && firstSection.lessons != null && !firstSection.lessons.isEmpty() ? firstSection.lessons.iterator().next() : null}">
+        <div class="container">
+            <div class="row g-4">
+
+                <!-- Left Column: Course details & Lectures -->
+                <div class="col-lg-8 col-12">
+                    <!-- Breadcrumbs -->
+                    <nav class="breadcrumb-nav mb-4" aria-label="breadcrumb">
+                        <ol class="breadcrumb m-0 align-items-center">
+                            <li class="breadcrumb-item"><a th:href="@{/}"
+                                    class="text-muted text-decoration-none fs-7 fw-medium">Trang Chủ</a></li>
+                            <li class="breadcrumb-item active text-primary fs-7 fw-semibold" aria-current="page">Chi
+                                Tiết Khóa Học</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Course Title -->
+                    <h1 class="course-title fw-bold text-dark font-heading mb-3" th:text="${course.title}">Guitar điện
+                        cơ bản cùng Khoa (FPTU MUSIC)</h1>
+
+                    <!-- Instructor Info -->
+                    <div
+                        class="instructor-container d-flex align-items-center gap-2 text-primary fw-semibold fs-6 mb-3">
+                        <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                        <a th:href="@{/instructor-profile/{id}(id=${course.instructor.id})}" class="text-decoration-none text-primary instructor-profile-link">
+                            <span class="instructor-name tracking-wide"
+                                th:text="${course.instructor.lastName + ' ' + course.instructor.firstName}">TRANG HIÊN
+                                KHOA</span>
+                        </a>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="rating-container d-flex align-items-center gap-2 mb-4">
+                        <span class="fw-bold text-warning fs-6" th:text="${course.averageRating}">4.5</span>
+                        <div class="stars-wrapper d-flex gap-1 text-warning">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" class="d-inline-flex">
+                                <!-- Full Star -->
+                                <i th:if="${i <= course.averageRating}" data-lucide="star"
+                                    class="star-icon filled text-warning"
+                                    style="width:16px; height:16px; fill:currentColor;"></i>
+                                <!-- Half Star -->
+                                <i th:if="${i > course.averageRating && (i - 1) < course.averageRating}"
+                                    data-lucide="star-half" class="star-icon filled text-warning"
+                                    style="width:16px; height:16px; fill:currentColor;"></i>
+                                <!-- Empty Star -->
+                                <i th:if="${(i - 1) >= course.averageRating}" data-lucide="star"
+                                    class="star-icon text-muted" style="width:16px; height:16px;"></i>
+                            </span>
+                        </div>
+                        <span class="rating-text text-muted fs-7 fw-medium"
+                            th:text="'(' + ${course.ratingCount} + ' Đánh Giá)'">(0 Đánh Giá)</span>
+                    </div>
+
+                    <!-- Course Attributes / Metadata Grid -->
+                    <div class="row row-cols-md-3 row-cols-1 g-3 mb-4">
+                        <div class="col">
+                            <div class="meta-item d-flex align-items-center gap-3 p-3 bg-white border rounded-3 h-100">
+                                <div class="meta-icon-box d-flex align-items-center justify-content-center bg-light rounded text-muted"
+                                    style="width:36px; height:36px;">
+                                    <i data-lucide="layers" style="width:18px;"></i>
+                                </div>
+                                <div class="meta-info">
+                                    <span class="meta-label d-block text-muted fw-semibold" style="font-size:11px;">Danh
+                                        Mục:</span>
+                                    <span class="meta-value text-dark fw-medium fs-7"
+                                        th:text="${course.category?.name ?: 'Chưa phân loại'}">Âm nhạc và Nghệ thuật
+                                        biểu diễn</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="meta-item d-flex align-items-center gap-3 p-3 bg-white border rounded-3 h-100">
+                                <div class="meta-icon-box d-flex align-items-center justify-content-center bg-light rounded text-muted"
+                                    style="width:36px; height:36px;">
+                                    <i data-lucide="folder-open" style="width:18px;"></i>
+                                </div>
+                                <div class="meta-info">
+                                    <span class="meta-label d-block text-muted fw-semibold" style="font-size:11px;">Danh
+                                        Mục Con:</span>
+                                    <span class="meta-value text-dark fw-medium fs-7"
+                                        th:text="${course.category?.description ?: 'Không có mô tả'}">Nhạc cụ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="meta-item d-flex align-items-center gap-3 p-3 bg-white border rounded-3 h-100">
+                                <div class="meta-icon-box d-flex align-items-center justify-content-center bg-light rounded text-muted"
+                                    style="width:36px; height:36px;">
+                                    <i data-lucide="bar-chart-2" style="width:18px;"></i>
+                                </div>
+                                <div class="meta-info">
+                                    <span class="meta-label d-block text-muted fw-semibold"
+                                        style="font-size:11px;">Trình Độ:</span>
+                                    <span class="meta-value text-dark fw-medium fs-7" th:text="${course.level}">Cơ
+                                        Bản</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Tabs Navigation (Bootstrap powered) -->
+                    <div class="tabs-nav-wrapper border-bottom mb-4">
+                        <ul class="nav nav-tabs border-bottom-0 gap-4" id="courseTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link border-0 text-muted fw-semibold pb-2 px-1 bg-transparent active-indicator active"
+                                    id="about-tab" data-bs-toggle="tab" data-bs-target="#about-tab-pane" type="button"
+                                    role="tab" aria-controls="about-tab-pane" aria-selected="true">Về Khóa Học</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link border-0 text-muted fw-semibold pb-2 px-1 bg-transparent active-indicator"
+                                    id="content-tab" data-bs-toggle="tab" data-bs-target="#content-tab-pane"
+                                    type="button" role="tab" aria-controls="content-tab-pane" aria-selected="false">Nội
+                                    Dung Khóa Học</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button
+                                    class="nav-link border-0 text-muted fw-semibold pb-2 px-1 bg-transparent active-indicator"
+                                    id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-tab-pane"
+                                    type="button" role="tab" aria-controls="reviews-tab-pane" aria-selected="false">Nhận
+                                    Xét</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab Panels Content -->
+                    <div class="tab-content bg-white border rounded-3 p-4 shadow-sm" id="courseTabContent">
+
+                        <!-- Panel 1: About the course -->
+                        <div class="tab-pane fade show active" id="about-tab-pane" role="tabpanel"
+                            aria-labelledby="about-tab" tabindex="0">
+                            <h3 class="panel-title fw-bold font-heading mb-3">Về Khóa Học</h3>
+                            
+                            <!-- Course Description Box -->
+                            <div class="description-card p-4 rounded-3 mb-4"
+                                style="background-color: #e6f0fa; border-left: 5px solid var(--bs-primary);">
+                                <div class="m-0 fs-7 text-justify" style="color: #274060;" th:utext="${course.description}">
+                                    Mô tả khóa học...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 2: Course Content -->
+                        <div class="tab-pane fade" id="content-tab-pane" role="tabpanel" aria-labelledby="content-tab"
+                            tabindex="0">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="panel-title fw-bold font-heading m-0">Nội Dung Khóa Học</h3>
+                                <span class="badge bg-light text-muted border px-3 py-2 rounded-pill fs-7 fw-semibold"
+                                    th:text="${course.sections != null ? course.sections.size() : 0} + ' phần'">2
+                                    phần</span>
+                            </div>
+
+                            <!-- Syllabus Accordion (Bootstrap dynamic components) -->
+                            <div class="accordion d-flex flex-column gap-3" id="syllabusAccordion">
+                                <div class="alert alert-info py-3 text-center border-0 rounded-3"
+                                    th:if="${course.sections == null || course.sections.isEmpty()}">
+                                    Chương trình học đang được cập nhật.
+                                </div>
+                                <!-- Accordion Item -->
+                                <div class="accordion-item border rounded-3 overflow-hidden bg-light"
+                                    th:each="sec, secStat : ${course.sections}">
+                                    <div class="accordion-header" th:id="'heading' + ${sec.id}">
+                                        <button
+                                            class="accordion-button bg-transparent border-0 d-flex justify-content-between align-items-center w-100 p-3 shadow-none"
+                                            th:classappend="${secStat.first} ? '' : 'collapsed'" type="button"
+                                            data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${sec.id}"
+                                            th:aria-expanded="${secStat.first} ? 'true' : 'false'"
+                                            th:aria-controls="'collapse' + ${sec.id}">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="play-icon-container d-flex align-items-center justify-content-center bg-white border rounded"
+                                                    style="width:32px; height:32px;">
+                                                    <i data-lucide="play" class="text-muted"
+                                                        style="width:14px; height:14px; fill:currentColor;"></i>
+                                                </div>
+                                                <div class="lecture-info text-start">
+                                                    <h4 class="lecture-title text-dark fw-semibold m-0 fs-7"
+                                                        th:text="${secStat.index + 1} + '. ' + ${sec.title}">1. Giới
+                                                        thiệu về guitar điện</h4>
+                                                    <span class="lecture-subtitle text-muted fs-8"
+                                                        th:text="${sec.lessons != null ? sec.lessons.size() : 0} + ' bài giảng'">1
+                                                        bài giảng</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div th:id="'collapse' + ${sec.id}" class="accordion-collapse collapse"
+                                        th:classappend="${secStat.first} ? 'show' : ''"
+                                        th:aria-labelledby="'heading' + ${sec.id}" data-bs-parent="#syllabusAccordion">
+                                        <div class="accordion-body bg-white border-top p-3 d-flex flex-column gap-3">
+                                            <div th:each="les : ${sec.lessons}"
+                                                class="border-bottom pb-3 mb-2 last-no-border"
+                                                style="border-bottom-style: dashed !important;">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h5 class="text-dark fw-semibold fs-7 mb-1"
+                                                            th:text="${les.title}">Tên bài giảng</h5>
+                                                        <span class="text-muted fs-8 d-block"
+                                                            th:text="'Thời lượng: ' + ${les.durationSeconds / 60} + ' phút'">10
+                                                            phút</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 3: Reviews (Active) -->
+                        <div class="tab-pane fade" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab"
+                            tabindex="0">
+                            <!-- Section Title -->
+                            <div class="d-flex align-items-center gap-2 text-primary fw-bold mb-4">
+                                <i data-lucide="message-square"
+                                    style="width: 20px; height: 20px; fill: currentColor;"></i>
+                                <span class="fs-6 fw-bold font-heading">Nhận Xét Khóa Học</span>
+                            </div>
+
+                            <!-- Thông báo gửi đánh giá thành công -->
+                            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4"
+                                role="alert" th:if="${reviewSuccessMessage}">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i data-lucide="check-circle" class="text-success"
+                                        style="width:20px; height:20px;"></i>
+                                    <span th:text="${reviewSuccessMessage}"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <!-- Thông báo gửi đánh giá thất bại -->
+                            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4"
+                                role="alert" th:if="${reviewErrorMessage}">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i data-lucide="alert-circle" class="text-danger"
+                                        style="width:20px; height:20px;"></i>
+                                    <span th:text="${reviewErrorMessage}"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <!-- Thông báo yêu cầu hoàn thành 30% bài học -->
+                            <div class="alert alert-warning border-0 shadow-sm rounded-3 mb-4"
+                                th:if="${enrolledCourseIds != null && enrolledCourseIds.contains(course.id) && (hasReviewed == null || !hasReviewed) && !canReview}">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i data-lucide="info" class="text-warning" style="width:20px; height:20px;"></i>
+                                    <span>Bạn cần hoàn thành ít nhất 30% tiến trình bài học để có thể gửi đánh giá cho khóa học này.</span>
+                                </div>
+                            </div>
+
+                            <form id="reviewForm" th:if="${enrolledCourseIds != null && enrolledCourseIds.contains(course.id) && canReview}"
+                                class="border rounded-3 p-4 mb-4 bg-white shadow-sm" th:classappend="${hasReviewed} ? 'd-none' : ''" onsubmit="submitAddReview(event)">
+                                <input type="hidden" name="courseId" th:value="${course.id}">
+                                <div
+                                    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                                    <div>
+                                        <h3 class="fw-bold font-heading fs-6 text-dark mb-1">
+                                            <i data-lucide="star" class="text-warning me-1" style="width: 18px; height: 18px; fill: currentColor; vertical-align: text-top;"></i>Đánh giá khóa học của bạn
+                                        </h3>
+                                        <p class="text-muted fs-8 m-0">Chia sẻ trải nghiệm học tập để giúp học viên khác
+                                            chọn khóa học phù hợp.</p>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="text-muted fs-8 fw-semibold">Đánh giá sao:</span>
+                                        <div class="star-rating-css">
+                                            <input type="radio" id="star5" name="rating" value="5" />
+                                            <label for="star5" title="5 sao"><i data-lucide="star"
+                                                    style="fill: currentColor;"></i></label>
+
+                                            <input type="radio" id="star4" name="rating" value="4" />
+                                            <label for="star4" title="4 sao"><i data-lucide="star"
+                                                    style="fill: currentColor;"></i></label>
+
+                                            <input type="radio" id="star3" name="rating" value="3" />
+                                            <label for="star3" title="3 sao"><i data-lucide="star"
+                                                    style="fill: currentColor;"></i></label>
+
+                                            <input type="radio" id="star2" name="rating" value="2" />
+                                            <label for="star2" title="2 sao"><i data-lucide="star"
+                                                    style="fill: currentColor;"></i></label>
+
+                                            <input type="radio" id="star1" name="rating" value="1" />
+                                            <label for="star1" title="1 sao"><i data-lucide="star"
+                                                    style="fill: currentColor;"></i></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-muted fw-semibold fs-8"
+                                        for="course-review-comment">Nhận xét</label>
+                                    <textarea name="comment" class="form-control fs-7 rounded-3 shadow-none"
+                                        id="course-review-comment" rows="4" maxlength="500"
+                                        placeholder="Viết cảm nhận của bạn về nội dung, giảng viên hoặc chất lượng bài học..."></textarea>
+                                </div>
+
+                                <div
+                                    class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                                    <button
+                                        class="btn btn-primary rounded-3 px-4 py-2 fw-bold fs-7 d-inline-flex align-items-center justify-content-center gap-2 ms-sm-auto"
+                                        type="submit">
+                                        <span>Gửi đánh giá</span>
+                                        <i data-lucide="send" style="width:16px; height:16px;"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Overview Summary Card -->
+                            <div class="border rounded-3 p-4 mb-4 bg-white shadow-sm">
+                                <div class="row g-4 align-items-center">
+                                    <!-- Big Average Rating -->
+                                    <div class="col-sm-4 text-center border-end-sm py-2">
+                                        <h2 class="display-4 fw-bold text-primary m-0 font-heading"
+                                            th:text="${course.averageRating}">4.5</h2>
+                                        <div
+                                            class="stars-wrapper d-flex justify-content-center gap-1 text-warning my-2">
+                                            <span th:each="i : ${#numbers.sequence(1, 5)}" class="d-inline-flex">
+                                                <!-- Full Star -->
+                                                <i th:if="${i <= course.averageRating}" data-lucide="star"
+                                                    class="star-icon filled text-warning"
+                                                    style="width:18px; height:18px; fill:currentColor;"></i>
+                                                <!-- Half Star -->
+                                                <i th:if="${i > course.averageRating && (i - 1) < course.averageRating}"
+                                                    data-lucide="star-half" class="star-icon filled text-warning"
+                                                    style="width:18px; height:18px; fill:currentColor;"></i>
+                                                <!-- Empty Star -->
+                                                <i th:if="${(i - 1) >= course.averageRating}" data-lucide="star"
+                                                    class="star-icon text-muted" style="width:18px; height:18px;"></i>
+                                            </span>
+                                        </div>
+                                        <span class="rating-text text-muted fs-8"
+                                            th:text="${course.ratingCount} + ' Đánh giá'">128 Đánh giá</span>
+                                    </div>
+
+                                    <!-- Rating breakdown progress bars -->
+                                    <div class="col-sm-8 ps-sm-4">
+                                        <div class="d-flex flex-column gap-2">
+                                            <!-- Stars loop 5 to 1 -->
+                                            <div class="d-flex align-items-center gap-3"
+                                                th:each="star : ${#numbers.sequence(5, 1, -1)}">
+                                                <span class="text-nowrap text-muted fs-8" style="width: 44px;"
+                                                    th:text="${star} + ' sao'">5 sao</span>
+                                                <div class="progress flex-grow-1 bg-light rounded-pill"
+                                                    style="height: 6px;">
+                                                    <div class="progress-bar bg-warning rounded-pill" role="progressbar"
+                                                        th:style="'width: ' + ${course.getStarPercentage(star)} + '%;'"
+                                                        th:aria-valuenow="${course.getStarPercentage(star)}"
+                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="text-muted fs-8 text-end" style="width: 32px;"
+                                                    th:text="${#numbers.formatDecimal(course.getStarPercentage(star), 1, 0)} + '%'">75%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Reviews List -->
+                            <div id="reviews-list-container" class="d-flex flex-column gap-3">
+                                <div id="no-reviews-alert" class="alert alert-info py-3 text-center border-0 rounded-3"
+                                    th:if="${course.feedbacks == null || course.feedbacks.isEmpty()}">
+                                    Chưa có đánh giá nào cho khóa học này.
+                                </div>
+                                <!-- Review Item -->
+                                <div th:id="'feedback-item-' + ${fb.id}" class="feedback-item border rounded-3 p-4 bg-white shadow-sm" th:each="fb, fbStat : ${course.feedbacks}" th:classappend="${fbStat.index >= 5} ? 'd-none' : ''">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="avatar-ring-wrapper d-flex align-items-center justify-content-center rounded-circle p-0.5"
+                                                style="border: 2px solid #e2e8f0; width: 44px; height: 44px;">
+                                                <img th:src="${fb.user != null && fb.user.getFullAvatarUrl() != null ? fb.user.getFullAvatarUrl() : '/images/student2.png'}"
+                                                    alt="Learner Avatar" class="rounded-circle"
+                                                    style="width: 100%; height: 100%; object-fit: cover;"
+                                                    onerror="this.onerror=null; this.src='/images/student2.png';">
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-semibold text-dark fs-7"
+                                                    th:text="${fb.user.lastName + ' ' + fb.user.firstName}">Nguyễn Văn
+                                                    An</span>
+                                                <div class="feedback-stars text-warning d-flex gap-1 mt-1" th:data-rating="${fb.rating}">
+                                                    <i th:each="i : ${#numbers.sequence(1, 5)}" data-lucide="star"
+                                                        class="star-icon"
+                                                        th:classappend="${i <= fb.rating} ? 'filled text-warning' : 'text-muted'"
+                                                        th:style="${i <= fb.rating} ? 'width:14px; height:14px; fill:currentColor;' : 'width:14px; height:14px;'"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <button th:if="${currentUser != null && currentUser.id == fb.user.id}"
+                                                class="btn btn-link btn-sm text-primary p-0 me-2 text-decoration-none fs-8 fw-semibold btn-edit-review"
+                                                th:data-feedback-id="${fb.id}"
+                                                th:data-feedback-comment="${fb.comment}"
+                                                th:data-feedback-rating="${fb.rating}"
+                                                data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                                                <i class="fa-regular fa-pen-to-square me-1"></i>Sửa
+                                            </button>
+                                            <button th:if="${currentUser != null && currentUser.id == fb.user.id}"
+                                                class="btn btn-link btn-sm text-danger p-0 me-2 text-decoration-none fs-8 fw-semibold btn-delete-review"
+                                                th:data-feedback-id="${fb.id}"
+                                                data-bs-toggle="modal" data-bs-target="#deleteReviewModal">
+                                                <i class="fa-regular fa-trash-can me-1"></i>Xóa
+                                            </button>
+                                            <span class="text-muted fs-8"
+                                                th:text="${fb.createdAt != null} ? ${#temporals.format(fb.createdAt, 'dd/MM/yyyy')} : 'Gần đây'">2
+                                                ngày trước</span>
+                                        </div>
+                                    </div>
+                                    <p class="feedback-comment text-muted fs-7 mb-0 text-justify" th:text="${fb.comment}">
+                                        "Khóa học rất hay và dễ hiểu..."
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- See More Button -->
+                            <button
+                                id="btn-load-more-reviews"
+                                class="btn btn-outline-primary w-100 py-2 fs-7 fw-semibold rounded-3 mt-3 shadow-none border-primary-subtle"
+                                style="background-color: var(--primary-light); color: var(--primary); border-color: var(--primary-light) !important;"
+                                th:if="${course.feedbacks != null && course.feedbacks.size() > 5}">
+                                Xem thêm đánh giá
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Purchasing Card -->
+                <div class="col-lg-4 col-12">
+                    <aside class="course-purchase-aside sticky-lg-top" style="top: 100px; z-index: 10;">
+                        <div class="card purchase-card border rounded-3 overflow-hidden shadow-lg">
+
+                            <!-- Thumbnail with overlay preview -->
+                            <div class="thumbnail-container position-relative bg-dark"
+                                style="aspect-ratio: 16/9; overflow: hidden;">
+                                <img th:src="${course.thumbnailPath}" th:alt="${course.title}"
+                                    class="w-100 h-100 object-fit-cover"
+                                    onerror="this.onerror=null; this.src='/images/course_thumbnail.png';">
+
+
+                                <div class="thumbnail-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-40"
+                                    th:if="${course.introVideoPath != null}">
+                                    <button
+                                        class="btn play-overlay-btn btn-light rounded-pill px-4 py-2 fw-semibold fs-7 shadow d-flex align-items-center gap-2 border-0"
+                                        data-bs-toggle="modal" data-bs-target="#videoModal"
+                                        th:data-intro-video-url="${course.introVideoPath}"
+                                        th:data-lesson-title="${course.title}">
+                                        <i data-lucide="play" class="fill-current" style="width:16px;"></i>
+                                        <span>Xem thử khóa học</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Purchasing info list -->
+                            <div class="card-body p-4">
+                                <h3 class="card-title fw-bold font-heading fs-6 mb-4">Khóa Học Bao Gồm:</h3>
+
+                                <ul class="list-unstyled d-flex flex-column gap-3 mb-4">
+
+                                    <!-- Price Row -->
+                                    <li
+                                        class="d-flex justify-content-between align-items-center pb-2 border-bottom border-light">
+                                        <div class="d-flex align-items-center gap-2 text-muted fs-7">
+                                            <i data-lucide="circle-dollar-sign" class="text-muted"
+                                                style="width:18px;"></i>
+                                            <span>Giá:</span>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="text-primary fw-bold fs-5 d-block"
+                                                th:text="${#numbers.formatDecimal(course.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">239,200
+                                                đ</span>
+                                        </div>
+                                    </li>
+
+                                    <!-- Duration Row -->
+                                    <li
+                                        class="d-flex justify-content-between align-items-center pb-2 border-bottom border-light">
+                                        <div class="d-flex align-items-center gap-2 text-muted fs-7">
+                                            <i data-lucide="clock" class="text-muted" style="width:18px;"></i>
+                                            <span>Thời lượng:</span>
+                                        </div>
+                                        <span class="fw-semibold text-dark fs-7"
+                                            th:text="${course.getTotalDurationMinutes()} + ' phút'">3 phút</span>
+                                    </li>
+
+                                    <!-- Lectures Row -->
+                                    <li
+                                        class="d-flex justify-content-between align-items-center pb-2 border-bottom border-light">
+                                        <div class="d-flex align-items-center gap-2 text-muted fs-7">
+                                            <i data-lucide="book-open" class="text-muted" style="width:18px;"></i>
+                                            <span>Bài Giảng:</span>
+                                        </div>
+                                        <span class="fw-semibold text-dark fs-7"
+                                            th:text="${course.getTotalLessonsCount()}">2</span>
+                                    </li>
+
+                                    <!-- Students Row -->
+                                    <li class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center gap-2 text-muted fs-7">
+                                            <i data-lucide="users" class="text-muted" style="width:18px;"></i>
+                                            <span>Đã Mua:</span>
+                                        </div>
+                                        <span class="fw-semibold text-dark fs-7"
+                                            th:text="${course.enrollmentsCount} + ' người'">0 người</span>
+                                    </li>
+                                </ul>
+
+                                <!-- Nếu đã mua khóa học -->
+                                <a th:if="${enrolledCourseIds != null && enrolledCourseIds.contains(course.id)}"
+                                    th:href="@{/course/{courseId}(courseId=${course.id})}"
+                                    class="btn btn-success w-100 py-3 fw-bold fs-7 rounded-3 d-flex align-items-center justify-content-center gap-2 text-decoration-none text-white">
+                                    <i data-lucide="play-circle" style="width:16px;"></i> Học tiếp
+                                </a>
+
+                                <!-- Nếu chưa mua -->
+                                <button
+                                    th:unless="${enrolledCourseIds != null && enrolledCourseIds.contains(course.id)}"
+                                    class="btn btn-primary w-100 py-3 fw-bold fs-7 rounded-3 d-flex align-items-center justify-content-center gap-2 shadow-primary"
+                                    type="button" th:onclick="'addToCart(this, ' + ${course.id} + ')'">
+                                    <span>Thêm Vào Giỏ Hàng</span>
+                                    <i data-lucide="shopping-cart" style="width:16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Video Preview (Bootstrap powered) -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3 overflow-hidden shadow-lg">
+                <div class="modal-header px-4 py-3 bg-white border-bottom align-items-center">
+                    <h3 class="modal-title fw-bold font-heading fs-6 m-0" id="videoModalLabel"
+                        th:text="'Xem thử khóa học - ' + ${course.title}">Xem thử khóa học - Guitar điện cơ bản</h3>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"
+                        aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body p-0 bg-dark">
+                    <!-- Real video player -->
+                    <div class="ratio ratio-16x9 w-100 bg-black">
+                        <video controls style="width: 100%; height: 100%; object-fit: contain;" id="previewVideo"
+                            th:src="${course.introVideoPath}">
+                            Trình duyệt của bạn không hỗ trợ thẻ video.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Review Modal -->
+    <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-3 border-0 shadow-lg bg-white">
+                <form id="editReviewForm" onsubmit="submitEditReview(event)">
+                    <input type="hidden" name="feedbackId" id="editFeedbackId">
+                    <div class="modal-header border-bottom border-light">
+                        <h5 class="modal-title fw-bold text-dark font-heading d-flex align-items-center gap-2" id="editReviewModalLabel">
+                            <i data-lucide="star" class="text-warning" style="width: 20px; height: 20px; fill: currentColor;"></i>Sửa Đánh Giá Khóa Học
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <span class="text-muted fs-8 fw-semibold">Đánh giá sao:</span>
+                            <div class="star-rating-css" id="editStarRating">
+                                <input type="radio" id="editStar5" name="rating" value="5" />
+                                <label for="editStar5" title="5 sao"><i data-lucide="star" style="fill: currentColor;"></i></label>
+
+                                <input type="radio" id="editStar4" name="rating" value="4" />
+                                <label for="editStar4" title="4 sao"><i data-lucide="star" style="fill: currentColor;"></i></label>
+
+                                <input type="radio" id="editStar3" name="rating" value="3" />
+                                <label for="editStar3" title="3 sao"><i data-lucide="star" style="fill: currentColor;"></i></label>
+
+                                <input type="radio" id="editStar2" name="rating" value="2" />
+                                <label for="editStar2" title="2 sao"><i data-lucide="star" style="fill: currentColor;"></i></label>
+
+                                <input type="radio" id="editStar1" name="rating" value="1" />
+                                <label for="editStar1" title="1 sao"><i data-lucide="star" style="fill: currentColor;"></i></label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-semibold fs-8" for="edit-review-comment">Nhận xét</label>
+                            <textarea name="comment" class="form-control fs-7 rounded-3 shadow-none" id="edit-review-comment" rows="4" maxlength="500" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top border-light">
+                        <button type="button" class="btn btn-light rounded-3 fw-bold fs-7 px-4 py-2" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary rounded-3 fw-bold fs-7 px-4 py-2">Lưu Thay Đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Review Confirmation Modal -->
+    <div class="modal fade" id="deleteReviewModal" tabindex="-1" aria-labelledby="deleteReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content rounded-3 border-0 shadow-lg bg-white">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark font-heading fs-6" id="deleteReviewModalLabel">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="text-muted fs-7 mb-0 text-center">Bạn có chắc chắn muốn xóa đánh giá này không?</p>
+                </div>
+                <div class="modal-footer border-top-0 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-light btn-sm fw-semibold px-3" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger btn-sm fw-semibold px-3" id="confirmDeleteReviewBtn">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;">
+        <div class="toast align-items-center text-white bg-success border-0 rounded-3 shadow-lg" id="cartToast"
+            role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-3 p-3">
+                    <i data-lucide="check-circle" class="text-white" style="width: 24px; height: 24px;"></i>
+                    <div class="toast-content flex-grow-1">
+                        <p class="toast-title fw-bold text-white m-0 fs-7">Thành công!</p>
+                        <p class="toast-message text-white-50 m-0 fs-8" id="toast-message-text"
+                            style="color: rgba(255, 255, 255, 0.9) !important;">Đã thêm khóa học "Guitar điện cơ bản"
+                            vào giỏ hàng.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-3 m-auto shadow-none" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/course_detail.js}"></script>
+
+</body>
+
+</html>

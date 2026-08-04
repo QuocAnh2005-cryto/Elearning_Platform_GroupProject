@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<aside th:fragment="sidebar(activePage)" class="sidebar">
+    <div class="sidebar-header">
+        <h2>Hệ thống Quản lý</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <ul>
+            <li th:classappend="${activePage == 'dashboard'} ? 'active' : ''">
+                <a th:href="@{/manager/dashboard}">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Tổng quan</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'instructor'} ? 'active' : ''">
+                <a th:href="@{/manager/instructor/list}">
+                    <i class="ph ph-users"></i>
+                    <span>Quản lý giảng viên</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'course'} ? 'active' : ''">
+                <a th:href="@{/manager/course/list}">
+                    <i class="ph ph-book-open"></i>
+                    <span>Phê duyệt khóa học</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'revenue'} ? 'active' : ''">
+                <a th:href="@{/manager/revenue/list}">
+                    <i class="ph ph-currency-circle-dollar"></i>
+                    <span>Doanh thu</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'transaction'} ? 'active' : ''">
+                <a th:href="@{/manager/transaction-history/list}">
+                    <i class="ph ph-receipt"></i>
+                    <span>Giao dịch</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'feedback'} ? 'active' : ''">
+                <a th:href="@{/manager/feedback-report/list}">
+                    <i class="ph ph-chat-circle-dots"></i>
+                    <span>Phản hồi</span>
+                </a>
+            </li>
+            <li th:classappend="${activePage == 'grant-access'} ? 'active' : ''">
+                <a th:href="@{/manager/grant-access}">
+                    <i class="ph ph-shield-check"></i>
+                    <span>Cấp quyền khóa học</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+</html>

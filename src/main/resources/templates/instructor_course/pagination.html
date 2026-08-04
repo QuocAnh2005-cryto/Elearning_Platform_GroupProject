@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="pagination(pageObj, paramName, tabName)"
+     th:if="${pageObj.totalPages > 1}"
+     class="pagination"
+     style="margin-top:12px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+
+    <!-- Nút Trước -->
+    <a th:if="${pageObj.number > 0}"
+       th:href="@{/instructor/courses(
+                    pagePublished=${paramName == 'pagePublished' ? pageObj.number - 1 : pagePublished},
+                    pagePending=${paramName == 'pagePending' ? pageObj.number - 1 : pagePending},
+                    pageDraft=${paramName == 'pageDraft' ? pageObj.number - 1 : pageDraft},
+                    pageRejected=${paramName == 'pageRejected' ? pageObj.number - 1 : pageRejected},
+                    pageResubmit=${paramName == 'pageResubmit' ? pageObj.number - 1 : pageResubmit},
+                    pageHidden=${paramName == 'pageHidden' ? pageObj.number - 1 : pageHidden},
+                    tab=${tabName})}"
+       class="btn btn-sm btn-outline">&laquo; Trước</a>
+
+    <!-- Các số trang -->
+    <th:block th:each="i : ${#numbers.sequence(0, pageObj.totalPages - 1)}">
+        <a th:href="@{/instructor/courses(
+                        pagePublished=${paramName == 'pagePublished' ? i : pagePublished},
+                        pagePending=${paramName == 'pagePending' ? i : pagePending},
+                        pageDraft=${paramName == 'pageDraft' ? i : pageDraft},
+                        pageRejected=${paramName == 'pageRejected' ? i : pageRejected},
+                        pageResubmit=${paramName == 'pageResubmit' ? i : pageResubmit},
+                        pageHidden=${paramName == 'pageHidden' ? i : pageHidden},
+                        tab=${tabName})}"
+           th:text="${i + 1}"
+           th:class="${i == pageObj.number} ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline'">1</a>
+    </th:block>
+
+    <!-- Nút Sau -->
+    <a th:if="${pageObj.number < pageObj.totalPages - 1}"
+       th:href="@{/instructor/courses(
+                    pagePublished=${paramName == 'pagePublished' ? pageObj.number + 1 : pagePublished},
+                    pagePending=${paramName == 'pagePending' ? pageObj.number + 1 : pagePending},
+                    pageDraft=${paramName == 'pageDraft' ? pageObj.number + 1 : pageDraft},
+                    pageRejected=${paramName == 'pageRejected' ? pageObj.number + 1 : pageRejected},
+                    pageResubmit=${paramName == 'pageResubmit' ? pageObj.number + 1 : pageResubmit},
+                    pageHidden=${paramName == 'pageHidden' ? pageObj.number + 1 : pageHidden},
+                    tab=${tabName})}"
+       class="btn btn-sm btn-outline">Sau &raquo;</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Doanh thu Giảng viên</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/revenue.css}">
+        <link rel="stylesheet" th:href="@{/css/manager/detail-transaction.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Tiêu đề trang -->
+        <div class="page-header d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h1>DOANH THU GIẢNG VIÊN</h1>
+                <p>Theo dõi doanh thu, lượt mua khóa học và thực nhận của từng giảng viên</p>
+            </div>
+            <a th:href="@{/manager/revenue/list}" class="btn btn-outline">
+                <i class="ph ph-arrow-left"></i> Quay lại Báo cáo
+            </a>
+        </div>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="filter-search-wrapper mb-4">
+            <form th:action="@{/manager/revenue/instructor}" method="get" class="row g-3 align-items-end">
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary small">Tìm kiếm giảng viên</label>
+                    <div class="input-group search-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="ph ph-magnifying-glass"></i>
+                        </span>
+                        <input type="text" name="keyword"
+                               th:value="${keyword}"
+                               class="form-control border-start-0 ps-0 shadow-none"
+                               placeholder="Tìm theo tên, email...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary small">Tháng</label>
+                    <select name="month" class="form-select shadow-none">
+                        <option value="0" th:selected="${month == 0}">Tất cả các tháng</option>
+                        <option value="1" th:selected="${month == 1}">Tháng 1</option>
+                        <option value="2" th:selected="${month == 2}">Tháng 2</option>
+                        <option value="3" th:selected="${month == 3}">Tháng 3</option>
+                        <option value="4" th:selected="${month == 4}">Tháng 4</option>
+                        <option value="5" th:selected="${month == 5}">Tháng 5</option>
+                        <option value="6" th:selected="${month == 6}">Tháng 6</option>
+                        <option value="7" th:selected="${month == 7}">Tháng 7</option>
+                        <option value="8" th:selected="${month == 8}">Tháng 8</option>
+                        <option value="9" th:selected="${month == 9}">Tháng 9</option>
+                        <option value="10" th:selected="${month == 10}">Tháng 10</option>
+                        <option value="11" th:selected="${month == 11}">Tháng 11</option>
+                        <option value="12" th:selected="${month == 12}">Tháng 12</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary small">Năm</label>
+                    <select name="year" class="form-select shadow-none">
+                        <option value="0" th:selected="${year == 0}">Tất cả các năm</option>
+                        <option th:each="y : ${#numbers.sequence(#calendars.year(#calendars.createNow()), #calendars.year(#calendars.createNow()) - 4, -1)}" 
+                                th:value="${y}" 
+                                th:text="${y}" 
+                                th:selected="${year == y}"></option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-submit-filter">
+                        <i class="ph ph-funnel me-1"></i> Lọc kết quả
+                    </button>
+                    <button type="button" id="btnResetFilter" class="btn btn-reset-filter">
+                        <i class="ph ph-arrow-counter-clockwise me-1"></i> Xóa bộ lọc
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bảng thống kê doanh thu giảng viên -->
+        <div class="transaction-card-table">
+            <div class="card-table-header">
+                <h2>DANH SÁCH DOANH THU GIẢNG VIÊN</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Giảng viên</th>
+                            <th scope="col" class="text-center">Số khóa học</th>
+                            <th scope="col" class="text-center">Số lượt đăng ký</th>
+                            <th scope="col" class="text-end">Tổng doanh thu</th>
+                            <th scope="col" class="text-end">Phí nền tảng (Thực nhận)</th>
+                            <th scope="col" class="text-end">Thanh toán cho Giảng viên</th>
+                            <th scope="col" class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rev : ${instructorRevenues}" th:data-instructor-id="${rev.instructorId}">
+                            <td>
+                                <div class="fw-semibold" th:text="${rev.firstName + ' ' + rev.lastName}">Tên Giảng Viên</div>
+                                <small class="text-muted" th:text="${rev.email}">email@fpt.edu.vn</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark px-3 py-2 fw-semibold" th:text="${rev.totalCourses}">0</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark px-3 py-2 fw-semibold" th:text="${rev.totalSales}">0</span>
+                            </td>
+                            <td class="text-end fw-semibold" th:text="${#numbers.formatDecimal(rev.totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                0 đ
+                            </td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(rev.platformShare, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                0 đ
+                            </td>
+                            <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(rev.instructorShare, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                0 đ
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{/manager/revenue/instructor/details/{id}(id=${rev.instructorId}, month=${month}, year=${year})}" class="btn btn-outline btn-sm btn-view-details" title="Xem chi tiết">
+                                    <i class="ph ph-eye"></i> Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${instructorRevenues == null or instructorRevenues.isEmpty()}">
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Không tìm thấy giảng viên nào.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <div class="pagination-circle-container mt-4" th:if="${instructorRevenues != null and !instructorRevenues.isEmpty()}">
+            <div class="pagination-circle-buttons">
+                <!-- Previous -->
+                <a th:if="${!instructorRevenues.first}"
+                   th:href="@{/manager/revenue/instructor(page=${instructorRevenues.number - 1}, keyword=${keyword}, month=${month}, year=${year})}"
+                   class="page-circle-btn">
+                    <i class="ph ph-caret-left"></i>
+                </a>
+                <span th:unless="${!instructorRevenues.first}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-left"></i>
+                </span>
+
+                <!-- Page numbers -->
+                <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+                   th:href="@{/manager/revenue/instructor(page=${pageNum}, keyword=${keyword}, month=${month}, year=${year})}"
+                   th:class="${instructorRevenues.number == pageNum ? 'page-circle-btn active' : 'page-circle-btn'}"
+                   th:text="${pageNum + 1}">1</a>
+
+                <!-- Next -->
+                <a th:if="${!instructorRevenues.last}"
+                   th:href="@{/manager/revenue/instructor(page=${instructorRevenues.number + 1}, keyword=${keyword}, month=${month}, year=${year})}"
+                   class="page-circle-btn">
+                    <i class="ph ph-caret-right"></i>
+                </a>
+                <span th:unless="${!instructorRevenues.last}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-right"></i>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <script>
+            document.getElementById('btnResetFilter')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = window.location.pathname;
+            });
+        </script>
+    </th:block>
+</body>
+</html>

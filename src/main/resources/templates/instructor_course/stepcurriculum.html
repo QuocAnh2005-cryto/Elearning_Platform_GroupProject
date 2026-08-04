@@ -1,0 +1,432 @@
+﻿
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<!--
+    FRAGMENT: step-curriculum
+    Dùng trong: course-editor.html
+    th:replace="~{course-editor/step-curriculum :: content}"
+-->
+<div th:fragment="content" th:with="source=${source} ?: 'create'">
+
+    <!-- CSS cục bộ: làm gọn khối lesson-item + style cho dropdown Tài liệu / Quiz ở khối xem trước -->
+    <style>
+        .lesson-item {
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 10px;
+            background: var(--card-bg, #fff);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            transition: box-shadow .15s ease, border-color .15s ease;
+        }
+        .lesson-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .lesson-item:last-child { margin-bottom: 0; }
+
+        #curriculumList .lesson-row {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 10px;
+            justify-content: space-between !important;
+            width: 100%;
+        }
+        #curriculumList .lesson-info {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px;
+            min-width: 0;
+            order: 1 !important;
+        }
+        .lesson-info .lesson-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #curriculumList .lesson-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px;
+            flex: 0 0 auto !important;
+            margin-left: auto !important;
+            order: 2 !important;
+        }
+
+        /* Dropdown dùng chung cho Tài liệu và Quiz ở khối xem trước, đồng bộ với edit_course.html */
+        .preview-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .preview-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: #fff;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 6px;
+            z-index: 100;
+            margin-top: 4px;
+            padding: 6px 0;
+        }
+        .preview-dropdown-menu.show { display: block; }
+        .preview-dropdown-item {
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .preview-dropdown-item:hover { background-color: #f1f5f9; }
+        .preview-dropdown-item.disabled { color: var(--text-muted, #94a3b8); cursor: default; }
+        .preview-dropdown-item.disabled:hover { background-color: transparent; }
+        .preview-dropdown-item .pdi-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .preview-dropdown-item .pdi-actions a {
+            color: var(--text-muted, #94a3b8);
+        }
+        .preview-dropdown-item .pdi-actions a:hover { color: #0d6efd; }
+        .preview-panel,
+        .preview-panel-body {
+            overflow: visible !important;
+        }
+    </style>
+
+    <div class="card">
+        <div class="card-title">Chương Trình Giảng Dạy</div>
+
+        <div class="alert alert-info">
+            Thêm chương và bài giảng cho khóa học của bạn. Kéo thả để sắp xếp thứ tự.
+        </div>
+
+        <!-- Danh sách chương từ backend -->
+        <div id="curriculumList">
+            <div th:each="section : ${sections}"
+                 class="section-item" th:data-section-id="${section.id}">
+
+                <div class="section-header">
+                    <span class="drag-handle">⠿</span>
+                    <span class="section-number" th:text="'Chương ' + ${section.position}">Chương 1</span>
+                    <span class="section-title" th:text="${section.title}">Tên chương</span>
+                    <div class="section-actions">
+                        <button type="button" class="btn btn-sm btn-outline"
+                                th:data-section-id="${section.id}"
+                                th:data-course-id="${section.course.id}"
+                                th:data-source="${source}"
+                                onclick="openAddLessonModal(this.dataset.sectionId, this.dataset.source, this.dataset.courseId)">
+                            + Thêm Bài Giảng
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                th:data-section-id="${section.id}"
+                                th:data-section-title="${section.title}"
+                                th:data-course-id="${section.course.id}"
+                                th:data-source="${source}"
+                                onclick="openEditSectionModal(this.dataset)"><i class="bi bi-pencil-square" style="font-size:11px;"></i></button>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                th:data-section-id="${section.id}"
+                                th:data-course-id="${section.course.id}"
+                                th:data-source="${source}"
+                                onclick="deleteSection(this.dataset.sectionId, this.dataset.courseId, this.dataset.source)"><i class="bi bi-trash" style="font-size:11px;"></i></button>
+                    </div>
+                </div>
+
+                <!-- Bài giảng trong chương -->
+                <!-- Chỉ hiển thị thông tin & thao tác cơ bản của lesson. Quiz + Tài liệu chỉ hiện ở khối "Xem trước" bên dưới. -->
+                <div class="lesson-list">
+                    <div th:each="lesson : ${section.lessons}"
+                         class="lesson-item" th:data-lesson-id="${lesson.id}">
+
+                        <div class="lesson-row">
+                            <span class="drag-handle">⠿</span>
+                            <div class="lesson-info">
+                                <span class="lesson-icon"></span>
+                                <span class="lesson-title" th:text="'Bài ' + ${lesson.position} + ': ' + ${lesson.title}">Tên bài giảng</span>
+                            </div>
+                            <div class="lesson-actions">
+                                <a th:href="@{/instructor/lesson-detail/{lessonId}(lessonId=${lesson.id})}"
+                                   class="btn btn-sm btn-outline">
+                                    + Thêm Bài Tập
+                                </a>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline"
+                                        th:data-lesson-id="${lesson.id}"
+                                        th:data-course-id="${section.course.id}"
+                                        th:data-source="${source}"
+                                        th:data-action-url="@{/instructor/materials/lesson/{lessonId}(lessonId=${lesson.id})}"
+                                        onclick="openAddMaterialModal(this.dataset)">
+                                    + Thêm Tài Liệu
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline"
+                                        th:data-lesson-id="${lesson.id}"
+                                        th:data-lesson-title="${lesson.title}"
+                                        th:data-course-id="${section.course.id}"
+                                        th:data-section-id="${section.id}"
+                                        th:data-source="${source}"
+                                        onclick="openEditLessonModal(this.dataset)">
+                                    <i class="bi bi-pencil-square" style="font-size:11px;"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        th:data-lesson-id="${lesson.id}"
+                                        th:data-course-id="${section.course.id}"
+                                        th:data-source="${source}"
+                                        onclick="deleteLesson(this.dataset.lessonId, this.dataset.courseId, this.dataset.source)">
+                                    <i class="bi bi-trash" style="font-size:11px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(section.lessons)}"
+                         class="table-empty" style="padding:12px 16px;font-size:.85rem;">
+                        Chưa có bài giảng nào
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="add-section-btn" id="addSectionBtn">
+            ＋ Thêm Mục (Chương)
+        </div>
+
+        <!-- Đây là nơi duy nhất hiển thị Quiz + Tài liệu của từng bài giảng -->
+        <div class="preview-panel" style="margin-top:20px;">
+            <div class="preview-panel-header">Xem trước chương trình giảng dạy</div>
+            <div class="preview-panel-body" style="padding:0;background:var(--card-bg);">
+
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border-color); background:var(--bg-secondary);">
+                    <span style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px;">
+                        Chương trình giảng dạy hiển thị cho học viên
+                    </span>
+                    <span style="font-size:12px; color:var(--text-muted);"
+                          th:text="${#lists.size(sections)} + ' Chương · ' + ${totalLessons} + ' bài học'"
+                          th:if="${sections != null and !#lists.isEmpty(sections)}">
+                    </span>
+                </div>
+
+                <!-- Lặp danh sách chương -->
+                <div th:each="section : ${sections}" style="border-bottom:1px solid var(--border-color);">
+                    <div style="display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer;"
+                         onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.cp-chev').classList.toggle('open')">
+                        <span class="cp-chev" style="display:inline-block; color:var(--text-muted); transition:transform .2s;">▾</span>
+                        <div style="flex:1;">
+                            <div style="font-size:14px; font-weight:600;"
+                                 th:text="'Chương ' + ${section.position} + ': ' + ${section.title}">Chương 1</div>
+                            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;"
+                                 th:text="${#lists.size(section.lessons)} + ' bài học'">0 bài học</div>
+                        </div>
+                    </div>
+
+                    <div class="cp-lessons" style="display:none; border-top:1px solid var(--border-color);">
+                        <!-- Lặp danh sách bài giảng -->
+                        <div th:each="lesson : ${section.lessons}"
+                             style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 18px 10px 48px; border-bottom:1px solid var(--border-color);">
+
+                            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+                                <i class="bi bi-play-circle" style="color:var(--text-muted);"></i>
+                                <div style="min-width:0;">
+                                    <div style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                                         th:text="'Bài ' + ${lesson.position} + ': ' + ${lesson.title}">Tên bài</div>
+                                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px; display:flex; align-items:center; gap:8px;">
+                                        <span th:if="${lesson.durationSeconds != null}">
+                                            <i class="bi bi-clock" style="font-size:11px;"></i>
+                                            <span th:text="${lesson.getDurationtext}"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center; flex-shrink:0;">
+                                <button type="button" class="btn btn-sm btn-outline"
+                                        th:data-lesson-id="${lesson.id}"
+                                        onclick="playPreviewVideo(this.dataset.lessonId)"
+                                        style="padding:4px 10px; font-size:12px; display:flex; align-items:center; gap:4px;">
+                                    <i class="bi bi-play-circle-fill"></i> Xem Video
+                                </button>
+
+                                <!-- Dropdown Tài liệu -->
+                                <div class="preview-dropdown">
+                                    <button type="button" class="btn btn-sm btn-outline"
+                                            onclick="togglePreviewDropdown(this, event)"
+                                            style="padding:4px 10px; font-size:12px; display:flex; align-items:center; gap:4px;">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                        Tài liệu
+                                        <span th:if="${lesson.materials != null}" th:text="'(' + ${#lists.size(lesson.materials)} + ')'"></span>
+                                        <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                                    </button>
+                                    <div class="preview-dropdown-menu">
+                                        <div th:each="mat : ${lesson.materials}" class="preview-dropdown-item">
+                                            <i class="bi bi-file-earmark-text" style="flex-shrink:0;"></i>
+                                            <span th:text="${mat.fileName != null ? mat.fileName : 'Tài liệu không tên'}"
+                                                  style="overflow:hidden; text-overflow:ellipsis;">Tên file tài liệu.pdf</span>
+                                            <span class="pdi-actions">
+                                                <a href="javascript:void(0)"
+                                                   th:data-material-id="${mat.id}"
+                                                   onclick="viewPreviewMaterial(this.dataset.materialId)"
+                                                   title="Xem tài liệu">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                               <button type="button"
+                                                       class="btn btn-sm btn-outline"
+                                                       th:data-material-id="${mat.id}"
+                                                       th:data-course-id="${section.course.id}"
+                                                       th:data-source="${source}"
+                                                       onclick="deleteMaterial(this.dataset.courseId, this.dataset.materialId, this.dataset.source)">
+                                                     <i class="bi bi-trash" style="font-size:11px;"></i>
+                                               </button>
+
+                                            </span>
+                                        </div>
+                                        <div th:if="${lesson.materials == null or #lists.isEmpty(lesson.materials)}"
+                                             class="preview-dropdown-item disabled">
+                                            Không có tài liệu đính kèm
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dropdown Quiz -->
+                                <div class="preview-dropdown">
+                                    <button type="button" class="btn btn-sm btn-outline"
+                                            onclick="togglePreviewDropdown(this, event)"
+                                            style="padding:4px 10px; font-size:12px; display:flex; align-items:center; gap:4px;">
+                                        <i class="bi bi-patch-question"></i>
+                                        Quiz
+                                        <span th:if="${lesson.quizzes != null}" th:text="'(' + ${#lists.size(lesson.quizzes)} + ')'"></span>
+                                        <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                                    </button>
+                                    <div class="preview-dropdown-menu">
+                                        <div th:each="quiz : ${lesson.quizzes}" class="preview-dropdown-item">
+                                            <i class="bi bi-patch-question" style="flex-shrink:0;"></i>
+                                            <span th:text="${quiz.title}" style="overflow:hidden; text-overflow:ellipsis;">Tên quiz</span>
+                                            <span class="pdi-actions">
+                                                <a th:href="@{/instructor/quiz/view-detail/{id}(id=${quiz.id})}" title="Xem quiz">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a th:href="@{/instructor/quiz/quiz-manage/{id}(id=${quiz.id})}" title="Sửa quiz">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            </span>
+                                        </div>
+                                        <div th:if="${lesson.quizzes == null or #lists.isEmpty(lesson.quizzes)}"
+                                             class="preview-dropdown-item disabled">
+                                            Chưa có quiz nào
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(section.lessons)}" style="padding:12px 48px; font-size:13px; color:var(--text-muted);">
+                            Chưa có bài học nào trong chương này.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <p th:if="${sections == null or #lists.isEmpty(sections)}"
+                   style="padding:28px 18px; text-align:center; color:var(--text-muted); font-size:13px; font-style:italic; margin:0;">
+                    Các chương và bài giảng sẽ hiện ở đây khi bạn thêm vào...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút điều hướng -->
+    <div class="gap-row" style="margin-top:16px;">
+        <a th:href="@{/instructor/{id}/submit-review(id=${courseId})}"
+           class="btn btn-primary">
+            Gửi yêu Cầu Duyệt
+        </a>
+    </div>
+
+    <div th:insert="~{instructor_course/modals :: all}"></div>
+
+    <!-- Modal xem thử Video (cục bộ cho khối xem trước) -->
+    <div class="modal-overlay" id="modal-preview-video">
+        <div class="modal modal-lg" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3>Xem Thử Video Bài Giảng</h3>
+                <button class="modal-close" onclick="closeVideoModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding:0; background:#000; display:flex; justify-content:center;">
+                <video id="previewPlayer" controls controlsList="nodownload" style="width:100%; max-height:450px;">
+                    Trình duyệt của bạn không hỗ trợ phát video này.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="none">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Đóng toàn bộ dropdown (Tài liệu / Quiz) khi click ra ngoài
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.preview-dropdown-menu').forEach(function (m) { m.classList.remove('show'); });
+            });
+
+            // Đóng modal xem video khi click ra ngoài overlay
+            var videoOverlay = document.getElementById('modal-preview-video');
+            if (videoOverlay) {
+                videoOverlay.addEventListener('click', function (e) {
+                    if (e.target === videoOverlay) closeVideoModal();
+                });
+            }
+        });
+
+        function togglePreviewDropdown(button, event) {
+            event.stopPropagation();
+            var currentDropdown = button.nextElementSibling;
+            document.querySelectorAll('.preview-dropdown-menu').forEach(function (menu) {
+                if (menu !== currentDropdown) menu.classList.remove('show');
+            });
+            currentDropdown.classList.toggle('show');
+        }
+
+        function playPreviewVideo(lessonId) {
+            fetch("/lesson/" + lessonId)
+                .then(res => res.text())
+                .then(url => {
+
+                    const player = document.getElementById("previewPlayer");
+
+                    player.src = url;
+                    player.load();
+
+                    openModal("modal-preview-video");
+
+                    player.play().catch(() => {});
+                });
+        }
+
+        function closeVideoModal() {
+            var player = document.getElementById('previewPlayer');
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+            document.getElementById('modal-preview-video').classList.remove('active');
+        }
+
+        function viewPreviewMaterial(materialId) {
+            if (!materialId || materialId === 'null' || materialId === '') {
+                alert('Không tìm thấy đường dẫn tài liệu đính kèm này.');
+                return;
+            }
+            window.open('/material/' + materialId + '/view', '_blank');
+        }
+
+    </script>
+
+</div>
+</html>
+
+

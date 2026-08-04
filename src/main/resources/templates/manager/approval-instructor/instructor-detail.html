@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Chi tiết Giảng viên</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/instructor.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="detail-header-container">
+            <a th:href="@{/manager/instructor/list}" class="back-btn">
+                <i class="ph ph-arrow-left"></i>
+            </a>
+            <div>
+                <h1>Chi tiết Giảng viên</h1>
+                <p>Xem thông tin chi tiết hồ sơ giảng viên và danh sách khóa học.</p>
+            </div>
+        </div>
+
+        <!-- Flash messages -->
+        <div th:if="${successMessage}" class="flash-alert success">
+            <i class="ph ph-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div class="split-layout-container">
+            <!-- LEFT: Detail -->
+            <div class="detail-card">
+                <!-- Profile Header Section -->
+                <div class="profile-section">
+                    <div class="profile-details">
+                        <div class="profile-name-lg" th:text="${request.fullName}">Tiến sĩ Eleanor Vance</div>
+                        <div class="profile-meta-info">
+                            <span class="meta-item"><i class="ph ph-envelope"></i> <span th:text="${request.email}">eleanor@example.com</span></span>
+                            <span class="meta-item"><i class="ph ph-phone"></i> <span th:text="${request.phone != null ? request.phone : 'N/A'}">0123456789</span></span>
+                        </div>
+
+                        <span
+                            th:class="${'badge badge-' + (request.status != null and request.status.name() == 'ACTIVE' ? 'success' : 'danger')}"
+                            th:text="${request.statusLabel}">ACTIVE</span>
+                    </div>
+                </div>
+
+                <!-- Giới thiệu (Introduction) Section -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="ph ph-user-circle"></i> Giới thiệu
+                    </div>
+                    <div class="intro-text"
+                        th:text="${request.bio != null ? request.bio : 'Không có phần tự giới thiệu.'}">
+                        Tôi có hơn 10 năm kinh nghiệm trong lĩnh vực Khoa học Dữ liệu.
+                    </div>
+                </div>
+
+                <!-- Danh sách khóa học Section -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="ph ph-book-open"></i> Danh sách khóa học
+                    </div>
+                    <div class="table-responsive mt-3" th:if="${courses != null and !courses.isEmpty()}">
+                        <table class="table table-hover align-middle detail-courses-table">
+                            <thead>
+                                <tr class="detail-courses-thead-tr">
+                                    <th class="detail-courses-th">Tên khóa học</th>
+                                    <th class="detail-courses-th">Cấp độ</th>
+                                    <th class="detail-courses-th">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="course : ${courses}" class="detail-courses-tr">
+                                    <td class="detail-courses-td-title" th:text="${course.title}">Tên khóa học</td>
+                                    <td class="detail-courses-td" th:text="${course.level != null ? course.level : 'N/A'}">Cấp độ</td>
+                                    <td class="detail-courses-td">
+                                        <span th:class="${'badge badge-' + (course.status.name() == 'PUBLISHED' ? 'success' : (course.status.name() == 'PENDING' ? 'warning' : (course.status.name() == 'REJECTED' ? 'danger' : 'secondary')))}"
+                                              th:text="${course.statusLabel}">Trạng thái</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${courses == null or courses.isEmpty()}" class="intro-text py-3">
+                        Giảng viên này chưa tạo khóa học nào.
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Action Card -->
+            <div>
+                <div class="action-card">
+                    <div class="action-card-title"> Thiết lập tài khoản</div>
+                    <form th:action="@{/manager/instructor/edit/{id}(id=${request.id})}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label text-start d-block status-form-label" for="status">Trạng thái tài khoản</label>
+                            <select id="status" name="status" class="form-select status-form-select">
+                                <option th:each="st : ${statuses}" 
+                                        th:value="${st}" 
+                                        th:text="${st.label}" 
+                                        th:selected="${request.status == st}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 status-form-submit-btn">
+                            Lưu thay đổi
+                        </button>
+                    </form>
+                    <div class="action-card-footer">
+                        <p class="action-card-info-text">
+                            <i class="ph ph-info"></i>
+                            Thay đổi trạng thái sang <strong>Bị khóa</strong> sẽ ngăn chặn giảng viên đăng nhập và thao tác trên hệ thống.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

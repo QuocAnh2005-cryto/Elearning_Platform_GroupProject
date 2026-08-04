@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Lịch sử giao dịch</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/revenue.css}">
+        <link rel="stylesheet" th:href="@{/css/manager/detail-transaction.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Tiêu đề trang -->
+        <div class="page-header mb-4">
+            <h1>LỊCH SỬ GIAO DỊCH</h1>
+            <p>Theo dõi toàn bộ giao dịch thanh toán trên hệ thống</p>
+        </div>
+
+        <!-- Grid số liệu thống kê giao dịch -->
+        <div class="rev-grid trans-stats-grid mb-4">
+            <div class="rev-card">
+                <h3>Tổng giao dịch</h3>
+                <div class="rev-val" th:text="${#numbers.formatInteger(totalTransaction, 0)}">1,245</div>
+            </div>
+            <div class="rev-card">
+                <h3>Thành công</h3>
+                <div class="rev-val text-success"
+                     th:text="${#numbers.formatInteger(transactionCountByStatusDTO.getNumberOfTransactionSuccess(), 0)}">
+                    1,120
+                </div>
+            </div>
+            <div class="rev-card">
+                <h3>Chờ xử lý</h3>
+                <div class="rev-val text-warning"
+                     th:text="${#numbers.formatInteger(transactionCountByStatusDTO.getNumberOfTransactionPending(), 0)}">
+                    85
+                </div>
+            </div>
+        </div>
+
+        <!-- Thanh lọc kết quả -->
+        <div class="filter-search-wrapper mb-4">
+            <form th:action="@{/manager/transaction-history/list}" method="get" class="row g-3 align-items-end">
+                <div class="col-12 col-md-2">
+                    <label class="form-label fw-medium text-secondary small">Trạng thái</label>
+                    <select name="status" class="form-select custom-select shadow-none">
+                        <option th:selected="${status == null || status == ''}" value="">Tất cả trạng thái</option>
+                        <option th:each="st : ${statuses}" 
+                                th:value="${st.name()}" 
+                                th:text="${st.label}" 
+                                th:selected="${status == st.name()}"></option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label fw-medium text-secondary small">Từ ngày</label>
+                    <input type="date" th:value="${fromDate}" name="fromDate"
+                           class="form-control custom-input shadow-none">
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label fw-medium text-secondary small">Đến ngày</label>
+                    <input type="date" th:value="${toDate}" name="toDate"
+                           class="form-control custom-input shadow-none">
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-medium text-secondary small">Từ khóa tìm kiếm</label>
+                    <div class="input-group search-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="ph ph-magnifying-glass"></i>
+                        </span>
+                        <input type="text" name="keyword"
+                               th:value="${keyword}"
+                               class="form-control border-start-0 ps-0 shadow-none"
+                               placeholder="Mã GD, tên học viên, nội dung...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-submit-filter">
+                        <i class="ph ph-funnel me-1"></i> Lọc kết quả
+                    </button>
+                    <button type="reset" id="btnResetFilter" class="btn btn-reset-filter">
+                        <i class="ph ph-arrow-counter-clockwise me-1"></i> Xóa bộ lọc
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bảng giao dịch -->
+        <div class="transaction-card-table">
+            <div class="card-table-header">
+                <h2>BẢNG GIAO DỊCH</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="th-code">Mã GD</th>
+                        <th scope="col" class="th-customer">Khách hàng</th>
+                        <th scope="col" class="th-amount">Số tiền / Nội dung</th>
+                        <th scope="col" class="th-status">Trạng thái</th>
+                        <th scope="col" class="text-center th-actions">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="transaction : ${pageTransaction}" th:data-payment-id="${transaction.id}">
+                        <td><strong class="text-primary" th:text="${transaction.transactionCode}">TX001</strong></td>
+                        <td>
+                            <div class="fw-semibold" th:text="${transaction.customerName}">Nguyễn Văn A</div>
+                            <small class="text-muted" th:text="${transaction.customerEmail}">nva@gmail.com</small>
+                        </td>
+                        <td>
+                            <div class="fw-semibold"
+                                 th:classappend="${transaction.paymentStatus.name() == 'PAID' ? ' text-success' : ' text-danger'}"
+                                 th:text="${(transaction.paymentStatus.name() == 'PAID' ? '+' : '') + #numbers.formatDecimal(transaction.amount, 0, 'COMMA', 0, 'POINT') + ' đ'}">
+                            </div>
+                            <small class="text-muted" th:text="${transaction.description}">Khóa học Java Web</small>
+                        </td>
+                        <td>
+                            <span th:class="${'fw-semibold ' + (transaction.paymentStatus.name() == 'PAID' ? 'text-success' : transaction.paymentStatus.name() == 'PENDING' ? 'text-warning' : transaction.paymentStatus.name() == 'FAILED' ? 'text-danger' : transaction.paymentStatus.name() == 'CANCELLED' ? 'text-secondary' : 'text-dark')}"
+                                  th:text="${transaction.getPaymentStatusLabel()}">Trạng thái</span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn-action" title="Xem chi tiết"><i class="ph ph-eye"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="pagination-circle-container" th:if="${pageTransaction != null and !pageTransaction.isEmpty()}">
+            <div class="pagination-circle-buttons">
+                <!-- Previous -->
+                <a th:if="${!pageTransaction.first}"
+                    th:href="@{/manager/transaction-history/list(page=${pageTransaction.number - 1}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, keyword=${keyword})}"
+                    class="page-circle-btn">
+                    <i class="ph ph-caret-left"></i>
+                </a>
+                <span th:unless="${!pageTransaction.first}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-left"></i>
+                </span>
+
+                <!-- Page numbers -->
+                <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+                    th:href="@{/manager/transaction-history/list(page=${pageNum}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, keyword=${keyword})}"
+                    th:class="${pageTransaction.number == pageNum ? 'page-circle-btn active' : 'page-circle-btn'}"
+                    th:text="${pageNum + 1}">1</a>
+
+                <!-- Next -->
+                <a th:if="${!pageTransaction.last}"
+                    th:href="@{/manager/transaction-history/list(page=${pageTransaction.number + 1}, status=${status}, fromDate=${fromDate}, toDate=${toDate}, keyword=${keyword})}"
+                    class="page-circle-btn">
+                    <i class="ph ph-caret-right"></i>
+                </a>
+                <span th:unless="${!pageTransaction.last}" class="page-circle-btn disabled">
+                    <i class="ph ph-caret-right"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Container chứa Modal Xem chi tiết giao dịch (sẽ load dynamic qua Ajax) -->
+        <div id="transactionContainer"></div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <script th:src="@{/js/manager/transaction-history.js}"></script>
+    </th:block>
+</body>
+</html>

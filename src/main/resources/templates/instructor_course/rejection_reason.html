@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Lý do từ chối khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/course_manage.css}"/>
+</head>
+<body>
+
+<div th:replace="~{instructor_course/sidebar :: sidebar(activePage='courses')}"></div>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Lý do từ chối khóa học</h1>
+            <p class="page-subtitle">Xem phản hồi từ Manager và chỉnh sửa lại khóa học trước khi gửi duyệt lần nữa.</p>
+        </div>
+        <a th:href="@{/instructor/courses(tab='rejected')}" class="btn btn-outline">Quay lại danh sách</a>
+    </div>
+
+    <section class="rejection-shell">
+        <div class="rejection-hero">
+            <div class="rejection-course-cover">
+                <img th:src="${course.thumbnailPath}" alt="Ảnh khóa học"/>
+            </div>
+            <div class="rejection-course-main">
+                <div class="rejection-status-badge">
+                    <span></span>
+                    <strong th:text="${course.statusLabel}">Rejected</strong>
+                </div>
+                <h2 th:text="${course.title}">Tên khóa học</h2>
+                <div th:utext="${course.description ?: 'Khóa học chưa có mô tả.'}">Mô tả khóa học</div>
+                <div class="rejection-course-meta">
+                    <span th:text="${course.category != null ? course.category.name : 'Chưa có danh mục'}">Danh mục</span>
+                    <span th:text="${course.level ?: 'Chưa cập nhật cấp độ'}">Beginner</span>
+                    <span th:text="${course.price != null ? #numbers.formatDecimal(course.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : 'Chưa có giá'}">0 VNĐ</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rejection-content-grid">
+            <section class="card rejection-reason-card">
+                <div class="rejection-section-heading">
+                    <span class="rejection-section-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 4.3 2.7 17.5A2 2 0 0 0 4.4 20h15.2a2 2 0 0 0 1.7-2.5L13.7 4.3a2 2 0 0 0-3.4 0Z"/></svg>
+                    </span>
+                    <div>
+                        <div class="card-title">Phản hồi từ Manager</div>
+                        <p>Lý do khóa học chưa được duyệt. Hãy ưu tiên sửa đúng nội dung này trước.</p>
+                    </div>
+                </div>
+
+                <!-- Instructor rejection reason: backend da kiem quyen va truyen rejectionReason cua dung course sang day. -->
+                <div class="rejection-reason-box" th:text="${rejectionReason}">
+                    Nội dung lý do từ chối
+                </div>
+            </section>
+
+            <aside class="card rejection-next-card">
+                <div class="card-title">Bước tiếp theo</div>
+                <div class="rejection-next-list">
+                    <div class="rejection-next-item">
+                        <span>1</span>
+                        <p>Đọc kỹ phản hồi và xác định phần cần chỉnh trong nội dung khóa học.</p>
+                    </div>
+                    <div class="rejection-next-item">
+                        <span>2</span>
+                        <p>Chỉnh sửa thông tin, section, bài học hoặc tài liệu còn thiếu.</p>
+                    </div>
+                    <div class="rejection-next-item">
+                        <span>3</span>
+                        <p>Quay lại bước gửi duyệt để kiểm tra checklist và gửi request mới.</p>
+                    </div>
+                </div>
+
+                <div class="rejection-reason-actions">
+                    <a th:href="@{/instructor/{id}/edit(id=${course.id})}" class="btn btn-primary">Chỉnh sửa khóa học</a>
+                    <a th:href="@{/instructor/{id}/submit-review(id=${course.id})}" class="btn btn-outline">Gửi lại request</a>
+                </div>
+            </aside>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

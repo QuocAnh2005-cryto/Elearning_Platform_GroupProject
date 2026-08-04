@@ -1,0 +1,68 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Environment files (secrets) ###
+# Ignore local .env files that may contain secrets. Keep a template like .env.example in source control.
+.env
+.env.*
+!.env.example
+
+### Logs and runtime generated files ###
+logs/
+*.log
+hs_err_pid*.log
+
+### Compiled classes / packaging ###
+*.class
+*.jar
+*.war
+*.ear
+
+### IDE / editor folders (additional) ###
+.idea/
+out/
+
+### Custom ignored folders ###
+cv-intern/
+cv-intern/out/
+
+### Build reports / coverage ###
+jacoco.exec
+.coverage
+
+# Ignore docs folder
+docs/
+/outputs/
+
+

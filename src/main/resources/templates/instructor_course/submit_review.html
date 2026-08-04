@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content" class="submit-review-panel">
+    <header class="review-header">
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+        <div>
+            <div class="title-row">
+                <h1>Gửi khóa học để xét duyệt</h1>
+                <span class="status-pill"
+                      th:text="${submitReview.courseStatus != null ? submitReview.courseStatus.label : 'Bản nháp'}">
+                    Bản nháp
+                </span>
+            </div>
+            <p>Kiểm tra điều kiện trước khi gửi yêu cầu đến Manager xét duyệt.</p>
+        </div>
+
+        <a class="back-link" th:href="@{/instructor/courses}">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại khóa học
+        </a>
+    </header>
+
+    <section class="progress-card"
+             aria-label="Tiến độ hoàn thành điều kiện duyệt"
+             th:data-completed-count="${submitReview.completedCount}"
+             th:data-total-count="${submitReview.totalCount}">
+        <div class="progress-ring" th:style="'--percent: ' + ${submitReview.percent}">
+            <span id="submitReviewPercentText" th:text="${submitReview.percent} + '%'">85%</span>
+        </div>
+        <div class="progress-copy">
+            <h2>
+                Đạt
+                <strong id="submitReviewRatioText" th:text="${submitReview.completedCount} + '/' + ${submitReview.totalCount}">11/13</strong>
+                điều kiện
+            </h2>
+            <p th:if="${!submitReview.submitReady}">Vui lòng hoàn thành các điều kiện còn thiếu để gửi yêu cầu.</p>
+            <p th:if="${submitReview.submitReady}">Khóa học đã đủ điều kiện để gửi xét duyệt.</p>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+            <span id="submitReviewProgressBar" th:style="'width: ' + ${submitReview.percent} + '%'"></span>
+        </div>
+        <strong class="progress-number"
+                id="submitReviewProgressNumber"
+                th:text="${submitReview.completedCount} + ' / ' + ${submitReview.totalCount}">11 / 13</strong>
+    </section>
+
+    <section class="checklist-card">
+        <h2>Checklist trước khi gửi</h2>
+
+        <div class="checklist-grid">
+            <div class="checklist-column">
+                <div class="group-title">
+                    <span class="group-icon"><i class="bi bi-file-earmark-text"></i></span>
+                    <span>1. Validate nội dung khóa học</span>
+                </div>
+
+                <!-- TODO replace: nếu sau này cần thêm/bớt rule, chỉnh trong CourseService#getSubmitReview. -->
+                <ul class="check-list">
+                    <li th:each="item : ${submitReview.contentChecks}"
+                        th:class="${item.passed ? 'is-ok' : 'is-missing'}">
+                        <span class="result-icon">
+                            <i th:class="${item.passed ? 'bi bi-check-lg' : 'bi bi-exclamation-triangle-fill'}"></i>
+                        </span>
+                        <span th:text="${item.label}">Điều kiện</span>
+                        <i th:class="${item.passed ? 'bi bi-check-square-fill item-check' : 'bi bi-square item-empty'}"></i>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="checklist-column">
+                <div class="group-title">
+                    <span class="group-icon"><i class="bi bi-shield-check"></i></span>
+                    <span>2. Validate nghiệp vụ request</span>
+                </div>
+
+                <ul class="check-list">
+                    <li th:each="item : ${submitReview.businessChecks}"
+                        th:class="${item.passed ? 'is-ok' : 'is-missing'}"
+                        th:attr="data-policy-item=${item.policy}">
+                        <span class="result-icon">
+                            <i th:class="${item.passed ? 'bi bi-check-lg' : 'bi bi-exclamation-triangle-fill'}"></i>
+                        </span>
+                        <span th:text="${item.label}">Điều kiện</span>
+                        <i th:class="${item.passed ? 'bi bi-check-square-fill item-check' : 'bi bi-square item-empty'}"></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="policy-box">
+            <label class="policy-check">
+                <input type="checkbox" id="acceptPolicyInput" form="submitReviewForm" name="acceptPolicy" value="true"/>
+                <span>Tôi cam kết nội dung khóa học không vi phạm bản quyền và tuân thủ chính sách nền tảng.</span>
+            </label>
+        </div>
+
+        <div class="missing-box" th:if="${submitReview.missingMessages != null and !#lists.isEmpty(submitReview.missingMessages)}">
+            <div class="missing-title">
+                <i class="bi bi-exclamation-triangle"></i>
+                Còn thiếu
+            </div>
+            <ul>
+                <li th:each="message : ${submitReview.missingMessages}"
+                    th:attr="data-policy-missing=${message == 'Chưa tick cam kết bản quyền và chính sách'}"
+                    th:text="${message}">
+                    Thiếu quiz / bài tập cuối khóa
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="review-actions">
+        <a class="preview-btn" th:href="@{/instructor/{id}/view(id=${submitReview.courseId}, source='submit-review')}">
+            <i class="bi bi-eye"></i>
+            Xem trước khóa học
+        </a>
+
+        <div class="submit-area">
+            <form id="submitReviewForm"
+                  th:action="@{/instructor/{id}/submit-review(id=${submitReview.courseId})}"
+                  method="post"
+                  th:data-ready-except-policy="${submitReview.readyExceptPolicy}">
+                <button id="submitReviewBtn"
+                        class="submit-btn"
+                        type="submit"
+                        th:disabled="${!submitReview.submitReady}">
+                    Gửi yêu cầu xét duyệt
+                    <i class="bi bi-send"></i>
+                </button>
+            </form>
+            <p>Nút chỉ bật khi tất cả điều kiện bắt buộc đều hợp lệ.</p>
+        </div>
+    </footer>
+</div>
+</html>
+

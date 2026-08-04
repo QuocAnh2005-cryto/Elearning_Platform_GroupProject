@@ -1,0 +1,660 @@
+/* =========================================================
+   LEARNING HUB — ISOLATED QUIZ MANAGEMENT STYLES (LIGHT MODE)
+   ========================================================= */
+
+:root {
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #e2e8f0;
+    --sidebar-text: #64748b;
+    --sidebar-text-hover: #1e293b;
+    --sidebar-menu-hover: #f1f5f9;
+    --primary-color: #1a56db;
+    --primary-hover: #1e40af;
+}
+
+.bg-coupon-page {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Bố Cục Khung Toàn Hệ Thống --- */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* --- Thanh Sidebar Điều Hướng --- */
+.admin-sidebar {
+    width: 280px;
+    background: var(--sidebar-bg) !important;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--sidebar-border);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Logo Thương Hiệu */
+.admin-sidebar .sidebar-logo-custom .logo-fa-layers {
+    color: var(--primary-color) !important;
+    text-shadow: 0 2px 8px rgba(26, 86, 219, 0.15);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.admin-sidebar .sidebar-logo-custom .logo-text {
+    color: var(--primary-color) !important;
+    font-weight: 800;
+    transition: all 0.25s ease;
+}
+
+.admin-sidebar .sidebar-logo-custom:hover .logo-fa-layers {
+    color: var(--primary-hover) !important;
+    transform: rotate(-8deg) scale(1.08);
+}
+
+.sidebar-brand {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--sidebar-border);
+}
+
+/* --- Thông Tin Giảng Viên & Dropdown --- */
+.sidebar-user-dropdown {
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 20px;
+}
+
+.sidebar-avatar {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2px solid rgba(26, 86, 219, 0.2);
+    display: block;
+}
+
+.sidebar-user-brief {
+    padding: 20px 0;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.sidebar-user-brief[aria-expanded="true"] .dropdown-arrow-icon {
+    transform: rotate(180deg);
+    color: var(--primary-color) !important;
+}
+
+.custom-user-dropdown-menu {
+    width: 100% !important;
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    margin-top: 4px !important;
+    box-shadow: 0 10px 25px rgba(30, 41, 59, 0.08) !important;
+    animation: dropdownFadeInOnly 0.2s ease-out;
+}
+
+.custom-user-dropdown-menu .dropdown-item {
+    color: #475569 !important;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.custom-user-dropdown-menu .dropdown-item:hover {
+    background-color: rgba(26, 86, 219, 0.06) !important;
+    color: var(--primary-color) !important;
+}
+
+.custom-user-dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #fef2f2 !important;
+    color: #dc2626 !important;
+}
+
+@keyframes dropdownFadeInOnly {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Danh Mục Menu --- */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.menu-category {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 16px 0 6px 12px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.menu-item i, .menu-item svg {
+    width: 18px;
+    height: 18px;
+    color: #94a3b8;
+}
+
+.menu-item:hover {
+    color: var(--sidebar-text-hover) !important;
+    background-color: var(--sidebar-menu-hover);
+}
+
+.menu-item:hover i, .menu-item:hover svg {
+    color: var(--primary-color);
+}
+
+.menu-item.active {
+    color: var(--primary-color) !important;
+    background-color: rgba(26, 86, 219, 0.08) !important;
+    font-weight: 600;
+}
+
+.menu-item.active i, .menu-item.active svg {
+    color: var(--primary-color) !important;
+}
+
+/* Nút Về Trang Chủ */
+.sidebar-footer {
+    padding-top: 20px;
+    border-top: 1px solid var(--sidebar-border);
+}
+
+.btn-back-home {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    border-radius: 30px !important;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.btn-back-home:hover {
+    background: var(--primary-hover) !important;
+    box-shadow: 0 8px 20px rgba(26, 86, 219, 0.3) !important;
+    transform: translateY(-2px);
+}
+
+/* --- Khu Vực Nội Dung Chính --- */
+.admin-main-content {
+    margin-left: 280px;
+    flex-grow: 1;
+    padding: 40px 60px;
+    width: calc(100% - 280px);
+}
+
+/* Khung Chứa Form Lớn */
+.coupon-form-card {
+    background: #ffffff !important;
+    border: 1px solid var(--sidebar-border) !important;
+    border-radius: 16px !important;
+    padding: 40px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.015) !important;
+}
+
+/* --- Trường Nhập Liệu & Ô Chọn --- */
+.coupon-form-input {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    color: #334155;
+}
+
+.coupon-form-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.15) !important;
+    background-color: #fff !important;
+}
+
+/* --- Xử Lý Báo Lỗi Validation (Spring Boot Backend) --- */
+.coupon-form-input.is-invalid-custom {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.coupon-form-input.is-invalid-custom:focus {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+.invalid-feedback-custom {
+    display: flex;
+    align-items: center;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 6px;
+    padding-left: 2px;
+    animation: slideDownError 0.2s ease-out;
+}
+
+.invalid-feedback-custom::before {
+    content: "\f071";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+    font-size: 11px;
+    color: #ef4444;
+}
+
+@keyframes slideDownError {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Thành Phần Giao Diện Đặc Thù Bài Quiz --- */
+.quiz-toggle-box {
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.quiz-toggle-box:hover {
+    border-color: rgba(26, 86, 219, 0.25);
+    background-color: rgba(26, 86, 219, 0.02) !important;
+}
+
+.custom-switch-primary:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Khung trạng thái danh sách trống */
+.quiz-empty-state {
+    border-style: dashed !important;
+    border-width: 2px !important;
+    border-color: #cbd5e1 !important;
+    border-radius: 12px;
+}
+
+.empty-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+/* Thẻ Câu Hỏi Thành Phần */
+.quiz-question-item-card {
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: questionCardFadeIn 0.3s ease-out;
+}
+
+.quiz-question-item-card:hover {
+    border-color: rgba(26, 86, 219, 0.3) !important;
+    box-shadow: 0 10px 25px rgba(26, 86, 219, 0.04) !important;
+}
+
+.btn-remove-question {
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.btn-remove-question:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Cụm input cho 4 đáp án */
+.quiz-question-item-card .input-group-text {
+    background-color: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-right: none;
+}
+
+.quiz-question-item-card .form-control {
+    border: 1.5px solid #cbd5e1 !important;
+    font-size: 13px;
+}
+
+.quiz-question-item-card .form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1) !important;
+}
+
+@keyframes questionCardFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Các nút bấm đồng bộ --- */
+.btn-primary-solid {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.btn-primary-solid:hover {
+    background: var(--primary-hover) !important;
+    box-shadow: 0 8px 20px rgba(26, 86, 219, 0.25) !important;
+}
+
+.premium-popup-border {
+    border-radius: 16px !important;
+    padding: 2rem !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Responsive thiết bị --- */
+@media (max-width: 1199.98px) {
+    .admin-sidebar { transform: translateX(-100%); }
+    .admin-main-content { margin-left: 0; padding: 24px; width: 100%; }
+}
+
+/* Tối ưu hóa cho ô nhập mô tả chi tiết của Quiz */
+textarea.coupon-form-input {
+    resize: none;
+    line-height: 1.6;
+}
+
+textarea.coupon-form-input:focus {
+    background-color: #ffffff !important;
+}
+
+/* Trình tinh chỉnh giao diện cao cấp - Tách biệt Input và Đơn vị */
+.quiz-input-isolated-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Tạo khoảng cách biệt lập sang trọng giữa ô nhập và đơn vị */
+}
+
+.quiz-input-isolated-wrapper .coupon-form-input {
+    flex: 1;
+}
+
+.quiz-unit-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Tối ưu hóa hiệu ứng cho nút Hủy Bỏ */
+.btn-cancel-outline {
+    border: 1.5px solid #cbd5e1 !important;
+    color: #64748b !important;
+    background: transparent !important;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel-outline:hover {
+    background: #f8fafc !important;
+    color: #1e293b !important;
+    border-color: #94a3b8 !important;
+}
+
+/* Font chữ và hiệu ứng Card đổ bóng mượt hơn */
+.coupon-form-card {
+    border: none !important;
+    box-shadow: 0 20px 40px rgba(148, 163, 184, 0.06) !important;
+}
+
+/* =========================================================
+   NÂNG CẤP VISUAL: GLOW STEPS & METADATA DASHBOARD
+   ========================================================= */
+
+/* CONTAINER CHÍNH CHO THANH STEP */
+.quiz-steps-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    padding: 0 20px;
+}
+
+/* Đường chạy ngầm giữa các step - Hiệu ứng viên nang chìm */
+.quiz-steps-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    right: 20px;
+    height: 6px;
+    background: #e2e8f0;
+    z-index: 1;
+    transform: translateY(-50%);
+    border-radius: 10px;
+}
+
+/* Thanh tiến trình chạy động (Sẽ dài ra khi chuyển step) */
+.quiz-progress-bar-fill {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    height: 6px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    z-index: 1;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Animation mượt mà */
+}
+
+/* Các Item Step */
+.quiz-step-item {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: row; /* Chuyển sang hàng ngang cho hiện đại */
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quiz-step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    transition: all 0.4s ease;
+}
+
+.quiz-step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.4s ease;
+}
+
+/* HOẠT HỌA TRẠNG THÁI ACTIVE (ĐANG Ở BƯỚC NÀY) */
+.quiz-step-item.active {
+    border-color: #3b82f6;
+    background: #ffffff;
+    transform: scale(1.05); /* Phóng to nhẹ tạo điểm nhấn */
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.12);
+}
+
+.quiz-step-item.active .quiz-step-circle {
+    background: #3b82f6;
+    color: #ffffff;
+    animation: pulseGlow 2s infinite; /* Hiệu ứng mạch đập phát sáng */
+}
+
+.quiz-step-item.active .quiz-step-label {
+    color: #1e293b;
+}
+
+/* TRẠNG THÁI COMPLETED (ĐÃ QUA) */
+.quiz-step-item.completed {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.quiz-step-item.completed .quiz-step-circle {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.quiz-step-item.completed .quiz-step-label {
+    color: #14532d;
+}
+
+/* KEYFRAMES CHO HIỆU ỨNG MẠCH ĐẬP */
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+
+/* =========================================================
+   THIẾT KẾ LẠI CARD TÓM TẮT THÀNH MINI-DASHBOARD
+   ========================================================= */
+.quiz-summary-dashboard {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 10px 30px rgba(148, 163, 184, 0.05) !important;
+}
+
+.quiz-main-info-zone {
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+}
+
+/* Grid chứa các thông số dạng Thẻ */
+.quiz-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.meta-box-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.meta-box-item:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.meta-box-icon-holder {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* Màu sắc biểu tượng đặc trưng */
+.icon-blue { color: #3b82f6; border: 1px solid #dbeafe; }
+.icon-green { color: #10b981; border: 1px solid #dcfce7; }
+.icon-amber { color: #f59e0b; border: 1px solid #fef3c7; }
+
+.meta-box-text-zone .meta-box-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin: 0;
+    font-weight: 700;
+}
+
+.meta-box-text-zone .meta-box-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    margin-top: 2px;
+}
+
+/* Hiệu ứng mượt mà khi load trang mới - Lướt nhẹ từ dưới lên */
+body {
+    animation: fadeInPage 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(12px); /* Tăng biên độ lên chút để thấy rõ cảm giác lướt */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng cho thanh Progress tự động chạy */
+.quiz-progress-bar-fill {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    height: 6px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    z-index: 1;
+    transform: translateY(-50%);
+    border-radius: 10px;
+
+    /* Đọc giá trị động từ HTML */
+    width: var(--target-width, 0%);
+
+    /* CHỈNH SỬA TẠI ĐÂY:
+       - Tăng thời gian từ 0.6s lên 1.2s để thanh chạy chậm lại, nhìn rõ hiệu ứng loading.
+       - Đổi sang đường cong cubic-bezier(0.25, 1, 0.5, 1) để lướt mượt và dừng khựng êm ái ở 100%, không bị nảy tràn viền. */
+    animation: progressLoadingEffect 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Định nghĩa quy trình tịnh tiến dữ liệu */
+@keyframes progressLoadingEffect {
+    from {
+        width: 0%;
+    }
+    to {
+        width: var(--target-width, 0%);
+    }
+}

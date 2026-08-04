@@ -1,0 +1,353 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+:root {
+    --primary: #3b82f6;
+    --soft-blue: #DCEEFF;
+    --light-bg: #F8FAFC;
+    --border: #E2E8F0;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+}
+
+body {
+    background-color: #FFFFFF;
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+.auth-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* LEFT SIDE - IMAGE SECTION */
+.auth-image {
+    flex: 1.2;
+    position: relative;
+    background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1470');
+    background-size: cover;
+    background-position: center;
+}
+
+.auth-image .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(220, 238, 255, 0.2), rgba(255, 255, 255, 0));
+}
+
+.brand-overlay {
+    position: absolute;
+    bottom: 10%;
+    left: 8%;
+    right: 8%;
+    z-index: 5;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.logo-white {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.image-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.image-text p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 500px;
+    font-weight: 300;
+}
+
+/* RIGHT SIDE - FORM */
+.auth-form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding: 2rem;
+}
+
+.form-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-header {
+    margin-bottom: 2.5rem;
+}
+
+.form-header h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--text-sub);
+    font-size: 0.95rem;
+}
+
+/* INPUT STYLES */
+/* Đổi tên từ .input-group thành .form-group */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.input-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-field i:not(.toggle-pass) {
+    position: absolute;
+    left: 14px;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: var(--light-bg);
+}
+
+.input-field input:focus {
+    border-color: var(--primary);
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.toggle-pass {
+    position: absolute;
+    right: 14px;
+    cursor: pointer;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+
+/* UTILS */
+.form-utils {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.link-forgot {
+    font-size: 0.85rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* CUSTOM CHECKBOX */
+.custom-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-sub);
+}
+
+.custom-check input { display: none; }
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    transition: 0.2s;
+}
+
+.custom-check input:checked + .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.custom-check input:checked + .checkmark::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: white;
+    font-size: 10px;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* BUTTONS */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* Cập nhật định dạng nút Google đồng bộ */
+.btn-google {
+    width: 100%;
+    padding: 11px;
+    background-color: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #475569;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-google:hover {
+    background-color: var(--light-bg);
+}
+
+.google-icon {
+    flex-shrink: 0;
+}
+
+/* DIVIDER */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: var(--text-sub);
+    font-size: 0.8rem;
+}
+
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--border);
+}
+
+.divider span { padding: 0 10px; }
+
+/* FOOTER */
+.form-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+}
+
+.form-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.alert-msg {
+    background-color: #FFF1F2;
+    color: #E11D48;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-message{
+    display:block;
+    margin-top:6px;
+    font-size:13px;
+    color:#ef4444;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .auth-image { display: none; }
+}
+
+/* NÚT QUAY VỀ TRANG CHỦ */
+.btn-home-back {
+    position: absolute;
+    top: 2rem;
+    left: 8%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 30px;
+    color: #FFFFFF;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-home-back i {
+    font-size: 0.85rem;
+    transition: transform 0.2s ease;
+}
+
+.btn-home-back:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-home-back:hover i {
+    transform: translateX(-4px); /* Hiệu ứng mũi tên dịch trái nhẹ khi di chuột */
+}

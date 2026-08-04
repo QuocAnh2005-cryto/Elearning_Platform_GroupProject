@@ -1,0 +1,406 @@
+/* =========================================================
+   LEARNING HUB — COURSE LIST PAGE SPECIFIC STYLES
+   ========================================================= */
+
+/* --- Header & Navigation --- */
+.site-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 0;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Search & Category Section --- */
+.search-category-section {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .search-category-section {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-grow: 1;
+        margin-left: 3rem;
+        margin-right: 3rem;
+    }
+}
+
+.category-dropdown-btn {
+    background: transparent;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.category-dropdown-btn:hover {
+    border-color: #1a56db;
+    color: #1a56db;
+    background-color: #eff6ff;
+}
+
+.category-dropdown-menu {
+    border: none;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    width: 240px;
+    border-radius: 12px;
+}
+
+.search-bar-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-icon-header {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 1rem;
+    color: #64748b;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.search-input-header {
+    width: 100%;
+    border-radius: 9999px;
+    border: 1.5px solid transparent;
+    background-color: #f1f5f9;
+    padding: 0.5rem 1rem 0.5rem 3rem;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.search-input-header:focus {
+    background-color: #ffffff;
+    border-color: #1a56db;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.12);
+    outline: none;
+}
+
+/* --- Header Utilities --- */
+.header-utilities {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Nút Trở thành Giảng viên */
+.btn-instructor-join {
+    display: none;
+    align-items: center;
+    gap: 0.25rem;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    margin-right: 0.5rem;
+    color: #1a56db;
+    transition: all 0.25s ease;
+}
+
+.btn-instructor-join:hover {
+    color: #1e40af;
+    transform: translateY(-1px);
+}
+
+@media (min-width: 1200px) {
+    .btn-instructor-join {
+        display: flex;
+    }
+}
+
+/* Nút Auth khi chưa đăng nhập */
+.btn-login-ghost {
+    background: transparent;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    border-radius: 9999px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    display: none;
+}
+
+.btn-login-ghost:hover {
+    border-color: #1a56db;
+    color: #1a56db;
+    background-color: #eff6ff;
+}
+
+@media (min-width: 576px) {
+    .btn-login-ghost {
+        display: inline-block;
+    }
+}
+
+.btn-register-solid {
+    background-color: #1a56db;
+    border: none;
+    color: #ffffff;
+    border-radius: 9999px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.15);
+}
+
+.btn-register-solid:hover {
+    background-color: #1e40af;
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(26, 86, 219, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Nút Giỏ hàng & Nút Thông báo */
+.btn-header-cart, .btn-header-bell {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    border-radius: 50%;
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.btn-header-cart:hover, .btn-header-bell:hover {
+    color: #1a56db;
+    background-color: #f1f5f9;
+}
+
+.btn-header-cart i, .btn-header-bell i,
+.btn-header-cart svg, .btn-header-bell svg {
+    width: 20px !important;
+    height: 20px !important;
+    flex-shrink: 0;
+}
+
+/* Giỏ hàng badge */
+.header-cart-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #ef4444;
+    border-radius: 9999px;
+    font-size: 10px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* --- Profile Dropdown --- */
+.user-profile-dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    border: none;
+    background: transparent;
+    transition: all 0.25s ease;
+}
+
+.user-profile-dropdown-btn:hover .header-user-avatar {
+    transform: scale(1.05);
+}
+
+.user-avatar-wrapper {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.header-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: all 0.25s ease;
+    display: block;
+    flex-shrink: 0;
+}
+
+.user-online-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #4ade80;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
+
+.user-name-header {
+    font-weight: 600;
+    font-size: 14px;
+    color: #0f172a;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .user-name-header {
+        display: inline-block;
+    }
+}
+
+/* Context Menu trong dropdown */
+.dropdown-menu-profile {
+    border: none;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    width: 220px;
+    border-radius: 20px;
+}
+
+.profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.profile-dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #1a56db;
+}
+
+.profile-dropdown-item.active {
+    background-color: #1a56db;
+    color: #ffffff !important;
+}
+
+.profile-dropdown-item.danger {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.profile-dropdown-item.danger:hover {
+    background-color: #fef2f2;
+    color: #ef4444;
+}
+
+/* --- Main Content Layout & Filters --- */
+.filter-icon {
+    width: 18px !important;
+    height: 18px !important;
+    color: #64748b;
+}
+
+.course-sort-select {
+    width: 170px !important;
+    cursor: pointer;
+}
+
+.course-thumbnail-link {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    flex-shrink: 0;
+    align-self: center;
+    width: 240px !important;
+    height: 145px !important;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .course-thumbnail-link {
+        align-self: flex-start !important;
+    }
+}
+
+.course-info-wrapper {
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 145px;
+}
+
+.course-meta-icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+/* --- Custom Toast Styles --- */
+#cartToast.toast-success {
+    background-color: #198754 !important;
+    color: #fff !important;
+}
+#cartToast.toast-success .toast-title {
+    color: #fff !important;
+}
+#cartToast.toast-success .toast-message {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+#cartToast.toast-success .toast-icon-warning {
+    display: none !important;
+}
+#cartToast.toast-success .toast-icon-success {
+    display: inline-block !important;
+}
+#cartToast.toast-success .toast-body svg {
+    color: #fff !important;
+}
+#cartToast.toast-success .btn-close {
+    filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+#cartToast.toast-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+#cartToast.toast-warning .toast-title {
+    color: #212529 !important;
+}
+#cartToast.toast-warning .toast-message {
+    color: rgba(0, 0, 0, 0.8) !important;
+}
+#cartToast.toast-warning .toast-icon-success {
+    display: none !important;
+}
+#cartToast.toast-warning .toast-icon-warning {
+    display: inline-block !important;
+}
+#cartToast.toast-warning .toast-body svg {
+    color: #212529 !important;
+}
+#cartToast.toast-warning .btn-close {
+    filter: none !important;
+}

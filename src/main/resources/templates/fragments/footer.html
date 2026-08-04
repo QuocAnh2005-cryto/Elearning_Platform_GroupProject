@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Fragment Footer dùng chung cho toàn hệ thống -->
+<footer th:fragment="footer" class="footer site-footer bg-white pt-5 pb-4 border-top">
+    <div class="container">
+        <div class="row g-5 justify-content-between mb-5">
+            <div class="col-lg-5 col-12">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <a th:href="@{/}" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+                        <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+                        <span class="logo-text-static fw-bold font-heading fs-5">LearningHub</span>
+                    </a>
+                </div>
+                <p class="text-muted fs-7 mb-0" style="max-width: 380px; line-height: 1.75;">
+                    Kiến thức là sức mạnh. Chúng tôi đồng hành cùng bạn trên con đường chinh phục đỉnh cao tri thức và phát triển sự nghiệp bền vững.
+                </p>
+            </div>
+            <div class="col-lg-3 col-6">
+                <h4 class="footer-title fw-bold fs-7 mb-4">HỌC TẬP</h4>
+                <ul class="list-unstyled d-flex flex-column gap-2 footer-links fs-7">
+                    <li><a th:href="@{/courses}" class="text-muted text-decoration-none">Tất cả khóa học</a></li>
+                    <li><a th:href="@{/student/my-learning}" class="text-muted text-decoration-none">Khóa học của tôi</a></li>
+                    <li><a th:href="@{/cart}" class="text-muted text-decoration-none">Giỏ hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-6">
+                <h4 class="footer-title fw-bold fs-7 mb-4">TÀI KHOẢN & HỖ TRỢ</h4>
+                <ul class="list-unstyled d-flex flex-column gap-2 footer-links fs-7">
+                    <li><a th:href="@{/student/profile}" class="text-muted text-decoration-none">Hồ sơ cá nhân</a></li>
+                    <li><a th:href="@{/student/purchase-history}" class="text-muted text-decoration-none">Lịch sử đơn hàng</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Trung tâm trợ giúp</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Điều khoản dịch vụ</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Chính sách bảo mật</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 border-top pt-4">
+            <p class="text-muted fs-7 m-0">© 2026 Learning Hub. All rights reserved.</p>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-light rounded-circle p-2" style="width: 36px; height: 36px;" aria-label="Ngôn ngữ">
+                    <i data-lucide="globe" style="width:18px; height:18px;" class="text-muted"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

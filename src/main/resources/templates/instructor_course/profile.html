@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Learning Hub - Thông Tin Của Tôi</title>
+    <link rel="stylesheet" th:href="@{/css/course_manage.css}"/>
+</head>
+<body>
+
+<div th:replace="~{instructor_course/sidebar :: sidebar(activePage='profile')}"></div>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Thông Tin Của Tôi</h1>
+            <p class="page-subtitle" th:text="${editMode} ? 'Chỉnh sửa hồ sơ giảng viên' : 'Xem thông tin hồ sơ giảng viên'">
+                Xem thông tin hồ sơ giảng viên
+            </p>
+        </div>
+        <div class="profile-header-actions">
+            <!-- Instructor profile password: nut nay mo popup doi mat khau, khong hien form truc tiep tren trang. -->
+            <button type="button" class="btn btn-outline" data-open-modal="modal-change-password">Thay m&#7853;t kh&#7849;u</button>
+            <a th:if="${!editMode}" th:href="@{/instructor/profile/edit}" class="btn btn-primary">Ch&#7881;nh s&#7917;a</a>
+            <a th:if="${editMode}" th:href="@{/instructor/sidebar}" class="btn btn-outline">H&#7911;y</a>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="success-msg" th:text="${success}">Thay đổi thành công!</div>
+    <div th:if="${error}" class="profile-alert profile-alert-error" th:text="${error}">Có lỗi xảy ra</div>
+
+    <!-- Profile view: man xem ho so rieng, khong hien form edit/popup. -->
+    <section th:if="${!editMode}" class="profile-showcase">
+        <div class="profile-hero-card">
+            <div class="profile-hero-cover"></div>
+            <div class="profile-hero-content">
+                <div class="profile-hero-avatar">
+                    <img th:if="${instructor?.avatar_url != null}" th:src="${instructor.avatar_url}" alt="Ảnh đại diện"/>
+                    <span th:if="${instructor?.avatar_url == null}"
+                          th:text="${instructor?.lastname != null and !#strings.isEmpty(instructor.lastname) ? #strings.substring(instructor.lastname,0,1) : 'T'}">T</span>
+                </div>
+                <div class="profile-hero-main">
+                    <div class="profile-role-badge">Instructor</div>
+                    <h2 th:text="${(instructor?.firstname ?: '') + ' ' + (instructor?.lastname ?: '')}">Tên giảng viên</h2>
+                    <p th:text="${instructor?.email ?: 'Chưa có email'}">email@example.com</p>
+                    <div class="profile-hero-tags">
+                        <span>LearningHub Creator</span>
+                        <span th:text="${instructor?.phone ?: 'Chưa cập nhật số điện thoại'}">0123456789</span>
+                    </div>
+                    <!-- Instructor profile rating: thay bang du lieu feedback cua cac khoa hoc thuoc instructor. -->
+                    <div class="profile-rating-panel">
+                        <div class="profile-rating-score">
+                            <strong th:text="${averageRating}">4.8</strong>
+                            <span>/ 5</span>
+                        </div>
+                        <div class="profile-rating-main">
+                            <div class="profile-rating-stars" aria-label="Instructor rating">
+                                <span th:each="star : ${#numbers.sequence(1, 5)}"
+                                      th:classappend="${star <= ratingStars} ? ' active' : ''">&#9733;</span>
+                            </div>
+                            <p>
+                                <span th:text="${ratingCount}">128</span>
+                                lượt đánh giá từ học viên
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-showcase-grid">
+            <div class="card profile-bio-card profile-feature-card">
+                <div class="profile-section-heading">
+                    <span class="profile-section-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h11v18H6a2 2 0 0 1-2-1.5Zm4-11h6M8 12h6M8 15h4"/></svg>
+                    </span>
+                    <div>
+                        <div class="card-title">Giới Thiệu Bản Thân</div>
+                        <p>Phần mô tả mà học viên sẽ nhìn thấy khi tìm hiểu về giảng viên.</p>
+                    </div>
+                </div>
+                <div class="profile-bio-content profile-bio-rich"
+                     th:utext="${instructor?.bio ?: 'Chưa cập nhật giới thiệu bản thân.'}">
+                    Chưa cập nhật giới thiệu bản thân.
+                </div>
+            </div>
+
+            <aside class="card profile-contact-card">
+                <div class="card-title">Thông Tin Liên Hệ</div>
+                <div class="profile-contact-list">
+                    <div class="profile-contact-item">
+                        <span>Email</span>
+                        <strong th:text="${instructor?.email ?: 'Chưa cập nhật'}">email@example.com</strong>
+                    </div>
+                    <div class="profile-contact-item">
+                        <span>Số điện thoại</span>
+                        <strong th:text="${instructor?.phone ?: 'Chưa cập nhật'}">0123456789</strong>
+                    </div>
+                    <div class="profile-contact-item">
+                        <span>Họ và tên đệm</span>
+                        <strong th:text="${instructor?.firstname ?: 'Chưa cập nhật'}">Nguyễn Văn</strong>
+                    </div>
+                    <div class="profile-contact-item">
+                        <span>Tên</span>
+                        <strong th:text="${instructor?.lastname ?: 'Chưa cập nhật'}">An</strong>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+
+    <form th:if="${editMode}"
+          th:action="@{/instructor/profiles}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${instructor}"
+          class="profile-edit-form">
+
+        <div class="card">
+            <div class="card-title">Thông Tin Hiển Thị</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Họ và Tên Đệm <span class="required">*</span></label>
+                    <input type="text" th:field="*{firstname}" class="form-control"
+                           placeholder="Nhập họ và tên đệm" required/>
+                    <p class="text-danger" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Tên <span class="required">*</span></label>
+                    <input type="text" class="form-control" th:field="*{lastname}"
+                           placeholder="Nhập tên" required/>
+                    <p class="text-danger" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Email đăng ký</label>
+                    <input type="email" class="form-control" th:field="*{email}" readonly/>
+                </div>
+
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" th:field="*{phone}" placeholder="0123456789"/>
+                    <p class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Giới Thiệu Bản Thân</label>
+                <textarea class="form-control" th:field="*{bio}" id="bio" rows="6" placeholder="Nhập mô tả ngắn giới thiệu bản thân..."></textarea>
+                <p class="text-danger" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></p>
+            </div>
+
+            <div class="form-group">
+                <label>Ảnh Đại Diện</label>
+                <div class="profile-avatar-edit-row">
+                    <div class="avatar-preview-wrap" id="avatarPreview">
+                        <img th:if="${instructor?.avatar_url != null}" th:src="${instructor.avatar_url}" alt="Avatar"/>
+                        <span th:if="${instructor?.avatar_url == null}"
+                              th:text="${instructor?.lastname != null and !#strings.isEmpty(instructor.lastname) ? #strings.substring(instructor.lastname,0,1) : 'T'}">T</span>
+                    </div>
+                    <div>
+                        <input type="file" th:field="*{file}" id="avatarInput" accept="image/*" style="display:none;"/>
+                        <button type="button" class="btn btn-outline btn-sm"
+                                onclick="document.getElementById('avatarInput').click()">Chọn ảnh</button>
+                        <div class="form-hint">JPG, PNG. Tối đa 2MB.</div>
+                        <p class="text-danger" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-form-actions">
+            <a th:href="@{/instructor/sidebar}" class="btn btn-outline btn-lg">Hủy</a>
+            <button type="submit" class="btn btn-primary btn-lg">Lưu thay đổi</button>
+        </div>
+    </form>
+
+    <!-- Instructor profile password: popup doi mat khau, submit ve endpoint backend hien co. -->
+    <div class="modal-overlay" id="modal-change-password">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Thay m&#7853;t kh&#7849;u</h3>
+                <button type="button" class="modal-close" data-close-modal="modal-change-password">&times;</button>
+            </div>
+            <form th:action="@{/instructor/profile/change-password}" method="post" class="profile-password-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>M&#7853;t kh&#7849;u hi&#7879;n t&#7841;i</label>
+                        <input type="password"
+                               name="oldPassword"
+                               class="form-control"
+                               autocomplete="current-password"
+                               placeholder="Nh&#7853;p m&#7853;t kh&#7849;u hi&#7879;n t&#7841;i n&#7871;u t&#224;i kho&#7843;n &#273;&#227; c&#243; m&#7853;t kh&#7849;u"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>M&#7853;t kh&#7849;u m&#7899;i <span class="required">*</span></label>
+                        <input type="password"
+                               name="newPassword"
+                               class="form-control"
+                               minlength="6"
+                               autocomplete="new-password"
+                               placeholder="T&#7889;i thi&#7875;u 6 k&#253; t&#7921;"
+                               required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nh&#7853;p l&#7841;i m&#7853;t kh&#7849;u <span class="required">*</span></label>
+                        <input type="password"
+                               name="confirmPassword"
+                               class="form-control"
+                               minlength="6"
+                               autocomplete="new-password"
+                               placeholder="X&#225;c nh&#7853;n m&#7853;t kh&#7849;u m&#7899;i"
+                               required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-change-password">H&#7911;y</button>
+                    <button type="submit" class="btn btn-primary">C&#7853;p nh&#7853;t m&#7853;t kh&#7849;u</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script th:src="@{/js/course_instructor.js}"></script>
+</body>
+</html>

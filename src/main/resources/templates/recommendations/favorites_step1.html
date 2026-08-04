@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết Lập Sở Thích - Bước 1 - Learning Hub</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Central Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <!-- Favorites Page Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/favorites.css}">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-light">
+
+
+    <main class="py-5">
+        <div class="survey-container">
+            <!-- Progress & Greeting Title -->
+            <div class="text-center survey-title-section">
+                <span class="step-indicator">Bước 1 trong số 2</span>
+                <h1 class="font-heading mt-2">Xin chào <span class="text-primary" th:text="${currentUser.lastName + ' ' + currentUser.firstName}">Học Viên</span>!</h1>
+                <p class="survey-subtitle">Hãy cho tôi biết một chút về bản thân bạn để tôi có thể đưa ra những khuyến nghị tốt nhất. Đầu tiên, danh mục bạn quan tâm nhất là gì?</p>
+            </div>
+
+            <!-- Parent Categories Cards Grid -->
+            <div class="parent-grid" th:if="${parents != null && !parents.isEmpty()}">
+                
+                <div class="col" th:each="parent : ${parents}">
+                    <!-- Thẻ link trỏ thẳng tới step 2 -->
+                    <a th:href="@{/student/favorites/step2(parentId=${parent.id})}" class="text-decoration-none d-block h-100">
+                        <div class="parent-card" th:classappend="${preSelectedParentId != null && preSelectedParentId == parent.id} ? 'parent-card-active' : ''">
+                            
+                            <!-- Custom Icon & Background depending on parent name -->
+                            <div class="card-icon-box" th:style="${#strings.contains(parent.name, 'Front-End') ? 'background: #fffbeb; color: #d97706;' :
+                                                                  (#strings.contains(parent.name, 'Back-End') ? 'background: #eff6ff; color: #2563eb;' :
+                                                                  (#strings.contains(parent.name, 'iOS') ? 'background: #faf5ff; color: #7c3aed;' : 'background: #f0fdf4; color: #16a34a;'))}">
+                                <i th:data-lucide="${#strings.contains(parent.name, 'Front-End') ? 'layout' :
+                                                     (#strings.contains(parent.name, 'Back-End') ? 'server' :
+                                                     (#strings.contains(parent.name, 'iOS') ? 'smartphone' : 'book-open'))}"></i>
+                            </div>
+
+                            <div>
+                                <h3 class="card-title" th:text="${parent.name}">Danh mục cha</h3>
+                                <p class="card-desc" th:text="${parent.description ?: 'Khám phá các khóa học chất lượng cao trong lĩnh vực này.'}">Mô tả ngắn</p>
+                            </div>
+                            
+                            <div class="mt-4 text-primary fw-bold fs-7">
+                                Chọn danh mục này <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Fallback if empty -->
+            <div class="card border border-light-subtle rounded-3 p-5 bg-white text-center shadow-sm" th:if="${parents == null || parents.isEmpty()}">
+                <div class="d-flex flex-column align-items-center justify-content-center py-4">
+                    <div class="empty-cart-icon-wrapper rounded-circle bg-light d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                        <i data-lucide="folder-open" class="text-muted" style="width: 36px; height: 36px;"></i>
+                    </div>
+                    <h3 class="fw-bold fs-5 font-heading text-dark mb-2">Không tìm thấy danh mục nào!</h3>
+                    <p class="text-muted fs-7 mb-4">Hệ thống đang bảo trì danh sách ngành học. Vui lòng quay lại sau.</p>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

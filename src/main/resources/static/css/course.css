@@ -1,0 +1,219 @@
+/* --- Custom Styles for Course Search & Filter Page --- */
+
+/* Sidebar Filters */
+.sidebar-filters {
+    border-color: #e2e8f0 !important;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 24px;
+    z-index: 10;
+}
+
+.filter-title {
+    color: var(--text-main);
+    letter-spacing: -0.2px;
+}
+
+/* Accordion Categories Custom Style */
+.category-accordion {
+    --bs-accordion-bg: transparent;
+    --bs-accordion-border-color: transparent;
+}
+
+.category-accordion .accordion-item {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.category-accordion .accordion-header {
+    border: none !important;
+}
+
+.category-accordion .accordion-button {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    padding: 8px 0px;
+    transition: var(--transition);
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.category-accordion .accordion-button:not(.collapsed) {
+    color: var(--primary) !important;
+}
+
+.category-accordion .accordion-button::after {
+    background-size: 10px;
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Category Child Links */
+.filter-category-link {
+    transition: var(--transition);
+    font-size: 13.5px;
+    padding: 4px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: #64748b !important;
+}
+
+.filter-category-link:hover {
+    color: var(--primary) !important;
+    transform: translateX(4px);
+}
+
+.active-category {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Checkbox overrides */
+.form-check-input:checked {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+/* Rating Stars */
+.star-icon {
+    width: 14.5px;
+    height: 14.5px;
+}
+
+.star-filled,
+.star-filled svg {
+    color: #f59e0b !important;
+    fill: #f59e0b !important;
+}
+
+.star-empty,
+.star-empty svg {
+    color: #e2e8f0 !important;
+    fill: #e2e8f0 !important;
+}
+
+/* Course Horizontal Items */
+.course-list-item {
+    border-radius: 12px !important;
+    transition: var(--transition);
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.course-list-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.course-item-title {
+    font-size: 17px !important;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.4;
+    transition: var(--transition);
+}
+
+.course-list-item:hover .course-item-title {
+    color: var(--primary);
+}
+
+/* Instructor text link */
+.instructor-name {
+    color: var(--primary) !important;
+    font-size: 13px !important;
+    transition: var(--transition);
+}
+
+.instructor-name:hover {
+    text-decoration: underline !important;
+}
+
+/* Badge Discount on Horizontal Cards */
+.badge-discount {
+    background-color: #f97316 !important;
+    border-radius: 4px !important;
+    letter-spacing: 0.5px;
+}
+
+/* Price block styling */
+.price-current {
+    color: var(--primary); /* Blue pricing color as shown in search screenshot */
+    font-family: var(--font-heading);
+}
+
+.price-old {
+    font-size: 12px !important;
+    color: #94a3b8 !important;
+}
+
+/* Add to Cart horizontal button */
+.btn-add-to-cart {
+    background-color: #eff6ff !important;
+    color: var(--primary) !important;
+    border: 1px solid transparent !important;
+    font-size: 13px !important;
+    padding: 8px 16px !important;
+    transition: var(--transition) !important;
+}
+
+.btn-add-to-cart:hover {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+/* Pagination Overrides */
+.page-num-btn {
+    width: 38px;
+    height: 38px;
+    background-color: #ffffff !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-muted) !important;
+    transition: var(--transition) !important;
+}
+
+.page-item.active .page-num-btn {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #ffffff !important;
+}
+
+.page-item:not(.active) .page-num-btn:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: var(--text-main) !important;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .course-list-item {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    
+    .course-list-item .flex-grow-1 {
+        text-align: center !important;
+    }
+    
+    .course-list-item .d-flex {
+        justify-content: center !important;
+    }
+    
+    .course-list-item .ms-auto {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+    }
+    
+    .course-list-item .align-self-end {
+        align-self: center !important;
+    }
+}

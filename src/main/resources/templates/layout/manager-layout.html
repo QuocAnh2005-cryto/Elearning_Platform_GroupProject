@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Quản lý Học thuật">Quản lý Học thuật</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Manager Layout CSS -->
+    <link rel="stylesheet" th:href="@{/css/manager/layout.css}">
+
+    <th:block layout:fragment="page-css"></th:block>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a class="header-logo d-flex align-items-center gap-2 text-decoration-none" th:href="@{/manager/dashboard}">
+                    <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+                    <span class="logo-text fw-bold font-heading">LearningHub</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a th:href="@{/manager/dashboard}"><i class="ph ph-squares-four"></i><span>Tổng quan</span></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/manager/instructor/list}"><i class="ph ph-users"></i><span>Quản lý giảng viên</span></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/manager/course/list}"><i class="ph ph-book-open"></i><span>Phê duyệt khóa học</span></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/manager/revenue/list}"><i class="ph ph-currency-circle-dollar"></i><span>Doanh thu</span></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/manager/transaction-history/list}"><i class="ph ph-receipt"></i><span>Giao dịch</span></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/manager/grant-access}"><i class="ph ph-shield-check"></i><span>Cấp quyền khóa học</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <!-- Top Navigation Header -->
+            <header class="main-header shadow-sm">
+                <div class="header-left d-flex align-items-center gap-2">
+                    <!-- Mobile Sidebar Toggle -->
+                    <button class="btn btn-link text-dark p-0 me-2 d-md-none" id="sidebarToggle">
+                        <i class="ph ph-list fs-3"></i>
+                    </button>
+
+                    <h5 class="mb-0 fw-bold text-dark font-heading">Quản lý Học thuật</h5>
+                </div>
+                <div class="header-right">
+                    <!-- User Account Dropdown -->
+                    <div class="dropdown user-dropdown">
+                        <button class="header-user-trigger btn border-0 p-0 d-flex align-items-center gap-2"
+                            id="headerUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar header-avatar">
+                                <img th:if="${currentUser != null and currentUser.avatarUrl != null}"
+                                    th:src="${currentUser.avatarUrl}" alt="Avatar"
+                                    class="w-100 h-100 object-fit-cover" />
+                                <span th:if="${currentUser == null or currentUser.avatarUrl == null}"
+                                    th:text="${currentUser != null and currentUser.firstName != null and !currentUser.firstName.isEmpty() ? #strings.substring(currentUser.firstName, 0, 1).toUpperCase() : 'M'}">M</span>
+                            </div>
+                            <span class="user-name-text d-none d-md-inline"
+                                th:text="${currentUser != null ? (currentUser.lastName + ' ' + currentUser.firstName) : 'Quản trị viên'}">Quản
+                                trị viên</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="headerUserDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/manager/profile}">Thông tin cá nhân</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/manager/profile/change-password}">Đổi mật khẩu</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" th:href="@{/logout}">Đăng xuất</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+                <div layout:fragment="content">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Active nav handling
+            const path = window.location.pathname;
+            const items = document.querySelectorAll(".sidebar-nav ul li");
+            items.forEach(li => {
+                const a = li.querySelector("a");
+                if (a) {
+                    const href = a.getAttribute("href");
+                    if (href === "/manager/dashboard" && (path === "/manager" || path === "/manager/" || path.startsWith("/manager/dashboard"))) {
+                        li.classList.add("active");
+                    } else if (href !== "/manager/dashboard") {
+                        const lastSlashIndex = href.lastIndexOf('/');
+                        const prefix = href.substring(0, lastSlashIndex);
+                        if (prefix !== "/manager" && prefix !== "") {
+                            if (path.startsWith(prefix)) {
+                                li.classList.add("active");
+                            }
+                        } else {
+                            if (path === href || path.startsWith(href + "/")) {
+                                li.classList.add("active");
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Mobile sidebar toggle handling
+            const sidebarToggle = document.getElementById("sidebarToggle");
+            const sidebar = document.querySelector(".sidebar");
+
+            // Create backdrop overlay element for mobile if not exists
+            let overlay = document.querySelector(".sidebar-overlay");
+            if (!overlay) {
+                overlay = document.createElement("div");
+                overlay.className = "sidebar-overlay";
+                document.body.appendChild(overlay);
+            }
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener("click", function () {
+                    sidebar.classList.toggle("show");
+                    overlay.classList.toggle("show");
+                });
+
+                overlay.addEventListener("click", function () {
+                    sidebar.classList.remove("show");
+                    overlay.classList.remove("show");
+                });
+            }
+        });
+    </script>
+    <th:block layout:fragment="page-js"></th:block>
+</body>
+
+</html>

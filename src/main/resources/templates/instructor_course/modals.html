@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="all"  th:with="source=${source} ?: 'create'">
+
+    <!-- ===== Modal: Thêm Chương ===== -->
+    <div class="modal-overlay" id="modal-add-section">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Thêm Chương Mới</h3>
+                <button class="modal-close" data-close-modal="modal-add-section">✕</button>
+            </div>
+            <form th:action="@{/instructor/{id}/sections(id=${courseId})}" method="POST" th:object="${section}">
+                <input type="hidden" name="source" th:value="${source}">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên Chương <span class="required">*</span></label>
+                        <input type="text" th:field="*{title}" class="form-control"
+                               placeholder="VD: Giới thiệu về guitar điện" required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-add-section">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="modal-edit-section">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Chỉnh Sửa Chương</h3>
+                <button class="modal-close" data-close-modal="modal-edit-section">x</button>
+            </div>
+            <form id="editSectionForm" method="POST" th:object="${section}">
+                <input type="hidden" name="source" th:value="${source}">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên Chương <span class="required">*</span></label>
+                        <input type="text" th:field="*{title}" id="editSectionTitle" class="form-control"
+                               placeholder="VD: Giới thiệu về guitar điện" required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-edit-section">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ===== Modal: Thêm Bài Giảng ===== -->
+    <div class="modal-overlay" id="modal-add-lesson">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>Thêm Bài Giảng</h3>
+                <button class="modal-close" data-close-modal="modal-add-lesson">✕</button>
+            </div>
+
+            <form
+                  method="POST" enctype="multipart/form-data" id="addLessonForm" th:object="${lesson}" data-lesson-upload-form>
+                <input type="hidden" name="sectionId" id="addLessonSectionId"/>
+                <input type="hidden" name="courseId" id="addLessonCourseId" th:value="${courseId}"/>
+                <!-- Direct video upload: JS gan blobName vao day sau khi upload thang len Azure. -->
+                <input type="hidden" name="videoBlobName" id="videoBlobNameInput"/>
+                <div class="modal-body">
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label>Tên Bài Giảng <span class="required">*</span></label>
+                        <input type="text" th:field="*{title}" id="lessonNameInput" class="form-control"
+                               placeholder="VD: Phân biệt guitar thùng và guitar điện" required/>
+                    </div>
+
+                    <!-- Media Tabs -->
+                    <div class="lesson-media-tabs" data-group="lesson-media">
+                        <div class="media-tab active" data-group="lesson-media" data-type="video">
+                            <span class="tab-icon"></span> TẢI VIDEO LÊN
+                        </div>
+                    </div>
+
+                    <!-- Video Upload -->
+                    <div class="media-content" data-group="lesson-media" data-type="video">
+                        <div class="file-upload-area" onclick="document.getElementById('videoFileInput').click()">
+                            <div class="upload-icon"></div>
+                            <p>Kéo thả hoặc nhấn để tải video lên</p>
+                            <p style="font-size:.75rem;color:#aaa;margin-top:4px;">MP4, MOV, AVI. Tối đa 2GB.</p>
+                            <span class="choose-btn">Chọn Video File</span>
+                        </div>
+                        <input type="file" id="videoFileInput" name="videoFile" accept="video/*" style="display:none;"/>
+                        <div id="videoPreviewContainer"></div>
+                        <div class="upload-progress" data-upload-progress style="display:none;margin-top:12px;">
+                            <div style="height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;">
+                                <div data-upload-progress-bar style="width:0%;height:100%;background:#2563eb;transition:width .2s ease;"></div>
+                            </div>
+                            <div data-upload-progress-text style="font-size:12px;color:#64748b;margin-top:6px;">0%</div>
+                        </div>
+                        <input type="hidden" th:field="*{durationSeconds}" id="durationSecondsInput"/>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-add-lesson">Hủy</button>
+                    <!-- Lesson video upload: disable khi submit de tranh double-click tao 2 lesson. -->
+                    <button type="submit" class="btn btn-primary" data-loading-text="Đang lưu video...">Lưu Bài Giảng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Modal: Chỉnh Sửa Bài Giảng ===== -->
+    <div class="modal-overlay" id="modal-edit-lesson">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>Chỉnh Sửa Bài Giảng</h3>
+                <button class="modal-close" data-close-modal="modal-edit-lesson">✕</button>
+            </div>
+
+            <form id="editLessonForm"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  th:object="${lesson}"
+                  data-lesson-upload-form>
+
+
+                <!-- Hidden Fields -->
+                <input type="hidden" name="courseId" id="editCourseid"/>
+                <input type="hidden" name="sectionId" id="editSectionId"/>
+                <input type="hidden" name="lessonId" id="editLessonId"/>
+                <!-- Direct video upload: JS gan blobName moi vao day neu instructor chon video thay the. -->
+                <input type="hidden" name="videoBlobName" id="editVideoBlobNameInput"/>
+<!--                <input type="hidden" name="source" value="create">-->
+
+                <div class="modal-body">
+                    <!-- LESSON TITLE -->
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label>Tên Bài Giảng <span class="required">*</span></label>
+                        <input type="text"
+                               th:field="*{title}"
+                               id="editLessonName"
+                               class="form-control"
+                               placeholder="Tên bài giảng"
+                               required/>
+                    </div>
+
+                    <!-- MEDIA TABS -->
+                    <div class="lesson-media-tabs" data-group="edit-lesson-media">
+                        <div class="media-tab active" data-group="edit-lesson-media" data-type="video">
+                            <span class="tab-icon"></span> VIDEO (Tùy Chọn)
+                        </div>
+                    </div>
+
+                    <!-- VIDEO UPLOAD (OPTIONAL) -->
+                    <div class="media-content" data-group="edit-lesson-media" data-type="video">
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:12px;">
+                            Nếu không chọn video mới, video cũ sẽ được giữ lại
+                        </p>
+                        <div class="file-upload-area" onclick="document.getElementById('editVideoFileInput').click()">
+                            <div class="upload-icon"></div>
+                            <p>Kéo thả hoặc nhấn để tải video lên</p>
+                            <p style="font-size:.75rem;color:#aaa;margin-top:4px;">MP4, MOV, AVI. Tối đa 2GB.</p>
+                            <span class="choose-btn">Chọn Video File</span>
+                        </div>
+                        <input type="file"
+                               id="editVideoFileInput"
+                               name="videoFile"
+                               accept="video/*"
+                               style="display:none;"/>
+                        <div id="editVideoPreviewContainer"></div>
+                        <div class="upload-progress" data-upload-progress style="display:none;margin-top:12px;">
+                            <div style="height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;">
+                                <div data-upload-progress-bar style="width:0%;height:100%;background:#2563eb;transition:width .2s ease;"></div>
+                            </div>
+                            <div data-upload-progress-text style="font-size:12px;color:#64748b;margin-top:6px;">0%</div>
+                        </div>
+                        <input type="hidden" th:field="*{durationSeconds}" id="editDurationSecondsInput"/>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-edit-lesson">Hủy</button>
+                    <!-- Lesson video upload: disable khi submit de tranh double-click tao 2 lesson. -->
+                    <button type="submit" class="btn btn-primary" data-loading-text="Đang lưu video...">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-add-material">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>Thêm Tài Liệu</h3>
+                <button class="modal-close" data-close-modal="modal-add-material">✕</button>
+            </div>
+            <form id="addMaterialForm" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="courseId" id="addMaterialCourseId">
+                <input type="hidden" name="lessonId" id="addMaterialLessonId" value=""/>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label style="display:block; font-size:13px; font-weight:500; margin-bottom:6px;">Chọn file <span class="required">*</span></label>
+                        <input type="file" name="materialFiles" id="addMaterialFile" class="form-control"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" multiple required>
+                        <div id="addMaterialPreview" style="margin-top:8px;"></div>
+                        <div data-upload-progress style="display:none; margin-top:12px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; font-weight:500; color:#495057;">
+                                <span>Đang tải tài liệu lên Azure...</span>
+                                <span data-upload-progress-text>0%</span>
+                            </div>
+                            <div style="background:#e9ecef; border-radius:4px; height:8px; overflow:hidden;">
+                                <div data-upload-progress-bar style="background:#0d6efd; height:100%; width:0%; transition:width 0.15s ease-out;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-add-material">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+</div>

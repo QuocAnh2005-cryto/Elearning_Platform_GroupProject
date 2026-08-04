@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Mua Hàng - Learning Hub</title>
+    <meta name="description" content="Xem và quản lý lịch sử mua hàng, hóa đơn khóa học tại Learning Hub.">
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Central Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <!-- Purchase History Custom Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/purchase_history.css}">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-light bg-opacity-50">
+
+    <!-- Header Navigation -->
+<header th:replace="fragments/header :: header"></header>
+
+    <!-- Main Purchase History Layout -->
+    <main class="py-5">
+        <div class="container py-3" style="max-width: 860px;">
+
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}"
+                            class="text-muted text-decoration-none fs-8 fw-medium">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/student/profile}"
+                            class="text-muted text-decoration-none fs-8 fw-medium">Hồ Sơ Cá Nhân</a></li>
+                    <li class="breadcrumb-item active text-primary fs-8 fw-bold" aria-current="page">Lịch Sử Mua Hàng
+                    </li>
+                </ol>
+            </nav>
+
+            <form th:action="@{/student/purchase-history}" method="get" class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="page-title fw-bold font-heading mb-0 fs-3">Lịch Sử Mua Hàng</h1>
+                <select id="statusFilter" name="status" class="form-select w-auto rounded-3 border-secondary-subtle" onchange="this.form.submit()">
+                    <option value="ALL" th:selected="${status == null || status == 'ALL'}">Tất cả</option>
+                    <option value="SUCCESS" th:selected="${status == 'SUCCESS'}">Thành công</option>
+                    <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ duyệt</option>
+                    <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">Hết hạn</option>
+                </select>
+            </form>
+
+            <!-- Orders Container -->
+            <div class="d-flex flex-column gap-4" th:if="${orders != null && !orders.isEmpty()}">
+
+                <!-- Order Card dynamic -->
+                <div class="card border border-light-subtle rounded-3 bg-white shadow-sm overflow-hidden order-card"
+                    th:each="order, orderStat : ${orders}" th:data-status="${#strings.toUpperCase(order.status)}">
+                    <!-- Order Header -->
+                    <div class="card-header bg-light bg-opacity-50 border-bottom border-light-subtle p-3">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-6 col-12 d-flex flex-wrap align-items-center gap-3">
+                                <div>
+                                    <span class="d-block text-muted fs-8 fw-medium text-uppercase tracking-wider">Mã đơn
+                                        hàng</span>
+                                    <span class="fw-bold text-dark fs-7" th:text="'#LH' + ${order.id}">#LH83921</span>
+                                </div>
+                                <div class="border-start border-light-subtle ps-3 d-none d-sm-block">
+                                    <span class="d-block text-muted fs-8 fw-medium text-uppercase tracking-wider">Ngày
+                                        mua</span>
+                                    <span class="fw-semibold text-muted-dark fs-7"
+                                        th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd/MM/yyyy') : ''}">28/05/2026</span>
+                                </div>
+                                <div class="border-start border-light-subtle ps-3 d-none d-sm-block">
+                                    <span class="d-block text-muted fs-8 fw-medium text-uppercase tracking-wider">Thanh
+                                        toán</span>
+                                    <span class="fw-semibold text-muted-dark fs-7"
+                                        th:text="${order.paymentMethod != null ? order.paymentMethod : 'N/A'}">ATM /
+                                        Internet Banking</span>
+                                </div>
+                            </div>
+                            <div
+                                class="col-md-6 col-12 text-md-end d-flex align-items-center justify-content-between justify-content-md-end gap-3 flex-wrap">
+                                <span
+                                    class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fs-8 fw-semibold d-inline-flex align-items-center gap-1"
+                                    th:if="${#strings.toUpperCase(order.status) == 'PAID' || #strings.toUpperCase(order.status) == 'COMPLETED' || #strings.toUpperCase(order.status) == 'SUCCESS'}">
+                                    <i data-lucide="check-circle-2" style="width:14px; height:14px;"></i> Thành công
+                                </span>
+                                <span
+                                    class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1.5 rounded-pill fs-8 fw-semibold d-inline-flex align-items-center gap-1"
+                                    th:if="${#strings.toUpperCase(order.status) == 'PENDING'}">
+                                    <i data-lucide="clock" style="width:14px; height:14px;"></i> Chờ duyệt
+                                </span>
+                                <span
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1.5 rounded-pill fs-8 fw-semibold d-inline-flex align-items-center gap-1"
+                                    th:if="${#strings.toUpperCase(order.status) == 'EXPIRED' || #strings.toUpperCase(order.status) == 'CANCELLED' || #strings.toUpperCase(order.status) == 'FAILED'}">
+                                    <i data-lucide="x-circle" style="width:14px; height:14px;"></i> Hết hạn
+                                </span>
+                                <div class="text-md-end">
+                                    <span
+                                        class="d-none d-md-block text-muted fs-8 fw-medium text-uppercase tracking-wider">Tổng
+                                        tiền</span>
+                                    <span class="fw-extrabold text-primary fs-5"
+                                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">478,400
+                                        VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-3 border-bottom border-light-subtle bg-white">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <span class="text-muted-dark fs-7 fw-medium">
+                                <i data-lucide="package" class="me-1 text-muted"
+                                    style="width: 16px; height: 16px; vertical-align: text-bottom;"></i>
+                                Đơn hàng gồm <span th:text="${order.items.size()}">2</span> khóa học
+                            </span>
+                            <button
+                                class="btn btn-outline-primary btn-sm rounded-3 px-3 py-1.5 fw-semibold fs-8 d-inline-flex align-items-center gap-1 btn-toggle-order"
+                                data-bs-toggle="collapse" th:data-bs-target="'#order-' + ${order.id} + '-details'"
+                                aria-expanded="true" th:aria-controls="'order-' + ${order.id} + '-details'">
+                                <span></span>
+                                <i data-lucide="chevron-up" class="toggle-icon" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Order Items Details -->
+                    <div class="collapse show" th:id="'order-' + ${order.id} + '-details'">
+                        <div class="card-body p-0 bg-white">
+                            <div class="list-group list-group-flush border-0">
+
+                                <!-- Course Item dynamic loop -->
+                                <div class="list-group-item p-3 d-flex flex-sm-row flex-column gap-3 align-items-start border-light-subtle"
+                                    th:each="item : ${order.items}">
+                                    <img th:src="${item.course?.thumbnailPath}" alt="course"
+                                        class="rounded-3 flex-shrink-0 object-fit-cover align-self-center align-self-sm-start"
+                                        style="width: 120px; height: 78px;"
+                                        onerror="this.onerror=null; this.src='/images/course_thumbnail.png';">
+                                    <div class="flex-grow-1">
+                                        <h4 class="fw-bold fs-7 mb-1 font-heading text-dark"
+                                            th:text="${item.courseTitleSnapshot != null ? item.courseTitleSnapshot : item.course?.title}">
+                                            Đệm hát Guitar những bài hát của Eric Clapton</h4>
+                                        <span class="text-muted fs-8 d-block mb-2"
+                                            th:text="'Giảng viên: ' + ${item.course?.instructor != null ? item.course.instructor.lastName + ' ' + item.course.instructor.firstName : 'GIẢNG VIÊN'}">Giảng
+                                            viên: NGUYỄN CÔNG PHƯƠNG</span>
+                                        <a th:href="@{/course/detail(id=${item.course?.id})}"
+                                            class="btn btn-primary btn-sm rounded-3 px-3 py-1.5 fw-bold fs-8 d-inline-flex align-items-center gap-1">
+                                            <i data-lucide="eye" style="width: 14px; height: 14px;"></i> Xem chi tiết khóa học
+                                        </a>
+                                    </div>
+                                    <div class="text-sm-end align-self-center align-self-sm-start mt-2 mt-sm-0">
+                                        <span class="fw-bold text-dark fs-7"
+                                            th:text="${#numbers.formatDecimal(item.priceSnapshot, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">209,300
+                                            VNĐ</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Empty State -->
+            <div class="card border border-light-subtle rounded-3 p-5 bg-white text-center shadow-sm"
+                th:if="${orders == null || orders.isEmpty()}">
+                <div class="d-flex flex-column align-items-center justify-content-center py-4">
+                    <div class="empty-cart-icon-wrapper rounded-circle bg-light d-flex align-items-center justify-content-center mb-4"
+                        style="width: 80px; height: 80px;">
+                        <i data-lucide="history" class="text-muted" style="width: 36px; height: 36px;"></i>
+                    </div>
+                    <h3 class="fw-bold fs-5 font-heading text-dark mb-2">Bạn chưa mua khóa học nào!</h3>
+                    <p class="text-muted fs-7 mb-4 px-3" style="max-width: 440px;">Hãy tiếp tục chọn lựa các khóa học để
+                        phục vụ việc học tập của bạn.</p>
+                    <a th:href="@{/courses}"
+                        class="btn btn-primary rounded-3 px-4 py-2.5 fw-bold fs-7 shadow-primary d-inline-flex align-items-center gap-2">
+                        Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Custom JavaScript -->
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Quản lý Doanh thu</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/revenue.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="page-header d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h1 th:text="'Báo cáo Doanh thu tháng ' + ${today.getMonthValue()} + '/' + ${today.getYear()}"></h1>
+                <p>Tổng quan về tài chính và doanh thu của hệ thống.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/manager/revenue/instructor}" class="btn btn-outline">Doanh thu Giảng viên</a>
+                <a th:href="@{/manager/transaction-history/list}" class="btn btn-outline">Xem tất cả giao dịch</a>
+            </div>
+        </div>
+        
+        <div class="rev-grid">
+            <div class="rev-card">
+                <h3>Tổng doanh thu (Tháng)</h3>
+                <div class="rev-val" th:text="${#numbers.formatDecimal(monthlyRevenue.monthlyRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'"></div>
+                <div th:classappend="${growthRate >= 0 ? ' text-success' : ' text-danger'}" class="rev-sub" th:text="${'↗' + (growthRate > 0 ? '+' + growthRate : '') + ' % so với tháng trước'}"></div>
+            </div>
+            <div class="rev-card">
+                <h3>Thanh toán cho Giảng viên</h3>
+                <div class="rev-val" th:text="${#numbers.formatDecimal(monthlyRevenue.instructorRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'"></div>
+            </div>
+            <div class="rev-card">
+                <h3>Phí nền tảng (Thực nhận)</h3>
+                <div class="rev-val" th:text="${#numbers.formatDecimal(monthlyRevenue.platformRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'"></div>
+            </div>
+        </div>
+        
+        <div class="chart-section mt-4">
+            <h2 th:text="'Xu hướng Doanh thu tháng ' + ${today.getMonthValue()} + '/' + ${today.getYear()}"></h2>
+            <div class="chart-container" id="chart-container-id" th:data-total-revenue="${monthlyRevenue.monthlyRevenue}" th:data-week-revenue="${weeklyRevenueJson}">
+                <canvas id="revLineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const weeklyRevenue = JSON.parse(document.querySelector("#chart-container-id").dataset.weekRevenue);
+                const labels = [];
+                const revenues = [];
+                let max = 0;
+                const totalRevenue = document.querySelector("#chart-container-id").dataset.totalRevenue;
+                for (const week in weeklyRevenue) {
+                    labels.push("Tuần " + week);
+                    revenues.push(weeklyRevenue[week]);
+                    if (weeklyRevenue[week] > max) {
+                        max = weeklyRevenue[week];
+                    }
+                }
+                const ctx = document.getElementById('revLineChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: revenues,
+                            borderColor: '#0056b3',
+                            backgroundColor: 'rgba(0, 86, 179, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: true } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: {callback: value => value.toLocaleString('vi-VN') + ' đ'} },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

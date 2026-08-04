@@ -1,0 +1,101 @@
+/* --- Custom Styles for Purchase History (purchase_history.html) --- */
+
+/* Order Cards styling */
+.order-card {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: var(--transition, all 0.2s ease-in-out);
+}
+
+.order-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.01) !important;
+}
+
+.order-card .card-header {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+}
+
+/* Badge customizations */
+.bg-success-subtle {
+    background-color: #ecfdf5 !important;
+}
+
+.text-success {
+    color: #059669 !important;
+}
+
+.border-success-subtle {
+    border-color: #a7f3d0 !important;
+}
+
+/* Item styling */
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8fafc;
+}
+
+.list-group-item img {
+    border: 1px solid #f1f5f9;
+}
+
+/* Custom list-group borders */
+.list-group-item.border-light-subtle {
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Toggle buttons styling */
+.btn-toggle-order {
+    font-size: 13px !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+.btn-toggle-order:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+}
+
+.btn-toggle-order .toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+/* Toggle text and icon direction using aria-expanded (no JS required) */
+.btn-toggle-order[aria-expanded="true"] span::before {
+    content: "Ẩn chi tiết";
+}
+
+.btn-toggle-order[aria-expanded="false"] span::before {
+    content: "Xem chi tiết";
+}
+
+.btn-toggle-order[aria-expanded="false"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .list-group-item img {
+        width: 100% !important;
+        height: 140px !important;
+        margin-bottom: 10px;
+    }
+}
+
+/* Contrast improvements for Light Mode */
+.text-muted-dark {
+    color: #334155 !important;
+}
+.text-muted {
+    color: #475569 !important;
+}
+.text-dark {
+    color: #0f172a !important;
+}
+.order-card .card-header {
+    background-color: #f8fafc !important; /* Slightly darker header background for better contrast */
+}

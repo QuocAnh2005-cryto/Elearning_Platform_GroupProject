@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đổi mật khẩu thành công | LearningHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="../../static/css/changepass-success.css">
+  <link rel="stylesheet" th:href="@{/css/changepass-success.css}">
+</head>
+<body>
+
+<div class="success-full-wrapper">
+  <div class="bg-blur-glow"></div>
+
+  <div class="success-card-centered">
+    <div class="brand-logo mb-40">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>LearningHub</span>
+    </div>
+
+    <div class="success-icon-box">
+      <div class="icon-circle-core">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div class="pulse-wave wave-1"></div>
+      <div class="pulse-wave wave-2"></div>
+    </div>
+
+    <div class="success-content">
+      <h1>Cập nhật thành công!</h1>
+      <p>Mật khẩu của bạn đã được thay đổi an toàn và bảo mật tuyệt đối. Giờ đây bạn có thể tiếp tục hành trình khám phá thế hệ tri thức mới trên LearningHub.</p>
+    </div>
+
+    <div class="action-box">
+      <a th:href="@{/login}" class="btn-primary-action">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Quay lại trang Đăng nhập</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

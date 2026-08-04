@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/manager-layout}">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Cấp quyền khóa học</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/grant-access.css}">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="page-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="fw-bold font-heading mb-1">Cấp quyền truy cập khóa học</h1>
+                <p class="text-muted">Cấp quyền học tập trực tiếp cho học viên trên hệ thống.</p>
+            </div>
+        </div>
+
+        <!-- Alert Notifications -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4"
+            role="alert" style="border-radius: 8px;">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            <span th:text="${successMessage}">Cấp quyền thành công!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4"
+            role="alert" style="border-radius: 8px;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>
+            <span th:text="${errorMessage}">Đã xảy ra lỗi!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="grant-access-container">
+            <!-- Search Form -->
+            <div class="search-section">
+                <h5 class="fw-bold mb-3" style="color: #444;">Tìm kiếm học viên</h5>
+                <form th:action="@{/manager/grant-access}" method="get">
+                    <div class="d-flex gap-2 align-items-center" style="max-width: 600px;">
+                        <div class="search-box-wrapper flex-grow-1">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" name="keyword" th:value="${keyword}"
+                                placeholder="Tìm kiếm học viên theo email hoặc số điện thoại..." class="form-control"
+                                autocomplete="off">
+                        </div>
+                        <button type="submit" class="btn btn-search-custom">
+                            <i class="ph ph-magnifying-glass"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="divider-dashed"></div>
+
+            <!-- Learners Table -->
+            <div class="table-responsive">
+                <table class="table table-hover learner-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 120px; white-space: nowrap;">Ảnh đại diện</th>
+                            <th>Họ và Tên</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
+                            <th class="text-center" style="width: 150px; white-space: nowrap;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="learner : ${learners.content}">
+                            <td class="text-center">
+                                <div class="learner-avatar mx-auto">
+                                    <img th:if="${learner.avatarUrl != null && !#strings.isEmpty(learner.avatarUrl)}"
+                                        th:src="${learner.avatarUrl}" alt="Avatar"
+                                        class="w-100 h-100 object-fit-cover rounded-circle" />
+                                    <span
+                                        th:unless="${learner.avatarUrl != null && !#strings.isEmpty(learner.avatarUrl)}"
+                                        th:text="${learner.lastName != null && !learner.lastName.isEmpty() ? #strings.substring(learner.lastName, 0, 1).toUpperCase() : (learner.fullName != null && !learner.fullName.isEmpty() ? #strings.substring(learner.fullName, 0, 1).toUpperCase() : 'A')}">A</span>
+                                </div>
+                            </td>
+                            <td class="fw-semibold text-dark" th:text="${learner.fullName}">Nguyễn Văn A</td>
+                            <td th:text="${learner.email}">a@gmail.com</td>
+                            <td th:text="${learner.phone != null ? learner.phone : 'Chưa cập nhật'}">0987654321</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-select" th:data-user-id="${learner.id}"
+                                    th:data-user-name="${learner.fullName}" th:data-user-email="${learner.email}"
+                                    onclick="openGrantModal(this)">
+                                    Chọn
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${learners == null or learners.isEmpty()}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="ph ph-user-minus fs-1 mb-2 d-block"></i>
+                                Không tìm thấy học viên nào phù hợp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ══════════ PAGINATION ══════════ -->
+            <div class="pagination-circle-container" th:if="${learners.totalPages > 1}">
+                <div class="pagination-circle-buttons">
+                    <!-- Previous -->
+                    <a th:if="${learners.hasPrevious()}"
+                        th:href="@{/manager/grant-access(keyword=${param.keyword}, page=${learners.number - 1})}"
+                        class="page-circle-btn">
+                        <i class="ph ph-caret-left"></i>
+                    </a>
+                    <span th:unless="${learners.hasPrevious()}" class="page-circle-btn disabled">
+                        <i class="ph ph-caret-left"></i>
+                    </span>
+
+                    <!-- Page numbers list -->
+                    <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                        th:href="@{/manager/grant-access(keyword=${param.keyword}, page=${i})}"
+                        th:class="${learners.number == i ? 'page-circle-btn active' : 'page-circle-btn'}"
+                        th:text="${i + 1}">1</a>
+
+                    <!-- Next -->
+                    <a th:if="${learners.hasNext()}"
+                        th:href="@{/manager/grant-access(keyword=${param.keyword}, page=${learners.number + 1})}"
+                        class="page-circle-btn">
+                        <i class="ph ph-caret-right"></i>
+                    </a>
+                    <span th:unless="${learners.hasNext()}" class="page-circle-btn disabled">
+                        <i class="ph ph-caret-right"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grant Course Access Modal -->
+        <div class="modal fade" id="grantAccessModal" tabindex="-1" aria-labelledby="grantAccessModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg modal-grant-custom">
+                    <form id="formSubmit">
+                        <input type="hidden" name="userId" id="modalUserId">
+
+                        <div class="modal-header-custom">
+                            <h5 class="modal-title-custom" id="grantAccessModalLabel">Cấp quyền truy cập khóa học</h5>
+                        </div>
+
+                        <div class="modal-body-custom">
+                            <!-- Learner info section -->
+                            <div class="modal-section">
+                                <label class="section-label">Học viên</label>
+                                <div class="learner-info-card">
+                                    <div class="info-item">
+                                        <i class="ph ph-user"></i>
+                                        <span id="modalUserName" class="info-text-name">Học viên</span>
+                                    </div>
+                                    <div class="info-item mt-2">
+                                        <i class="ph ph-envelope"></i>
+                                        <span id="modalUserEmail" class="info-text-email">email@gmail.com</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Course Select section -->
+                            <div class="modal-section">
+                                <label class="section-label">Khóa học <span class="required-star">*</span></label>
+                                <div class="custom-search-select">
+                                    <div class="select-search-box">
+                                        <input type="text" id="courseSearchInput" class="form-select-custom"
+                                            placeholder="Tìm kiếm và chọn khóa học..." autocomplete="off">
+                                        <i class="ph ph-caret-down select-caret"></i>
+                                    </div>
+                                    <div class="select-dropdown-options" id="courseDropdownOptions">
+                                        <div class="option-item" data-value="" style="display: none;">-- Chọn khóa học --</div>
+                                        <div th:each="course : ${courses}" class="option-item" th:data-value="${course.id}">
+                                            <span th:text="${course.courseName}">Tên khóa học</span>
+                                        </div>
+                                    </div>
+                                    <div id="hiddenCourseInputsContainer"></div>
+                                </div>
+                                <div class="selected-courses-badges d-flex flex-wrap gap-2 mt-2" id="selectedCoursesBadges"></div>
+                            </div>
+
+                            <!-- Reason section -->
+                            <div class="modal-section">
+                                <label class="section-label">Lý do <span class="required-star">*</span></label>
+                                <div class="select-wrapper-custom">
+                                    <select name="reason" id="modalReasonSelect" class="form-select-custom" required>
+                                        <option value="" disabled selected>-- Chọn lý do --</option>
+                                        <option th:each="reason : ${reasons}" th:value="${reason.name()}"
+                                            th:text="${reason.label}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Note section -->
+                            <div class="modal-section">
+                                <label class="section-label">Ghi chú (Không bắt buộc)</label>
+                                <textarea name="note" id="modalNote" class="form-textarea-custom"
+                                    placeholder="Học viên liên hệ hỗ trợ do..."></textarea>
+                            </div>
+
+                            <!-- Send email notification section -->
+                            <div class="modal-section-checkbox">
+                                <label class="checkbox-container-custom">
+                                    <input type="checkbox" name="sendEmail" id="modalSendEmail" checked>
+                                    <span class="checkmark-custom"></span>
+                                    <span class="checkbox-label-text">Gửi email thông báo</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer-custom">
+                            <button type="button" class="btn-cancel-custom" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" id="btnSubmitForm" class="btn-submit-custom">Cấp quyền</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container (Bootstrap 5 Toast) -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+            <div id="resultToast" class="toast align-items-center text-white border-0" role="alert"
+                aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="toastMessage">
+                        Thông báo
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <script th:src="@{/js/manager/grant-access.js}"></script>
+    </th:block>
+</body>
+
+</html>

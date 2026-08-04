@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câu hỏi ôn tập</title>
+    <meta name="description" content="Trang câu hỏi ôn tập cho bài học Learning Hub.">
+
+    <link rel="stylesheet" href="/css/home.css" th:href="@{/css/home.css}">
+    <link rel="stylesheet" href="/css/quiz.css" th:href="@{/css/quiz.css}">
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<body class="quiz-page-body">
+    <main class="quiz-page" th:fragment="quizContent">
+        <link rel="stylesheet" href="/css/quiz.css" th:href="@{/css/quiz.css}">
+
+        <!-- Header hiển thị tên khu vực quiz và tên bài học hiện tại -->
+        <header class="quiz-page-header">
+            <div class="quiz-page-header-icon" aria-hidden="true">?</div>
+            <div class="quiz-page-header-copy">
+                <h1 class="quiz-page-title" th:text="${page.quizCount > 0 ? 'Quiz của bài học' : 'Câu hỏi ôn tập'}">Quiz của bài học</h1>
+                <p class="quiz-page-subtitle" th:text="${page.lessonTitle != null ? page.lessonTitle : 'Bài học hiện tại'}">Bài học hiện tại</p>
+            </div>
+        </header>
+
+        <!-- Thống kê nhanh: số quiz, tổng số câu hỏi và trạng thái chung -->
+        <section class="quiz-summary-panel">
+            <div class="quiz-summary-card">
+                <span class="quiz-summary-label">Quiz</span>
+                <strong class="quiz-summary-value" th:text="${page.quizCount}">0</strong>
+                <small class="quiz-summary-note">bài quiz trong bài học này</small>
+            </div>
+            <div class="quiz-summary-card">
+                <span class="quiz-summary-label">Câu hỏi</span>
+                <strong class="quiz-summary-value" th:text="${page.totalQuestions}">0</strong>
+                <small class="quiz-summary-note">tổng số câu đang có</small>
+            </div>
+            <div class="quiz-summary-card">
+                <span class="quiz-summary-label">Trạng thái</span>
+                <strong class="quiz-summary-value" th:text="${page.previewMode ? 'Xem trước' : (page.quizCount > 0 ? 'Sẵn sàng' : 'Chưa có quiz')}">Sẵn sàng</strong>
+                <small class="quiz-summary-note" th:text="${page.previewMode ? 'chỉ xem nội dung, không lưu lịch sử làm bài' : 'chọn đáp án rồi nộp bài khi hoàn tất'}">chọn đáp án rồi nộp bài khi hoàn tất</small>
+            </div>
+        </section>
+
+        <!-- Khu vực chính chỉ hiển thị khi bài học có quiz và đã xác định được quiz đang chọn -->
+        <section class="quiz-stack" th:if="${!page.isEmpty() and page.activeQuiz != null}">
+            <div class="quiz-container-layout is-collapsed">
+                <!-- Sidebar chọn quiz, chỉ hiện khi bài học có nhiều hơn một quiz -->
+                <aside class="quiz-sidebar-nav" th:if="${page.quizzes.size() > 1}">
+                    <div class="quiz-sidebar-header">
+                        <span class="quiz-nav-title">Chọn bài Quiz</span>
+                        <button type="button" class="quiz-toggle-btn" id="toggleQuizSidebarBtn" title="Mở rộng danh sách" aria-label="Mở rộng danh sách">&#10095;</button>
+                    </div>
+                    <div class="quiz-nav-list">
+                        <a th:each="quiz, quizStat : ${page.quizzes}"
+                           th:href="${page.previewMode}
+                                ? @{/instructor/quiz/lesson-preview/{lessonId}(lessonId=${page.lessonId}, activeQuizId=${quiz.id})}
+                                : @{/quiz/lesson/{lessonId}(lessonId=${page.lessonId}, activeQuizId=${quiz.id})}"
+                           class="quiz-nav-item quiz-option-link"
+                           th:classappend="${quiz.active} ? 'active' : ''">
+                            <div class="quiz-nav-item-header">
+                                <span class="quiz-nav-badge" th:text="${'Quiz #' + quizStat.count}">Quiz #1</span>
+                                <span th:if="${quiz.latestAttempt != null}"
+                                      class="quiz-status-pill"
+                                      th:classappend="${quiz.latestAttempt.passed} ? 'passed' : 'failed'"
+                                      th:text="${quiz.latestAttempt.statusLabel}">
+                                    Đạt
+                                </span>
+                            </div>
+                            <div class="quiz-nav-item-title" th:text="${quiz.title != null ? quiz.title : 'Quiz ' + quiz.id}">Tiêu đề Quiz</div>
+                        </a>
+                    </div>
+                </aside>
+
+                <!-- Nội dung chi tiết của quiz đang active -->
+                <div class="quiz-main-content" th:style="${page.quizzes.size() == 1 ? 'grid-column: 1 / -1;' : ''}">
+                    <article class="quiz-card quiz-overview-card quiz-detail-card" th:object="${page.activeQuiz}">
+                        <!-- Tiêu đề, điểm đạt tối thiểu và số câu của quiz đang xem -->
+                        <div class="quiz-card-top">
+                            <div class="quiz-card-heading">
+                                <span class="quiz-card-kicker" th:text="${'Quiz #' + page.activeQuiz.id}">Quiz #1</span>
+                                <h2 class="quiz-card-title" th:text="${page.activeQuiz.title != null ? page.activeQuiz.title : 'Quiz không có tiêu đề'}">Quiz</h2>
+                            </div>
+
+                            <div class="quiz-badges">
+                                <span class="quiz-points">Phần trăm điểm tối thiểu để đạt: <strong th:text="${page.activeQuiz.passScorePercent != null ? page.activeQuiz.passScorePercent + '%' : '---'}">---</strong></span>
+                                <span class="quiz-points quiz-points-soft">Số câu: <strong th:text="${page.activeQuiz.questionCount}">0</strong></span>
+                                <span class="quiz-points quiz-points-soft"
+                                      th:if="${page.activeQuiz.timeLimitMinutes != null}">
+                                    Thời gian: <strong><span class="quiz-countdown"
+                                                            th:attr="data-time-limit-minutes=${page.activeQuiz.timeLimitMinutes}"
+                                                            th:text="${page.activeQuiz.timeLimitMinutes + ':00'}">15:00</span></strong>
+                                </span>
+                                <span class="quiz-points quiz-points-soft"
+                                      th:unless="${page.activeQuiz.timeLimitMinutes != null}">Không giới hạn thời gian</span>
+                            </div>
+                        </div>
+
+                        <!-- Chế độ xem kết quả sau khi người học đã từng nộp bài và không chọn làm lại -->
+                        <div th:if="${!page.previewMode and page.activeQuiz.showingResult}" class="quiz-history-section">
+                            <h3 class="quiz-history-title" style="font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--quiz-text);">Lịch sử làm bài của bạn</h3>
+
+                            <!-- Danh sách các lần làm bài, mặc định hiện lần đang chọn và lần mới nhất -->
+                            <div class="quiz-attempt-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                                <a th:each="attempt : ${page.activeQuiz.attempts}"
+                                   th:href="@{/quiz/lesson/{lessonId}(lessonId=${page.lessonId}, activeQuizId=${page.activeQuiz.id}, activeAttemptId=${attempt.id})}"
+                                   class="quiz-attempt-item quiz-option-link text-decoration-none"
+                                   th:classappend="${attempt.active} ? 'active-attempt-item' : 'older-attempt'"
+                                   th:style="${attempt.active or attempt.latest} ? 'display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--quiz-border); border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);' : 'display: none; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--quiz-border); border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);'">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 15px; color: var(--quiz-text);" th:text="${attempt.title}">Lần làm bài</div>
+                                        <div style="font-size: 12px; color: var(--quiz-muted); margin-top: 4px;" th:text="${#temporals.format(attempt.submittedAt, 'dd/MM/yyyy HH:mm')}">Thời gian nộp</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: 800; font-size: 18px;"
+                                             th:styleappend="${attempt.passed} ? 'color: var(--quiz-success);' : 'color: #ef4444;'"
+                                             th:text="${attempt.score + '%'}">80%</div>
+                                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 2px;"
+                                             th:styleappend="${attempt.passed} ? 'color: var(--quiz-success);' : 'color: #ef4444;'"
+                                             th:text="${attempt.shortStatusLabel}">ĐẠT</div>
+                                    </div>
+                                </a>
+
+                                <div th:if="${page.activeQuiz.olderAttemptCount > 0}" style="text-align: center; margin-top: 4px;">
+                                    <button type="button" class="btn-toggle-attempts"
+                                            style="background: transparent; border: 1px solid var(--quiz-border); color: var(--quiz-primary); font-size: 13px; font-weight: 600; cursor: pointer; padding: 6px 16px; border-radius: 99px; transition: all 0.2s;"
+                                            th:data-count="${page.activeQuiz.attempts.size()}">
+                                        Xem thêm <span th:text="${page.activeQuiz.olderAttemptCount}">1</span> lần làm bài trước &#10095;
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Nút chuyển sang chế độ làm lại quiz -->
+                            <div class="quiz-actions" style="display: flex; justify-content: center; margin-bottom: 24px;">
+                                <a th:href="@{/quiz/lesson/{lessonId}(lessonId=${page.lessonId}, retake=true, activeQuizId=${page.activeQuiz.id})}"
+                                   class="quiz-submit-button"
+                                   style="text-decoration: none; display: inline-block; text-align: center;">
+                                    Làm lại bài Quiz
+                                </a>
+                            </div>
+
+                            <!-- Phần review đáp án của lần làm bài đang chọn -->
+                            <div class="quiz-review-section" style="margin-top: 40px; border-top: 1px dashed var(--quiz-border); padding-top: 30px;">
+                                <h3 class="quiz-history-title"
+                                    style="font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--quiz-text);"
+                                    th:text="${'Đáp án & Giải thích chi tiết (' + page.activeQuiz.selectedAttempt.title + ')'}">
+                                    Đáp án & Giải thích chi tiết
+                                </h3>
+
+                                <!-- Danh sách câu hỏi ở chế độ review: tô màu đáp án đúng/sai/đúng nhưng bỏ lỡ -->
+                                <div class="quiz-question-list" th:if="${!page.activeQuiz.questions.isEmpty()}">
+                                    <article class="quiz-question-box" th:each="question, questionStat : ${page.activeQuiz.questions}" style="margin-bottom: 24px;">
+                                        <div class="quiz-card-top quiz-question-top" style="margin-bottom: 12px;">
+                                            <div class="quiz-question-heading">
+                                                <span class="quiz-question-number">Câu <span th:text="${question.position != null ? question.position : questionStat.count}">1</span></span>
+                                                <h3 class="quiz-question-title" th:text="${question.questionText}">Nội dung câu hỏi</h3>
+                                            </div>
+                                        </div>
+
+                                        <div class="quiz-options" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px;">
+                                            <div th:each="answer, answerStat : ${question.answers}"
+                                                 class="quiz-option-ui"
+                                                 th:classappend="${answer.reviewClass}"
+                                                 style="pointer-events: none; user-select: none;">
+                                                <span class="quiz-option-index" th:text="${answerStat.count}">A</span>
+                                                <span class="quiz-option-text" th:text="${answer.answerText}">Đáp án</span>
+                                                <span th:if="${answer.reviewLabel != ''}"
+                                                      class="quiz-answer-badge"
+                                                      th:classappend="${answer.selected and answer.correct} ? 'badge-user-correct' : (${answer.selected} ? 'badge-user-wrong' : 'badge-correct-missed')"
+                                                      th:text="${answer.reviewLabel}">
+                                                    Đáp án đúng
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Giải thích của câu hỏi, nếu giảng viên có nhập -->
+                                        <div class="quiz-explanation-box"
+                                             style="padding: 14px 18px; border-left: 4px solid var(--quiz-primary); border-radius: 0 14px 14px 0; font-size: 14px; line-height: 1.5; margin-top: 10px;"
+                                             th:styleappend="${question.explanation != null and !#strings.isEmpty(question.explanation)} ? 'background-color: var(--quiz-primary-soft); color: var(--quiz-primary-deep); border-color: var(--quiz-primary);' : 'background-color: #f1f5f9; color: #475569; border-color: #94a3b8;'">
+                                            <strong>Giải thích:</strong>
+                                            <span th:if="${question.explanation != null and !#strings.isEmpty(question.explanation)}" th:text="${question.explanation}">Nội dung giải thích</span>
+                                            <span th:unless="${question.explanation != null and !#strings.isEmpty(question.explanation)}">Không có giải thích chi tiết cho câu hỏi này.</span>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chế độ làm bài: hiện khi chưa có attempt hoặc người học bấm làm lại -->
+                        <div th:if="${page.previewMode}" class="quiz-question-list">
+                            <!-- Instructor preview: chi hien cau hoi/dap an de xem, khong render form submit nen khong luu QuizAttempt. -->
+                            <article class="quiz-question-box" th:each="question, questionStat : ${page.activeQuiz.questions}">
+                                <div class="quiz-card-top quiz-question-top">
+                                    <div class="quiz-question-heading">
+                                        <span class="quiz-question-number">Câu <span th:text="${question.position != null ? question.position : questionStat.count}">1</span></span>
+                                        <h3 class="quiz-question-title" th:text="${question.questionText}">Nội dung câu hỏi</h3>
+                                    </div>
+
+                                    <div class="quiz-question-tags">
+                                        <span class="quiz-tag" th:text="${question.multipleChoice ? 'Nhiều đáp án' : 'Một đáp án'}">Một đáp án</span>
+                                        <span class="quiz-tag quiz-tag-soft"><span th:text="${question.displayPoints + ' điểm'}">1 điểm</span></span>
+                                    </div>
+                                </div>
+
+                                <fieldset class="quiz-options"
+                                          th:if="${!question.answers.isEmpty()}"
+                                          disabled
+                                          th:attr="aria-label=${'Các lựa chọn cho câu hỏi ' + (question.position != null ? question.position : questionStat.count)}">
+                                    <label class="quiz-option" th:each="answer, answerStat : ${question.answers}">
+                                        <input th:type="${question.multipleChoice ? 'checkbox' : 'radio'}"
+                                               th:checked="${answer.correct}"
+                                               disabled>
+                                        <span class="quiz-option-ui">
+                                            <span class="quiz-radio-indicator" aria-hidden="true"></span>
+                                            <span class="quiz-option-index" th:text="${answerStat.count}">A</span>
+                                            <span class="quiz-option-text" th:text="${answer.answerText}">Đáp án</span>
+                                            <span th:if="${answer.correct}" class="quiz-answer-badge badge-user-correct">Đáp án đúng</span>
+                                        </span>
+                                    </label>
+                                </fieldset>
+
+                                <div class="quiz-empty-question" th:if="${question.answers.isEmpty()}">
+                                    Chưa có đáp án cho câu hỏi này.
+                                </div>
+                            </article>
+                        </div>
+
+                        <form th:if="${!page.previewMode and !page.activeQuiz.showingResult}"
+                              th:action="@{/quiz/submit/{quizId}(quizId=${page.activeQuiz.id})}"
+                              method="POST"
+                              th:attr="data-time-limit-minutes=${page.activeQuiz.timeLimitMinutes}">
+                            <!-- Dữ liệu bind vào QuizSubmitDTO ở controller -->
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" name="quizId" th:value="${page.activeQuiz.id}" />
+
+                            <div class="quiz-question-list" th:if="${!page.activeQuiz.questions.isEmpty()}">
+                                <!-- Một câu hỏi trong form submit, gồm questionId và danh sách selectedAnswerIds -->
+                                <article class="quiz-question-box" th:each="question, questionStat : ${page.activeQuiz.questions}">
+                                    <input type="hidden" th:name="${'questions[' + question.formIndex + '].questionId'}" th:value="${question.id}" />
+
+                                    <div class="quiz-card-top quiz-question-top">
+                                        <div class="quiz-question-heading">
+                                            <span class="quiz-question-number">Câu <span th:text="${question.position != null ? question.position : questionStat.count}">1</span></span>
+                                            <h3 class="quiz-question-title" th:text="${question.questionText}">Nội dung câu hỏi</h3>
+                                        </div>
+
+                                        <div class="quiz-question-tags">
+                                            <span class="quiz-tag" th:text="${question.multipleChoice ? 'Nhiều đáp án' : 'Một đáp án'}">Một đáp án</span>
+                                            <span class="quiz-tag quiz-tag-soft"><span th:text="${question.displayPoints + ' điểm'}">1 điểm</span></span>
+                                        </div>
+                                    </div>
+
+                                    <fieldset class="quiz-options"
+                                              th:if="${!question.answers.isEmpty()}"
+                                              th:attr="aria-label=${'Các lựa chọn cho câu hỏi ' + (question.position != null ? question.position : questionStat.count)}">
+                                        <!-- Checkbox dùng cho câu nhiều đáp án, radio dùng cho câu một đáp án -->
+                                        <label class="quiz-option" th:each="answer, answerStat : ${question.answers}">
+                                            <input th:type="${question.multipleChoice ? 'checkbox' : 'radio'}"
+                                                   th:name="${'questions[' + question.formIndex + '].selectedAnswerIds'}"
+                                                   th:value="${answer.id}">
+                                            <span class="quiz-option-ui">
+                                                <span class="quiz-radio-indicator" aria-hidden="true"></span>
+                                                <span class="quiz-option-index" th:text="${answerStat.count}">A</span>
+                                                <span class="quiz-option-text" th:text="${answer.answerText}">Đáp án</span>
+                                            </span>
+                                        </label>
+                                    </fieldset>
+
+                                    <div class="quiz-empty-question" th:if="${question.answers.isEmpty()}">
+                                        Chưa có đáp án cho câu hỏi này.
+                                    </div>
+                                </article>
+                            </div>
+
+                            <!-- Nút submit chỉ hiện khi quiz có ít nhất một câu hỏi -->
+                            <div class="quiz-actions" th:if="${!page.activeQuiz.questions.isEmpty()}" style="margin-top: 24px;">
+                                <button type="submit" class="quiz-submit-button">Nộp bài</button>
+                            </div>
+                        </form>
+
+                        <!-- Trạng thái quiz rỗng: có quiz nhưng chưa có câu hỏi -->
+                        <div class="quiz-empty-question" th:if="${page.activeQuiz.questions.isEmpty()}">
+                            Quiz này chưa có câu hỏi.
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trạng thái bài học chưa có quiz nào -->
+        <section class="quiz-empty-state" th:if="${page.empty}">
+            <h2>Chưa có quiz cho bài học này</h2>
+        </section>
+    </main>
+    <script th:src="@{/js/quiz.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biên Soạn Câu Hỏi Chi Tiết — Learning Hub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&family=Outfit:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/manage-questions.css}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-quiz-dashboard">
+
+<header class="editor-navbar d-flex align-items-center justify-content-between px-4">
+    <div class="d-flex align-items-center gap-3">
+        <a th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id}, lessonId=${quiz.lessonId})}" class="btn-nav-back" title="Hủy bỏ và quay lại">
+            <i data-lucide="x"></i>
+        </a>
+        <div class="editor-brand d-flex align-items-center gap-2">
+            <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+            <span class="logo-text fw-bold font-heading brand-color fs-4">LearningHub</span>
+            <span class="badge bg-brand-light brand-color font-heading fs-8 ms-2">QUESTION EDITOR</span>
+        </div>
+    </div>
+
+    <div class="d-none d-md-block text-center">
+        <span class="text-muted fs-8 text-uppercase fw-bold d-block letter-spacing-1">Thuộc bộ Quiz:</span>
+        <span class="fw-semibold text-dark fs-7 font-heading" th:text="${quiz.title}">Cấu hình Hibernate Core</span>
+    </div>
+
+    <div class="dropdown user-profile-zone">
+        <div class="d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+            <img th:src="${currentUser != null && currentUser.getFullAvatarUrl() != null ? currentUser.getFullAvatarUrl() : '/images/avatar.png'}" class="editor-avatar" alt="User">
+            <div class="d-none d-sm-block text-start">
+                <h6 class="m-0 fw-bold fs-7 text-dark" th:text="${currentUser != null ? currentUser.firstName + ' ' + currentUser.lastName : 'Giảng viên'}">Giảng viên</h6>
+                <span class="fs-8 text-muted d-block">Chuyên Viên</span>
+            </div>
+            <i data-lucide="chevron-down" class="text-muted ms-1" style="width: 14px;"></i>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2 mt-2 custom-dropdown">
+            <li><a class="dropdown-item py-2 rounded-2 fs-7 text-dark d-flex align-items-center gap-2" th:href="@{/instructor/sidebar}"><i data-lucide="user" style="width:16px;"></i> Hồ sơ cá nhân</a></li>
+            <li><hr class="dropdown-divider my-1 border-light"></li>
+            <li><a class="dropdown-item py-2 rounded-2 fs-7 text-danger d-flex align-items-center gap-2" th:href="@{/logout}"><i data-lucide="log-out" style="width:16px;"></i> Đăng xuất</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="container py-5" style="margin-bottom: 100px;">
+    <form th:action="@{/instructor/quiz/save-question}" method="POST" th:object="${question}" id="questionForm">
+
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" name="quizId" th:value="${quiz.id}">
+        <input type="hidden" name="page" th:value="${page}">
+        <input type="hidden" name="size" th:value="${size}">
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-xs rounded-4 p-4 bg-white mb-4">
+                    <div class="mb-4">
+                        <label class="form-label font-heading fw-bold text-dark fs-7 mb-2">Loại câu hỏi trắc nghiệm</label>
+                        <div class="row g-3">
+                            <div class="col-sm-6" th:each="type : ${questionTypes}">
+                                <label class="type-selector-card p-3 rounded-3 border d-flex align-items-center gap-3" th:for="${'type-' + type}">
+                                    <input type="radio" th:field="*{questionType}" th:id="${'type-' + type}"
+                                           th:value="${type}" class="form-check-input type-radio-input"
+                                           onchange="handleTypeChange(this.value)">
+                                    <div>
+                                        <span class="fw-bold text-dark font-heading fs-7 d-block" th:text="${type}">Tên Loại</span>
+                                        <span class="text-muted fs-8" th:text="${type}">Mô tả</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="questionText" class="form-label font-heading fw-bold text-dark fs-7 mb-2">Nội dung câu hỏi</label>
+                        <textarea id="questionText" th:field="*{questionText}" rows="4" class="form-control rounded-3 p-3 fs-7 border-light-subtle font-heading"
+                                  placeholder="Nhập câu hỏi trắc nghiệm của bạn tại đây..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-xs rounded-4 p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="font-heading fw-bold text-dark fs-6 m-0">Danh sách phương án trả lời</h5>
+                            <p class="text-muted fs-8 m-0 mt-0.5">Tích chọn vào biểu tượng tương ứng để thiết lập đáp án đúng</p>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold" onclick="addNewAnswerRow()">
+                            <i data-lucide="plus" class="me-1" style="width:14px; display:inline-block; vertical-align:middle;"></i> Thêm phương án
+                        </button>
+                    </div>
+
+                    <div id="answersContainer" class="d-flex flex-column gap-3">
+                        <div th:each="ans, state : *{answers}" class="answer-row-item d-flex align-items-start gap-3" th:if="${!#lists.isEmpty(question.answers)}">
+                            <input type="hidden" class="answer-id-input" th:value="${ans.id}">
+
+                            <div class="correct-indicator-wrapper pt-3">
+                                <input type="radio" class="correct-input-control" th:value="true" th:checked="${ans.correct}">
+                            </div>
+                            <div class="input-group rounded-3 overflow-hidden border shadow-xs flex-grow-1 align-items-stretch">
+                                <span class="input-group-text bg-light font-heading fw-bold text-muted border-0 px-3 fs-7 answer-index-label d-flex align-items-center">A</span>
+                                <textarea class="form-control border-0 p-3 fs-7 answer-text-input" rows="1" style="resize: none;" placeholder="Nhập nội dung phương án..." required th:text="${ans.answerText}"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-delete-answer mt-1" onclick="removeAnswerRow(this)"><i data-lucide="trash-2"></i></button>
+                        </div>
+
+                        <div class="answer-row-item d-flex align-items-start gap-3" th:if="${#lists.isEmpty(question.answers)}" th:each="i : ${#numbers.sequence(0, 3)}">
+                            <input type="hidden" class="answer-id-input" value="">
+
+                            <div class="correct-indicator-wrapper pt-3">
+                                <input type="radio" class="correct-input-control" value="true" th:checked="${i == 0}">
+                            </div>
+                            <div class="input-group rounded-3 overflow-hidden border shadow-xs flex-grow-1 align-items-stretch">
+                                <span class="input-group-text bg-light font-heading fw-bold text-muted border-0 px-3 fs-7 answer-index-label d-flex align-items-center">A</span>
+                                <textarea class="form-control border-0 p-3 fs-7 answer-text-input" rows="1" style="resize: none;" placeholder="Nhập nội dung phương án..." required></textarea>
+                            </div>
+                            <button type="button" class="btn btn-delete-answer mt-1" onclick="removeAnswerRow(this)"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-xs rounded-4 p-4 bg-white sticky-lg-top" style="top: 96px; z-index: 100;">
+                    <h5 class="font-heading fw-bold text-dark fs-6 mb-3">Cấu hình thang điểm</h5>
+
+                    <div class="mb-4">
+                        <label for="points" class="form-label font-heading fw-medium text-muted fs-8 text-uppercase letter-spacing-1">Điểm số cho câu hỏi này</label>
+                        <div class="input-group border rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0 text-muted"><i data-lucide="sparkles" style="width: 16px;"></i></span>
+                            <input type="number" id="points" th:field="*{points}" class="form-control border-0 p-2.5 fs-7" min="1" max="10" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="explanation" class="form-label font-heading fw-medium text-muted fs-8 text-uppercase letter-spacing-1">Giải thích đáp án (Optional)</label>
+                        <textarea id="explanation" th:field="*{explanation}" rows="4" class="form-control rounded-3 p-2.5 fs-7 border-light-subtle" placeholder="Giải thích tại sao đáp án này đúng..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sticky-control-bar bg-white p-3 px-4 border-top shadow-lg d-flex align-items-center justify-content-between position-fixed bottom-0 start-0 w-100" style="z-index: 1020;">
+            <a th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id}, lessonId=${quiz.lessonId})}" class="btn btn-outline-secondary rounded-pill px-4 py-2.5 fw-semibold fs-7 text-decoration-none">
+                Hủy bỏ cấu hình
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <button type="submit" class="btn btn-primary-solid rounded-pill px-5 py-2.5 fw-semibold fs-7 shadow-blue">
+                    <i data-lucide="check-circle" class="me-1" style="width:16px; display:inline-block; vertical-align:middle;"></i> Lưu Câu Hỏi Vào Bộ Quiz
+                </button>
+            </div>
+        </div>
+    </form>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const ALPHABET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+        const initialType = document.querySelector('.type-radio-input:checked')?.value || 'SINGLE';
+        handleTypeChange(initialType);
+        autoResizeTextareas();
+    });
+
+    function handleTypeChange(typeCode) {
+        const rows = document.querySelectorAll('.answer-row-item');
+        const isMultiple = (typeCode === 'MULTIPLE');
+
+        rows.forEach((row, index) => {
+            const wrapper = row.querySelector('.correct-indicator-wrapper');
+            const input = wrapper.querySelector('.correct-input-control');
+            const wasChecked = input ? input.checked : (index === 0);
+
+            if (isMultiple) {
+                wrapper.innerHTML = `<input type="checkbox" class="form-check-input correct-input-control checkbox-style" ${wasChecked ? 'checked' : ''}>`;
+            } else {
+                wrapper.innerHTML = `<input type="radio" name="singleCorrectIndex" class="form-check-input correct-input-control radio-style" value="${index}" ${wasChecked ? 'checked' : ''} onchange="syncSingleChoiceState()">`;
+            }
+        });
+
+        updateRowIndexesAndNames();
+    }
+
+    function syncSingleChoiceState() {
+        const selectedRadio = document.querySelector('input[name="singleCorrectIndex"]:checked');
+        const selectedIndex = selectedRadio ? parseInt(selectedRadio.value) : 0;
+        const rows = document.querySelectorAll('.answer-row-item');
+
+        rows.forEach((row, index) => {
+            const hiddenCorrect = row.querySelector('.hidden-correct-input');
+            if (hiddenCorrect) {
+                hiddenCorrect.value = (index === selectedIndex) ? "true" : "false";
+            }
+        });
+    }
+
+    function updateRowIndexesAndNames() {
+        const rows = document.querySelectorAll('.answer-row-item');
+        const currentType = document.querySelector('.type-radio-input:checked')?.value || 'SINGLE';
+        const isMultiple = (currentType === 'MULTIPLE');
+
+        let hasChecked = false;
+
+        rows.forEach((row, index) => {
+            // 1. Cập nhật nhãn chữ cái A, B, C, D...
+            const label = row.querySelector('.answer-index-label');
+            if (label) label.textContent = ALPHABET[index] || `P.Án ${index + 1}`;
+
+            // 2. Cập nhật name cho ID input (nếu có dữ liệu cũ)
+            const idInput = row.querySelector('.answer-id-input');
+            if (idInput) {
+                idInput.name = `answers[${index}].id`;
+                if(!idInput.value) idInput.removeAttribute('name');
+            }
+
+            // 3. Cập nhật name cho ô text area nhập đáp án
+            const textarea = row.querySelector('.answer-text-input');
+            if (textarea) textarea.name = `answers[${index}].answerText`;
+
+            // 4. Đồng bộ logic đúng/sai về cấu trúc mảng Object cho Spring Boot
+            // Xóa bỏ các input ẩn cũ của dòng này để render lại chuẩn xác
+            row.querySelectorAll('.hidden-correct-input').forEach(el => el.remove());
+
+            const indicator = row.querySelector('.correct-input-control');
+
+            if (isMultiple) {
+                if (indicator) {
+                    indicator.name = `answers[${index}].correct`;
+                    indicator.value = "true";
+                }
+            } else {
+                if (indicator) {
+                    indicator.value = index;
+                    if (indicator.checked) hasChecked = true;
+                }
+                // Thêm input ẩn để map giá trị true/false cho Single Choice
+                const hiddenCorrect = document.createElement('input');
+                hiddenCorrect.type = 'hidden';
+                hiddenCorrect.className = 'hidden-correct-input';
+                hiddenCorrect.name = `answers[${index}].correct`;
+                hiddenCorrect.value = (indicator && indicator.checked) ? "true" : "false";
+                row.appendChild(hiddenCorrect);
+            }
+        });
+
+        // Đảm bảo Single Choice luôn có ít nhất 1 đáp án được tích chọn
+        if (!isMultiple && !hasChecked && rows.length > 0) {
+            const firstRadio = rows[0].querySelector('input[name="singleCorrectIndex"]');
+            if (firstRadio) {
+                firstRadio.checked = true;
+                syncSingleChoiceState();
+            }
+        }
+    }
+
+    function addNewAnswerRow() {
+        const container = document.getElementById('answersContainer');
+        const currentCount = document.querySelectorAll('.answer-row-item').length;
+
+        if (currentCount >= 10) {
+            alert("Hệ thống giới hạn tối đa 10 phương án trả lời.");
+            return;
+        }
+
+        const newRow = document.createElement('div');
+        newRow.className = "answer-row-item d-flex align-items-start gap-3";
+        newRow.innerHTML = `
+            <input type="hidden" class="answer-id-input" value="">
+            <div class="correct-indicator-wrapper pt-3">
+                <input type="radio" class="correct-input-control">
+            </div>
+            <div class="input-group rounded-3 overflow-hidden border shadow-xs flex-grow-1 align-items-stretch">
+                <span class="input-group-text bg-light font-heading fw-bold text-muted border-0 px-3 fs-7 answer-index-label d-flex align-items-center">A</span>
+                <textarea class="form-control border-0 p-3 fs-7 answer-text-input" rows="1" style="resize: none;" placeholder="Nhập nội dung phương án..." required></textarea>
+            </div>
+            <button type="button" class="btn btn-delete-answer mt-1" onclick="removeAnswerRow(this)"><i data-lucide="trash-2"></i></button>
+        `;
+
+        container.appendChild(newRow);
+        lucide.createIcons();
+
+        const currentType = document.querySelector('.type-radio-input:checked')?.value || 'SINGLE';
+        handleTypeChange(currentType);
+        initAutoResizeForElement(newRow.querySelector('.answer-text-input'));
+    }
+
+    function removeAnswerRow(button) {
+        const rows = document.querySelectorAll('.answer-row-item');
+        if (rows.length <= 2) {
+            alert("Bạn phải giữ lại ít nhất 2 phương án trả lời.");
+            return;
+        }
+
+        const rowItem = button.closest('.answer-row-item');
+        rowItem.remove();
+
+        const currentType = document.querySelector('.type-radio-input:checked')?.value || 'SINGLE';
+        if (currentType !== 'MULTIPLE') {
+            updateRowIndexesAndNames();
+            syncSingleChoiceState();
+        } else {
+            updateRowIndexesAndNames();
+        }
+    }
+
+    function autoResizeTextareas() {
+        document.querySelectorAll('.answer-text-input').forEach(initAutoResizeForElement);
+    }
+
+    function initAutoResizeForElement(textarea) {
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    }
+</script>
+</body>
+</html>

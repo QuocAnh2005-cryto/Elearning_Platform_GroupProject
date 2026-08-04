@@ -1,0 +1,235 @@
+/* --- CSS Variables & Design System --- */
+:root {
+    --primary: #1a56db;
+    --primary-hover: #1e40af;
+    --primary-light: #eff6ff;
+    --bg-page: #f0f5fa;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+    
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Base Custom Resets & Typography --- */
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-page);
+    color: var(--text-main);
+}
+
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+.bg-page {
+    background-color: var(--bg-page) !important;
+}
+
+.fs-7 {
+    font-size: 14.5px !important;
+}
+
+.fs-8 {
+    font-size: 12.2px !important;
+}
+
+/* --- Navigation & Header --- */
+.logo-icon-box {
+    transition: var(--transition);
+}
+
+.navbar-brand:hover .logo-icon-box {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+.logo-text {
+    font-size: 19px;
+    letter-spacing: -0.5px;
+}
+
+.search-input {
+    transition: var(--transition);
+    border: 1.5px solid transparent !important;
+}
+
+.search-input:focus {
+    background-color: #ffffff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1) !important;
+}
+
+
+
+/* Hide default bootstrap dropdown caret */
+.no-caret::after {
+    display: none !important;
+}
+
+/* Breadcrumbs Separator */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+    vertical-align: middle;
+}
+
+/* --- Student Overview Card --- */
+.avatar-edit-btn {
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.avatar-edit-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: scale(1.08);
+}
+
+.verified-account-badge {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+}
+
+/* Custom styles matching Coursera Account Settings */
+.border-card {
+    border: 1px solid #d1d7e0;
+    background-color: #ffffff;
+}
+.text-coursera-blue {
+    color: #0056d2;
+}
+.bg-coursera-blue {
+    background-color: #0056d2;
+    color: #ffffff;
+}
+.bg-coursera-blue:hover {
+    background-color: #00419e;
+    color: #ffffff;
+}
+.warning-box {
+    background-color: #fff0d1;
+    border-radius: 16px;
+    border: 1px solid #ffe8cc;
+}
+
+/* Custom Bootstrap tab styling to match provided design */
+.nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+}
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 4px solid transparent;
+    color: #586372;
+    font-weight: 500;
+    padding: 8px 16px 12px 16px;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+.nav-tabs .nav-link:hover {
+    color: #1f2937;
+    border-color: transparent;
+}
+.nav-tabs .nav-link.active {
+    color: #1f2937 !important;
+    font-weight: 600;
+    border-bottom: 4px solid #1f2937 !important;
+    background: transparent !important;
+}
+
+/* --- Statistics Cards --- */
+.stat-icon-wrapper {
+    transition: var(--transition);
+}
+
+.card:hover .stat-icon-wrapper {
+    transform: scale(1.05);
+}
+
+.card {
+    transition: var(--transition);
+}
+
+.card.border:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md) !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* --- Settings List Options --- */
+.option-item {
+    transition: var(--transition);
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.option-item:last-child {
+    border-bottom: none !important;
+}
+
+.option-item:hover {
+    background-color: var(--primary-light) !important;
+    padding-left: 20px !important;
+}
+
+.option-item:hover span {
+    color: var(--primary) !important;
+}
+
+.option-item:hover i.text-muted {
+    color: var(--primary) !important;
+}
+
+.option-item i.text-light {
+    color: #cbd5e1 !important;
+    transition: var(--transition);
+}
+
+.option-item:hover i.text-light {
+    color: var(--primary) !important;
+    transform: translateX(2px);
+}
+
+/* --- Footer Custom styling --- */
+.footer-title {
+    letter-spacing: 0.5px;
+}
+
+.footer-links a {
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--primary) !important;
+    padding-left: 2px;
+}
+
+.footer-bottom button {
+    transition: var(--transition);
+}
+
+.footer-bottom button:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+    transform: scale(1.05);
+}
+
+.footer-bottom button i {
+    transition: var(--transition);
+}
+
+.footer-bottom button:hover i {
+    color: var(--primary) !important;
+}
+

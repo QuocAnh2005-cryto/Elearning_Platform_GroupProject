@@ -1,0 +1,43 @@
+.star-rating-css {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.star-rating-css input[type="radio"] {
+    display: none;
+}
+
+.star-rating-css label {
+    cursor: pointer;
+    padding: 2px;
+}
+
+/* Default: hollow star (grey border, no fill) */
+.star-rating-css label svg {
+    width: 24px;
+    height: 24px;
+    fill: none !important;
+    stroke: #ccc !important;
+    transition: stroke 0.15s ease-in-out, fill 0.15s ease-in-out;
+}
+
+/* Hover & Checked: filled yellow star (yellow border + yellow fill) */
+.star-rating-css input[type="radio"]:checked~label svg,
+.star-rating-css input[type="radio"]:checked~label svg polygon,
+.star-rating-css label:hover svg,
+.star-rating-css label:hover svg polygon,
+.star-rating-css label:hover~label svg,
+.star-rating-css label:hover~label svg polygon {
+    fill: #ffc107 !important;
+    stroke: #ffc107 !important;
+}
+
+/* Force solid yellow fill for all read-only/filled stars on the page */
+.star-icon.filled,
+.star-icon.filled polygon,
+.star-icon.filled path {
+    fill: #ffc107 !important;
+    stroke: #ffc107 !important;
+}

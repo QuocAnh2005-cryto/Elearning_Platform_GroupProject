@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Thông tin cá nhân - Quản trị viên</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/profile.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        
+        <!-- Alerts for Success/Error feedback -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="profile-container">
+            <!-- Profile Banner -->
+            <div class="profile-banner">
+                <div class="banner-content">
+                    <div class="banner-avatar-wrap">
+                        <img th:if="${user.avatarUrl != null}" th:src="${user.getFullAvatarUrl()}" alt="Avatar" class="w-100 h-100 object-fit-cover" />
+                        <span th:if="${user.avatarUrl == null}" th:text="${user.firstName != null and !user.firstName.isEmpty() ? #strings.substring(user.firstName, 0, 1).toUpperCase() : 'A'}">A</span>
+                    </div>
+                    <div class="banner-text">
+                        <h2 th:text="${user.lastName + ' ' + user.firstName}">Tên Admin</h2>
+                        <p th:text="${user.email}">admin@gmail.com</p>
+                        <span class="badge-role">Quản trị viên Hệ thống</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content Grid -->
+            <div class="profile-grid">
+                
+                <!-- Left: Edit Profile Info -->
+                <div class="card-panel">
+                    <div class="panel-title">
+                        <i class="ph ph-user-circle"></i>
+                        <span>Cập nhật thông tin cá nhân</span>
+                    </div>
+                    
+                    <form th:action="@{/admin/profile/update}" method="post" enctype="multipart/form-data">
+                        
+                        <!-- Avatar upload area -->
+                        <div class="avatar-upload-area">
+                            <div class="avatar-preview-sm">
+                                <img id="avatarPreview" th:if="${user.avatarUrl != null}" th:src="${user.getFullAvatarUrl()}" alt="Preview" class="w-100 h-100 object-fit-cover" />
+                                <span id="avatarFallback" th:if="${user.avatarUrl == null}" th:text="${user.firstName != null and !user.firstName.isEmpty() ? #strings.substring(user.firstName, 0, 1).toUpperCase() : 'A'}">A</span>
+                            </div>
+                            <div>
+                                <label for="avatarFile" class="btn-upload-trigger">
+                                    <i class="ph ph-camera"></i> Chọn ảnh đại diện mới
+                                </label>
+                                <input type="file" id="avatarFile" name="avatarFile" accept="image/*" class="d-none" onchange="previewImage(this)">
+                                <p class="text-muted mb-0 mt-1 small">Chấp nhận JPG, PNG dung lượng &lt; 2MB</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="lastName">Họ</label>
+                                    <input type="text" id="lastName" name="lastName" th:value="${user.lastName}" class="form-control-custom" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="firstName">Tên</label>
+                                    <input type="text" id="firstName" name="firstName" th:value="${user.firstName}" class="form-control-custom" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="phone">Số điện thoại</label>
+                            <input type="text" id="phone" name="phone" th:value="${user.phone}" class="form-control-custom" placeholder="Nhập số điện thoại">
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="bio">Giới thiệu bản thân (Bio)</label>
+                            <textarea id="bio" name="bio" rows="4" th:text="${user.bio}" class="form-control-custom" placeholder="Viết giới thiệu ngắn về bạn..."></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn-primary-custom">
+                                <i class="ph ph-floppy-disk"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Password & System Metadata -->
+                <div class="d-flex flex-column gap-4">
+                    
+                    <!-- Read-only metadata -->
+                    <div class="card-panel">
+                        <div class="panel-title">
+                            <i class="ph ph-info"></i>
+                            <span>Thông tin tài khoản</span>
+                        </div>
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <span class="info-label">Email</span>
+                                <span class="info-val" th:text="${user.email}">email@example.com</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Quyền hạn</span>
+                                <span class="info-val">Administrator</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Ngày đăng ký</span>
+                                <span class="info-val" th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">--/--/----</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Lần cuối cập nhật</span>
+                                <span class="info-val" th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'dd/MM/yyyy HH:mm') : 'Chưa cập nhật'}">--/--/----</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom JS to preview uploaded image -->
+    <th:block layout:fragment="page-js">
+        <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let preview = document.getElementById('avatarPreview');
+                        let fallback = document.getElementById('avatarFallback');
+                        
+                        if (!preview) {
+                            preview = document.createElement('img');
+                            preview.id = 'avatarPreview';
+                            preview.className = 'w-100 h-100 object-fit-cover';
+                            fallback.parentNode.appendChild(preview);
+                        }
+                        
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        
+                        if (fallback) {
+                            fallback.style.display = 'none';
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

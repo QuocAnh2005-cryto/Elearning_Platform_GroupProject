@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Learning Hub - Thư Viện Tài Liệu</title>
+    <link rel="stylesheet" th:href="@{/css/course_manage.css}"/>
+</head>
+<body>
+
+<div th:replace="~{instructor_course/sidebar :: sidebar(activePage='materials')}"></div>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Thư Viện Tài Liệu</h1>
+            <p class="page-subtitle">Quản lý tài liệu đã gắn trong các bài học của bạn.</p>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="success-msg" th:text="${success}">Thành công</div>
+    <div th:if="${error}" class="profile-alert profile-alert-error" th:text="${error}">Có lỗi xảy ra</div>
+
+    <section class="material-library-shell">
+        <div class="material-library-summary">
+            <div class="material-summary-item">
+                <span>Tổng tài liệu</span>
+                <strong th:text="${materialPage != null ? materialPage.totalElements : 0}">0</strong>
+            </div>
+            <div class="material-summary-note">
+                <strong>Quy tắc xóa:</strong>
+                Khóa học ở trạng thái Bản nháp hoặc Bị Từ Chối có thể được xóa. Khóa học ở trạng thái Đang Chờ Duyệt hoặc Đã Xuất Bản sẽ bị khóa. Khóa học ở trạng thái Đã Ẩn chỉ được phép xóa khi không còn học viên truy cập.
+            </div>
+        </div>
+
+        <div class="card material-library-card">
+            <form class="material-filter-bar" th:action="@{/instructor/materials}" method="get">
+                <input type="text"
+                       name="keyword"
+                       class="form-control material-search-input"
+                       placeholder="Tìm nhanh theo tên file..."
+                       th:value="${keyword}"/>
+
+                <select name="courseId" class="form-control">
+                    <option value="">Tất cả khóa học</option>
+                    <option th:each="c : ${courses}"
+                            th:value="${c.id}"
+                            th:selected="${selectedCourseId != null and selectedCourseId == c.id}"
+                            th:text="${c.title}">Khóa học</option>
+                </select>
+
+                <select name="sectionId" class="form-control">
+                    <option value="">Tất cả chương</option>
+                    <option th:each="s : ${sections}"
+                            th:value="${s.id}"
+                            th:selected="${selectedSectionId != null and selectedSectionId == s.id}"
+                            th:text="${s.title}">Section</option>
+                </select>
+
+                <select name="lessonId" class="form-control">
+                    <option value="">Tất cả bài học</option>
+                    <option th:each="l : ${lessons}"
+                            th:value="${l.id}"
+                            th:selected="${selectedLessonId != null and selectedLessonId == l.id}"
+                            th:text="${l.title}">Lesson</option>
+                </select>
+
+                <select name="fileType" class="form-control">
+                    <option value="">Tất cả loại file</option>
+                    <option th:each="type : ${fileTypes}"
+                            th:value="${type}"
+                            th:selected="${selectedFileType != null and #strings.toLowerCase(selectedFileType) == type}"
+                            th:text="${#strings.toUpperCase(type)}">PDF</option>
+                </select>
+
+                <select name="size" class="form-control material-size-select">
+                    <option value="8" th:selected="${pageSize == 8}">8 / trang</option>
+                    <option value="12" th:selected="${pageSize == 12}">12 / trang</option>
+                    <option value="20" th:selected="${pageSize == 20}">20 / trang</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a th:href="@{/instructor/materials}" class="btn btn-outline">Xóa lọc</a>
+            </form>
+
+            <div class="material-list-heading">
+                <div>
+                    <div class="card-title">Danh sách tài liệu</div>
+                    <p>
+                        Hiển thị
+                        <span th:text="${materialPage != null ? materialPage.numberOfElements : 0}">0</span>
+                        /
+                        <span th:text="${materialPage != null ? materialPage.totalElements : 0}">0</span>
+                        tài liệu phù hợp.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-empty material-empty-state" th:if="${materialPage == null or materialPage.empty}">
+                Chưa có tài liệu nào phù hợp với điều kiện lọc.
+            </div>
+
+            <div class="material-list" th:if="${materialPage != null and !materialPage.empty}">
+                <article class="material-row" th:each="m : ${materialPage.content}">
+                    <div class="material-file-icon" th:text="${m.fileType != null ? #strings.toUpperCase(m.fileType) : 'FILE'}">PDF</div>
+
+                    <div class="material-main">
+                        <div class="material-title-row">
+                            <h3 th:text="${m.fileName ?: 'Tài liệu không tên'}">Tên tài liệu</h3>
+                            <span class="material-status-pill"
+                                  th:classappend="${m.courseStatus != null ? ' status-' + #strings.toLowerCase(m.courseStatus) : ''}"
+                                  th:text="${m.courseStatusLabel ?: 'Chưa có trạng thái'}">Draft</span>
+                        </div>
+
+                        <div class="material-context-grid">
+                            <div>
+                                <span>Khóa học</span>
+                                <strong th:text="${m.courseTitle ?: 'Chưa gắn khóa học'}">Tên khóa học</strong>
+                            </div>
+                            <div>
+                                <span>Chương</span>
+                                <strong th:text="${m.sectionTitle ?: 'Chưa gắn chương'}">Tên chương</strong>
+                            </div>
+                            <div>
+                                <span>Bài học</span>
+                                <strong th:text="${m.lessonTitle ?: 'Chưa gắn bài học'}">Tên bài học</strong>
+                            </div>
+                            <div>
+                                <span>Kích thước</span>
+                                <strong th:text="${m.fileSize != null ? #numbers.formatDecimal(m.fileSize / 1024.0 / 1024.0, 1, 2) + ' MB' : 'Không rõ'}">1.2 MB</strong>
+                            </div>
+                            <div>
+                                <span>Ngày tải lên</span>
+                                <strong th:text="${m.createdAt != null ? #temporals.format(m.createdAt, 'dd/MM/yyyy HH:mm') : 'Không rõ'}">01/01/2026</strong>
+                            </div>
+                        </div>
+
+                        <p class="material-delete-hint"
+                           th:classappend="${m.deleteAllowed} ? ' allow' : ' block'"
+                           th:text="${m.deleteReason}">
+                            Lý do xóa
+                        </p>
+                    </div>
+
+                    <div class="material-actions">
+                        <a class="btn btn-sm btn-outline"
+                           th:href="@{/material/{id}/view(id=${m.id})}"
+                           target="_blank">Xem chi tiết</a>
+
+                        <!-- Instructor material library: nut xoa chi enable khi backend danh dau deleteAllowed. -->
+                        <form th:if="${m.deleteAllowed}"
+                              th:action="@{/instructor/materials/library/{id}/delete(id=${m.id})}"
+                              method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa tài liệu này?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+
+                        <button th:if="${!m.deleteAllowed}"
+                                type="button"
+                                class="btn btn-sm btn-disabled"
+                                th:title="${m.deleteReason}"
+                                disabled>Xóa</button>
+                    </div>
+                </article>
+            </div>
+
+            <nav class="material-pagination" th:if="${materialPage != null and materialPage.totalPages > 1}">
+                <a class="btn btn-sm btn-outline"
+                   th:classappend="${materialPage.first} ? ' disabled' : ''"
+                   th:href="@{/instructor/materials(page=${materialPage.number - 1}, size=${pageSize}, keyword=${keyword}, courseId=${selectedCourseId}, sectionId=${selectedSectionId}, lessonId=${selectedLessonId}, fileType=${selectedFileType})}">
+                    Trước
+                </a>
+
+                <a class="material-page-number"
+                   th:each="p : ${#numbers.sequence(0, materialPage.totalPages - 1)}"
+                   th:if="${p == 0 or p == materialPage.totalPages - 1 or (p >= materialPage.number - 2 and p <= materialPage.number + 2)}"
+                   th:classappend="${p == materialPage.number} ? ' active' : ''"
+                   th:href="@{/instructor/materials(page=${p}, size=${pageSize}, keyword=${keyword}, courseId=${selectedCourseId}, sectionId=${selectedSectionId}, lessonId=${selectedLessonId}, fileType=${selectedFileType})}"
+                   th:text="${p + 1}">1</a>
+
+                <a class="btn btn-sm btn-outline"
+                   th:classappend="${materialPage.last} ? ' disabled' : ''"
+                   th:href="@{/instructor/materials(page=${materialPage.number + 1}, size=${pageSize}, keyword=${keyword}, courseId=${selectedCourseId}, sectionId=${selectedSectionId}, lessonId=${selectedLessonId}, fileType=${selectedFileType})}">
+                    Sau
+                </a>
+            </nav>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

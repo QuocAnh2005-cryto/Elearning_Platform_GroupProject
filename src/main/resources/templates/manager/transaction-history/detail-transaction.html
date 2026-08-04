@@ -1,0 +1,188 @@
+<!-- Modal Xem Chi Tiết Giao Dịch - Dữ Liệu Giả -->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<div id="transactionDetailModal" class="transaction-modal-overlay">
+    <div class="transaction-modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header-custom">
+            <div class="header-title">
+                <h2 id="modalTitle">Chi Tiết Giao Dịch</h2>
+                <p id="modalSubtitle" class="transaction-code-header">Mã GD: <span id="transactionCode"
+                                                                                   th:text="${transactionDetail.gateWayOrderCode}"></span>
+                </p>
+            </div>
+            <button class="btn-close-modal"
+                    onclick="document.getElementById('transactionDetailModal').classList.remove('active')" title="Đóng">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body-custom">
+            <!-- Transaction Info Grid -->
+            <div class="transaction-info-grid">
+                <div class="info-card">
+                    <div class="info-icon customer-icon"><i class="ph ph-user"></i></div>
+                    <div class="info-content">
+                        <span class="info-label">Khách hàng</span>
+                        <p class="info-value" th:text="${transactionDetail.customerName}">Nguyễn Văn A</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon payment-icon"><i class="ph ph-credit-card"></i></div>
+                    <div class="info-content">
+                        <span class="info-label">Số tiền</span>
+                        <p class="info-value amount"
+                           th:text="${#numbers.formatDecimal(transactionDetail.amount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                            1.000 đ</p>
+                        <small class="info-detail" th:text="${transactionDetail.gateWay}">PAYOS</small>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon status-icon"><i class="ph ph-check-circle"></i></div>
+                    <div class="info-content">
+                        <span class="info-label">Trạng thái</span>
+                        <div th:switch="${transactionDetail.status.name()}">
+                            <p class="info-value status-badge status-paid text-success" th:case="'PAID'">
+                                Đã thanh toán
+                            </p>
+
+                            <p class="info-value status-badge status-pending text-warning" th:case="'PENDING'">
+                                Chờ thanh toán
+                            </p>
+
+                            <p class="info-value status-badge status-failed text-danger" th:case="'FAILED'">
+                                Thất bại
+                            </p>
+
+                            <p class="info-value status-badge status-cancelled text-secondary" th:case="'CANCELLED'">
+                                Đã hủy
+                            </p>
+
+                            <p class="info-value status-badge status-expired text-dark" th:case="'EXPIRED'">
+                                Hết hạn
+                            </p>
+
+                            <span th:case="*" class="text-muted">
+                                Không xác định
+                            </span>
+                        </div>
+                        <small th:if="${transactionDetail.paidAt != null}" class="info-detail"
+                               th:text="${'Thanh toán lúc: ' + #temporals.format(transactionDetail.paidAt, 'dd/MM/yyyy HH:mm')}">Thanh
+                            toán lúc: 22/06/2026 10:05</small>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon time-icon"><i class="ph ph-calendar"></i></div>
+                    <div class="info-content">
+                        <span class="info-label">Thời gian tạo</span>
+                        <p class="info-value" th:text="${#temporals.format(transactionDetail.createdAt, 'dd/MM/yyyy')}">
+                            22/06/2026</p>
+                        <small class="info-detail" th:text="${#temporals.format(transactionDetail.createdAt, 'HH:mm')}">10:00</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="order-items-section">
+                <div class="section-header">
+                    <h3><i class="ph ph-book"></i> Khóa học trong đơn hàng</h3>
+                    <span class="item-count"
+                          th:text="${transactionDetail.courses.size()} + ' khóa học'">1 khóa học</span>
+                </div>
+                <div class="order-items-list">
+                    <div class="order-item" th:each="course : ${transactionDetail.courses}"
+                         th:onclick="|window.open('@{/course/detail(id=${course.id})}', '_blank')|">
+                        <div class="order-item-thumbnail">
+                            <img th:src="${course.thumbnailUrl}" class="w-100 h-100 object-fit-cover"></img>
+                        </div>
+                        <div class="order-item-content">
+                            <p class="order-item-title" th:text="${course.title}">Java Core Từ Cơ Bản Đến Nâng
+                                Cao</p>
+                            <span class="order-item-price"
+                                  th:text="${#numbers.formatDecimal(course.price, 0, 'COMMA', 0, 'POINT') + ' đ'}">1.000 đ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <!-- All Transaction Details -->
+            <div class="additional-details">
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.paymentUrl != null}">
+                    <span class="detail-label-large">Link trạng thái thanh toán:</span>
+                    <span class="detail-value-large">
+                    <a th:href="${transactionDetail.paymentUrl}"
+                       target="_blank"
+                       th:text="${transactionDetail.paymentUrl}">
+                    </a>
+                    </span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.id != null}">
+                    <span class="detail-label-large">Mã GD:</span>
+                    <span class="detail-value-large" th:text="${transactionDetail.id}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.customerName != null}">
+                    <span class="detail-label-large">Khách hàng:</span>
+                    <span class="detail-value-large" th:text="${transactionDetail.customerName}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.customerEmail != null}">
+                    <span class="detail-label-large">Email:</span>
+                    <span class="detail-value-large" th:text="${transactionDetail.customerEmail}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.amount != null}">
+                    <span class="detail-label-large">Số tiền:</span>
+                    <span class="detail-value-large"
+                          th:text="${#numbers.formatDecimal(transactionDetail.amount, 0, 'COMMA', 0, 'POINT')}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.description != null}">
+                    <span class="detail-label-large">Mô tả:</span>
+                    <span class="detail-value-large" th:text="${transactionDetail.description}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.updatedAt != null}">
+                    <span class="detail-label-large">Ngày cập nhật:</span>
+                    <span class="detail-value-large"
+                          th:text="${#temporals.format(transactionDetail.updatedAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.expiredAt != null}">
+                    <span class="detail-label-large">Hết hạn:</span>
+                    <span class="detail-value-large"
+                          th:text="${#temporals.format(transactionDetail.expiredAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.paidAt != null}">
+                    <span class="detail-label-large">Thanh toán lúc:</span>
+                    <span class="detail-value-large"
+                          th:text="${#temporals.format(transactionDetail.paidAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                </div>
+
+                <div class="detail-row detail-row-large" th:if="${transactionDetail.gateWay != null}">
+                    <span class="detail-label-large">Cổng thanh toán:</span>
+                    <span class="detail-value-large" th:text="${transactionDetail.gateWay}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-custom">
+            <button class="btn btn-secondary-modal"
+                    onclick="document.getElementById('transactionDetailModal').classList.remove('active')">
+                <i class="ph ph-arrow-left me-1"></i> Quay lại
+            </button>
+            <button class="btn btn-primary-modal" onclick="window.print()">
+                <i class="ph ph-printer me-1"></i> In chi tiết
+            </button>
+        </div>
+    </div>
+</div>

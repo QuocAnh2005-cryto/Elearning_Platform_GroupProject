@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết Lập Sở Thích - Bước 2 - Learning Hub</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Central Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <!-- Favorites Page Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/favorites.css}">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-light">
+
+
+    <main class="py-5">
+        <div class="survey-container">
+            <!-- Progress & Greeting Title -->
+            <div class="text-center survey-title-section">
+                <span class="step-indicator">Bước 2 trong số 2</span>
+                <h1 class="font-heading mt-2">Tuyệt vời! Những chủ đề nào bạn quan tâm?</h1>
+                <p class="survey-subtitle">
+                    Bạn đã chọn danh mục chính là <strong class="text-primary" th:text="${parent.name}">Lập trình</strong>. 
+                    Hãy tích chọn các danh mục nhỏ hơn bên dưới để chúng tôi tối ưu gợi ý.
+                </p>
+            </div>
+
+            <!-- Child Categories Form -->
+            <form th:action="@{/student/favorites/save}" method="post">
+                <input type="hidden" name="parentId" th:value="${parent.id}">
+
+                <!-- Grid of child categories -->
+                <div class="child-grid" th:if="${children != null && !children.isEmpty()}">
+                    <label class="child-card-label" th:each="child : ${children}">
+                        <!-- Native Checkbox hidden -->
+                        <input type="checkbox" name="childIds" th:value="${child.id}" class="d-none favorite-checkbox" 
+                               th:checked="${selectedChildIds != null && selectedChildIds.contains(child.id)}">
+                        
+                        <!-- Card UI toggled by CSS -->
+                        <div class="child-card-content">
+                            <div class="child-info">
+                                <!-- Dynamic Icon depending on category name -->
+                                <div class="child-icon-box" th:style="${#strings.contains(child.name, 'HTML') ? 'background: #fff5eb; color: #f97316;' :
+                                                                      (#strings.contains(child.name, 'CSS') ? 'background: #f0f9ff; color: #0284c7;' :
+                                                                      (#strings.contains(child.name, 'React') ? 'background: #ecfeff; color: #0891b2;' :
+                                                                      (#strings.contains(child.name, 'Node') ? 'background: #f0fdf4; color: #16a34a;' :
+                                                                      (#strings.contains(child.name, 'Python') ? 'background: #fefce8; color: #ca8a04;' :
+                                                                      (#strings.contains(child.name, 'Java') ? 'background: #fef2f2; color: #dc2626;' :
+                                                                      (#strings.contains(child.name, 'Swift') ? 'background: #fff7ed; color: #ea580c;' : 'background: #f1f5f9; color: #475569;'))))))}">
+                                    <i th:data-lucide="${#strings.contains(child.name, 'HTML') ? 'code-2' :
+                                                         (#strings.contains(child.name, 'CSS') ? 'palette' :
+                                                         (#strings.contains(child.name, 'React') ? 'atom' :
+                                                         (#strings.contains(child.name, 'Node') ? 'database' :
+                                                         (#strings.contains(child.name, 'Python') ? 'terminal' :
+                                                         (#strings.contains(child.name, 'Java') ? 'coffee' :
+                                                         (#strings.contains(child.name, 'Swift') ? 'smartphone' : 'layers'))))))}"></i>
+                                </div>
+                                <span class="child-name" th:text="${child.name}">HTML</span>
+                            </div>
+                            <!-- Checked Icon indicator -->
+                            <div class="child-badge">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Empty state fallback -->
+                <div class="card border border-light-subtle rounded-3 p-5 bg-white text-center shadow-sm mb-5" th:if="${children == null || children.isEmpty()}">
+                    <div class="d-flex flex-column align-items-center justify-content-center py-4">
+                        <div class="empty-cart-icon-wrapper rounded-circle bg-light d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i data-lucide="help-circle" class="text-muted" style="width: 36px; height: 36px;"></i>
+                        </div>
+                        <h3 class="fw-bold fs-5 font-heading text-dark mb-2">Chưa có danh mục con!</h3>
+                        <p class="text-muted fs-7 mb-4">Danh mục cha hiện tại chưa có các danh mục chi tiết.</p>
+                    </div>
+                </div>
+
+                <!-- Actions Section -->
+                <div class="survey-actions">
+                    <a th:href="@{/student/favorites/step1}" class="btn-survey-back text-decoration-none d-inline-flex align-items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Trở lại
+                    </a>
+                    <button type="submit" class="btn-survey-next">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

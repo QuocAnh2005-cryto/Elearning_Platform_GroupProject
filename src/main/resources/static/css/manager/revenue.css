@@ -1,0 +1,279 @@
+/* ════════════════════════════════════════════
+   Manager Revenue CSS — Bootstrap enhanced
+   ════════════════════════════════════════════ */
+
+
+/* ── Buttons ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: var(--border-radius); cursor: pointer; font-family: inherit; font-weight: 500; border: none; text-decoration: none; }
+.btn-outline { background: #fff; border: 1px solid var(--border-color); color: var(--text-main); }
+.btn-outline:hover { background: var(--bg-light); }
+
+/* ── Revenue Grid ── */
+.rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.rev-card { padding: 20px; border-radius: var(--border-radius); border: 1px solid var(--border-color); background: var(--white); }
+.rev-card.primary { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+.rev-card h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; opacity: 0.9; }
+.rev-card .rev-val { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+.rev-card .rev-sub { font-size: 0.85rem; }
+
+/* ════════════════════════════════════════════
+   Bổ sung cho trang Lịch sử giao dịch
+   ════════════════════════════════════════════ */
+
+/* -- Bộ lọc trạng thái (Tabs) -- */
+.btn-filter {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.btn-filter:hover {
+    background: var(--bg-light);
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+.btn-filter.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+    box-shadow: 0 2px 4px rgba(0, 86, 179, 0.15);
+}
+
+/* -- Thanh tìm kiếm -- */
+.search-box-wrapper .input-group {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.search-box-wrapper input {
+    height: 44px;
+    font-size: 0.95rem;
+}
+.search-box-wrapper .input-group-text {
+    border-color: var(--border-color);
+    padding-left: 16px;
+}
+
+/* -- Bảng danh sách giao dịch dạng Card -- */
+.transaction-card-table {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+.card-table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white);
+}
+.card-table-header h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.transaction-card-table .table th {
+    background-color: var(--bg-light);
+    color: var(--text-gray);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.transaction-card-table .table td {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* -- Badges Trạng thái -- */
+.badge-paid {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+.badge-fail {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* -- Nút hành động con mắt -- */
+.btn-action {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 1.2rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-action:hover {
+    color: var(--primary-blue);
+    background-color: var(--bg-light);
+}
+
+/* -- Thanh phân trang Custom -- */
+.pagination-custom a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.page-item-num {
+    width: 36px;
+    height: 36px;
+    color: var(--text-main);
+    background: var(--white);
+    border: 1px solid var(--border-color);
+}
+.page-item-num:hover {
+    background: var(--bg-light);
+    color: var(--primary-blue);
+}
+.page-item-num.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+}
+.page-link-nav {
+    width: 36px;
+    height: 36px;
+    color: var(--text-gray);
+    background: transparent;
+}
+.page-link-nav:hover {
+    color: var(--text-main);
+}
+
+/* ── Khu vực bộ lọc nâng cao ── */
+.filter-search-wrapper {
+    background: var(--white);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-search-wrapper .form-label {
+    margin-bottom: 6px;
+}
+
+/* Tùy biến ô Input và Select đồng bộ với hệ thống */
+.custom-input, .custom-select {
+    height: 42px;
+    font-size: 0.95rem;
+    border-color: var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-main);
+}
+
+.custom-input:focus, .custom-select:focus {
+    border-color: var(--primary-blue);
+}
+
+/* Group tìm kiếm kèm nút bấm liền dải */
+.search-group {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-group .input-group-text,
+.search-group input {
+    height: 42px;
+    border-color: var(--border-color);
+}
+
+/* Nút tìm kiếm góc phải Group */
+.btn-search-submit {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 0 20px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0 !important; /* Để khớp với input-group */
+    transition: background-color 0.2s;
+}
+
+.btn-search-submit:hover {
+    background-color: #004494;
+    color: var(--white);
+}
+
+.btn-submit-filter {
+    background-color: var(--primary-blue);
+    color: var(--white) !important;
+    height: 42px;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-submit-filter:hover {
+    background-color: #004494;
+}
+
+.btn-reset-filter {
+    background-color: var(--white);
+    color: var(--text-gray) !important;
+    border: 1px solid var(--border-color);
+    height: 42px;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-reset-filter:hover {
+    background-color: var(--bg-light);
+    color: var(--text-main) !important;
+    border-color: var(--text-gray);
+}
+
+
+
+/* ── Chart ── */
+.chart-section { background: var(--white); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; box-shadow: var(--shadow-sm); }
+.chart-section h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+.chart-container { height: 300px; width: 100%; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .rev-grid { grid-template-columns: 1fr; }
+}
+
+.th-code { width: 15%; }
+.th-customer { width: 25%; }
+.th-amount { width: 25%; }
+.th-status { width: 20%; }
+.th-actions { width: 15%; }

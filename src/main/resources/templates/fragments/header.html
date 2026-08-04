@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+</head>
+<body>
+<!-- Fragment Header dùng chung cho toàn bộ dự án -->
+<header th:fragment="header" class="site-header" id="site-header">
+    <script>
+        // Break out of iframes if a full layout page is loaded inside one
+        if (window.top !== window.self) {
+            window.top.location.href = window.self.location.href;
+        }
+        
+        // Apply dark theme immediately if stored in localStorage to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            } else {
+                document.documentElement.classList.remove('dark-theme');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" th:href="@{/css/darkTheme.css}">
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <div class="container d-flex align-items-center justify-content-between header-container">
+        
+        <!-- Logo Section -->
+        <a class="header-logo d-flex align-items-center gap-2 text-decoration-none" th:href="@{/}">
+            <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+            <span class="logo-text fw-bold font-heading">LearningHub</span>
+        </a>
+
+        <!-- Search Bar (Desktop) -->
+        <div class="search-category-section header-search d-none d-lg-flex align-items-center gap-2 flex-grow-1 mx-5" style="max-width: 540px;">
+            <div class="dropdown">
+                <button class="btn btn-light rounded-pill dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 text-muted fw-medium fs-7 category-dropdown-btn"
+                        type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    <span>Danh Mục</span>
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg mt-2 p-2 category-dropdown-menu" aria-labelledby="categoryDropdown" style="min-width: 240px;">
+                    <li th:each="cat : ${headerCategories}" class="mb-1">
+                        <div class="dropdown-item d-flex align-items-center justify-content-between rounded py-2" style="cursor: pointer;"
+                             th:onclick="'event.stopPropagation(); bootstrap.Collapse.getOrCreateInstance(document.getElementById(\'submenu-\' + ' + ${cat.id} + ')).toggle()'">
+                            <span class="d-flex align-items-center gap-2">
+                                <i th:data-lucide="${#strings.contains(cat.name, 'Front-End') ? 'layout' : 
+                                                    (#strings.contains(cat.name, 'Back-End') ? 'server' : 
+                                                    (#strings.contains(cat.name, 'iOS') ? 'smartphone' : 'book-open'))}" style="width:16px;"></i>
+                                <span class="fw-semibold text-dark" th:text="${cat.name}">Category Name</span>
+                            </span>
+                            <i data-lucide="chevron-right" style="width:14px; height:14px;" th:if="${cat.children != null && !cat.children.isEmpty()}"></i>
+                        </div>
+                        <div class="collapse submenu-collapse" th:id="'submenu-' + ${cat.id}" th:if="${cat.children != null && !cat.children.isEmpty()}">
+                            <ul class="list-unstyled ps-4 py-1 mb-0">
+                                <li th:each="child : ${cat.children}" th:if="${child.status == 'ACTIVE'}">
+                                    <a class="dropdown-item rounded py-1.5 fs-7 text-muted" th:href="@{/courses(categoryId=${child.id})}">
+                                        <span th:text="${child.name}">Subcategory Name</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <form action="/courses" method="get" class="search-bar-wrapper position-relative flex-grow-1">
+                <i data-lucide="search"
+                   class="search-icon search-icon-header position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"
+                   style="width:18px; height:18px;"></i>
+                <input type="text" name="search" th:value="${search}" placeholder="Tìm kiếm khóa học..."
+                       class="form-control search-input search-input-header rounded-pill border-0 bg-light px-4 py-2 ps-5"
+                       id="search-input">
+            </form>
+        </div>
+
+        <!-- User Utilities -->
+        <div class="header-utilities header-auth d-flex align-items-center gap-3">
+            <th:block th:if="${currentUser == null}">
+                <a th:href="@{/login}"
+                   class="btn btn-ghost-primary btn-login-ghost rounded-pill px-4 py-2 fw-semibold fs-7 d-none d-sm-inline-block text-decoration-none">Đăng nhập</a>
+                <a th:href="@{/register}"
+                   class="btn btn-primary-solid btn-register-solid rounded-pill px-4 py-2 fw-semibold fs-7 text-decoration-none"
+                   id="btn-login-header">Đăng ký</a>
+            </th:block>
+
+            <th:block th:if="${currentUser != null}">
+                <!-- Cart Icon -->
+                <a th:href="@{/cart}" class="btn btn-link nav-icon-btn btn-header-cart text-muted p-2 rounded-circle position-relative text-decoration-none" aria-label="Giỏ hàng">
+                    <i data-lucide="shopping-cart" style="width: 20px; height: 20px;"></i>
+                    <span class="position-absolute top-1 translate-middle badge rounded-circle bg-danger p-1 cart-count-badge header-cart-badge" 
+                          id="cart-badge-count"
+                          style="left: 75%; font-size: 10px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #fff;" 
+                          th:text="${cartSize ?: 0}">
+                        0
+                    </span>
+                </a>
+
+
+                <!-- User Profile Dropdown -->
+                <div class="dropdown user-profile-dropdown">
+                    <button class="btn user-profile-dropdown-btn d-flex align-items-center gap-2 p-1 border-0 bg-transparent dropdown-toggle no-caret"
+                            type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar-wrapper position-relative">
+                            <img th:src="${currentUser.getFullAvatarUrl() != null ? currentUser.getFullAvatarUrl() : '/images/student2.png'}"
+                                 alt="User Avatar" class="rounded-circle header-user-avatar"
+                                 onerror="this.onerror=null; this.src='/images/student2.png';">
+                            <span class="user-online-badge"></span>
+                        </div>
+                        <span class="user-name-header user-name fw-semibold fs-7 text-dark d-none d-md-inline-block"
+                              th:text="${currentUser.firstName + ' ' + currentUser.lastName}">Tên Học Viên</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 p-2 context-menu dropdown-menu-profile" style="width: 220px; border-radius: var(--radius-lg);" aria-labelledby="profileDropdown">
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <p class="fw-bold text-dark m-0 fs-7 text-truncate"
+                               th:text="${currentUser.firstName + ' ' + currentUser.lastName}">Tên Học Viên</p>
+                            <small class="text-muted fs-8 text-truncate d-block" th:text="${currentUser.email}">user@gmail.com</small>
+                        </li>
+                        <li><a class="dropdown-item profile-dropdown-item d-flex align-items-center gap-3 rounded py-2 fs-7 text-muted text-decoration-none"
+                               th:href="@{/student/profile}"><i data-lucide="user" style="width:16px;"></i> Thông tin của tôi</a>
+                        </li>
+                        <li><a class="dropdown-item profile-dropdown-item d-flex align-items-center gap-3 rounded py-2 fs-7 text-muted text-decoration-none"
+                               th:href="@{/student/my-learning}"><i data-lucide="graduation-cap" style="width:16px;"></i> Việc học của tôi</a>
+                        </li>
+                        <li><a class="dropdown-item profile-dropdown-item d-flex align-items-center gap-3 rounded py-2 fs-7 text-muted text-decoration-none"
+                               th:href="@{/student/purchase-history}"><i data-lucide="history" style="width:16px;"></i> Lịch sử mua hàng</a>
+                        </li>
+                        <li><a class="dropdown-item profile-dropdown-item d-flex align-items-center gap-3 rounded py-2 fs-7 text-muted text-decoration-none"
+                               th:href="@{/courses}"><i data-lucide="search" style="width:16px;"></i> Tìm kiếm khóa học</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider bg-light">
+                        </li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit"
+                                        class="dropdown-item profile-dropdown-item danger d-flex align-items-center gap-3 rounded py-2 fs-7 text-danger border-0 bg-transparent w-100 fw-semibold text-start">
+                                    <i data-lucide="log-out" style="width:16px;"></i>
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.innerWidth >= 992) {
+                // Hover for main category dropdown in header
+                const categoryDropdown = document.querySelector('.header-search .dropdown');
+                if (categoryDropdown) {
+                    const dropdownToggle = categoryDropdown.querySelector('.dropdown-toggle');
+                    let mainTimeout;
+                    categoryDropdown.addEventListener('mouseenter', () => {
+                        clearTimeout(mainTimeout);
+                        const bsDropdown = bootstrap.Dropdown.getOrCreateInstance(dropdownToggle);
+                        bsDropdown.show();
+                    });
+                    categoryDropdown.addEventListener('mouseleave', () => {
+                        mainTimeout = setTimeout(() => {
+                            const bsDropdown = bootstrap.Dropdown.getOrCreateInstance(dropdownToggle);
+                            bsDropdown.hide();
+                        }, 150);
+                    });
+                }
+
+                // Hover for subcategories in header
+                const headerCategoryItems = document.querySelectorAll('.header-search .category-dropdown-menu > li');
+                headerCategoryItems.forEach(item => {
+                    const collapseEl = item.querySelector('.submenu-collapse');
+                    if (collapseEl) {
+                        let subTimeout;
+                        item.addEventListener('mouseenter', () => {
+                            clearTimeout(subTimeout);
+                            const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false });
+                            bsCollapse.show();
+                        });
+                        item.addEventListener('mouseleave', () => {
+                            subTimeout = setTimeout(() => {
+                                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false });
+                                bsCollapse.hide();
+                            }, 100);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</header>
+</body>
+</html>

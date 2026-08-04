@@ -1,0 +1,322 @@
+/* --- Custom Design Variables & Variables Overrides --- */
+:root {
+    --primary: #1a56db;
+    --primary-hover: #1e40af;
+    --primary-light: #eff6ff;
+    --bg-page: #f0f5fa;
+    --bg-card: #ffffff;
+    --bg-accent: #f3f8fc;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --accent-yellow: #eab308;
+    --accent-yellow-light: #fef9c3;
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    --shadow-premium: 0 20px 25px -5px rgba(26, 86, 219, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Base Custom Resets & Typography --- */
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-page);
+    color: var(--text-main);
+}
+
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+.bg-page {
+    background-color: var(--bg-page) !important;
+}
+
+.fs-7 {
+    font-size: 14.5px !important;
+}
+
+.fs-8 {
+    font-size: 12px !important;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+/* --- Custom Header Styles --- */
+.logo-icon-wrapper {
+    background-color: var(--primary-light);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.navbar-brand:hover .logo-icon-wrapper {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+.logo-text {
+    font-size: 19px;
+    letter-spacing: -0.5px;
+}
+
+/* Search Box Custom Focus */
+.search-input {
+    transition: var(--transition);
+    border: 1.5px solid transparent !important;
+}
+
+.search-input:focus {
+    background-color: var(--bg-card) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1) !important;
+}
+
+
+
+/* Profile Dropdown Custom */
+.user-avatar {
+    transition: var(--transition);
+}
+
+.user-avatar:hover {
+    border-color: var(--primary) !important;
+}
+
+/* --- Left Column Elements --- */
+/* Breadcrumb separator */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+    vertical-align: middle;
+}
+
+/* Metadata Card items */
+.meta-item {
+    transition: var(--transition);
+}
+
+.meta-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: #cbd5e1 !important;
+}
+
+.meta-icon-box {
+    background-color: var(--bg-accent) !important;
+}
+
+/* Tabs & Underline Indicators */
+.active-indicator {
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    color: var(--text-light) !important;
+    transition: var(--transition);
+}
+
+.active-indicator:hover {
+    color: var(--text-main) !important;
+}
+
+.active-indicator.active {
+    color: var(--primary) !important;
+    border-bottom-color: var(--primary) !important;
+}
+
+/* Course review form */
+.course-review-star {
+    transition: var(--transition);
+}
+
+.course-review-star:hover {
+    transform: scale(1.12);
+}
+
+.course-review-star i,
+.course-review-star svg {
+    transition: var(--transition);
+}
+
+.course-review-star.is-selected {
+    color: var(--accent-yellow) !important;
+}
+
+.course-review-star.is-selected i,
+.course-review-star.is-selected svg {
+    fill: var(--accent-yellow) !important;
+}
+
+/* Syllabus Accordion Premium styling */
+.accordion-item {
+    transition: var(--transition);
+}
+
+.accordion-item:hover {
+    border-color: #cbd5e1 !important;
+    transform: translateY(-1px);
+}
+
+.accordion-button {
+    font-size: 15px !important;
+}
+
+.accordion-button::after {
+    /* Custom icon rotation using Lucide or default bootstrap but cleanly positioned */
+    margin-left: auto;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: transparent !important;
+    color: var(--primary) !important;
+    box-shadow: none !important;
+}
+
+.accordion-button.collapsed .play-icon-container {
+    background-color: var(--bg-card);
+}
+
+.accordion-button:not(.collapsed) .play-icon-container {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary-light) !important;
+}
+
+/* Custom Play Circle and Preview buttons */
+.preview-btn {
+    transition: var(--transition);
+}
+
+.preview-btn:hover {
+    color: var(--primary) !important;
+    transform: scale(1.1);
+}
+
+/* --- Right Column: Purchasing Card --- */
+.course-purchase-aside {
+    transition: var(--transition);
+}
+
+.purchase-card {
+    transition: var(--transition);
+}
+
+.purchase-card:hover {
+    box-shadow: var(--shadow-premium) !important;
+    transform: translateY(-2px);
+}
+
+/* Thumbnail Scale & Video Overlay */
+.thumbnail-container img {
+    transition: var(--transition);
+}
+
+.purchase-card:hover .thumbnail-container img {
+    transform: scale(1.05);
+}
+
+.thumbnail-overlay {
+    transition: var(--transition);
+}
+
+.purchase-card:hover .thumbnail-overlay {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+}
+
+.play-overlay-btn {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: white !important;
+    transition: var(--transition);
+}
+
+.play-overlay-btn:hover {
+    background-color: white !important;
+    color: var(--primary) !important;
+    transform: scale(1.05);
+}
+
+/* Primary Button Styling */
+#btn-add-to-cart {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    transition: var(--transition);
+}
+
+#btn-add-to-cart:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(26, 86, 219, 0.3) !important;
+}
+
+#btn-add-to-cart:active {
+    transform: translateY(0);
+}
+
+/* --- Simulated Video Player inside Modal --- */
+.player-big-play-btn {
+    transition: var(--transition);
+}
+
+.player-big-play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.1) !important;
+    background-color: var(--primary-hover) !important;
+}
+
+.player-bottom-controls i {
+    transition: var(--transition);
+}
+
+.player-bottom-controls i:hover {
+    color: white !important;
+}
+
+/* --- Bootstrap Toast Style Overrides --- */
+.toast-body {
+    border-radius: var(--radius-lg);
+}
+
+.toast {
+    animation: toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toast-slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive spacing tweaks for sticky sidebar */
+@media (min-width: 992px) {
+    .course-purchase-aside {
+        top: 100px !important;
+    }
+}
+@media (max-width: 991.98px) {
+    .course-purchase-aside {
+        position: static !important;
+        margin-top: 24px;
+    }
+}
+
+/* Custom vertical divider for rating overview */
+@media (min-width: 576px) {
+    .border-end-sm {
+        border-right: 1px solid var(--border) !important;
+    }
+}
+
+

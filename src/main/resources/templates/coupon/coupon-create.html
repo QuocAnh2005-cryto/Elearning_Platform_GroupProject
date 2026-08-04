@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Mã Giảm Giá — Quản Trị Learning Hub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/coupon-manage.css}">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-coupon-page">
+
+<div class="admin-wrapper">
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <a class="header-logo sidebar-logo-custom d-flex align-items-center gap-2 text-decoration-none"
+               th:href="@{/}">
+                <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+                <span class="logo-text fw-bold font-heading">LearningHub</span>
+            </a>
+        </div>
+
+        <div class="dropdown sidebar-user-dropdown">
+            <div class="sidebar-user-brief d-flex align-items-center gap-2" data-bs-toggle="dropdown"
+                 aria-expanded="false" role="button">
+                <div class="position-relative">
+                    <img th:src="${currentUser != null && currentUser.avatarUrl != null ? currentUser.avatarUrl : '/images/avatar.png'}"
+                         class="sidebar-avatar" alt="Admin">
+                    <span class="user-online-badge"></span>
+                </div>
+                <div class="sidebar-user-info flex-grow-1">
+                    <h6 class="m-0 fw-bold fs-7 text-truncate" style="max-width: 140px;"
+                        th:text="${currentUser != null ? currentUser.firstName + ' ' + currentUser.lastName : 'Giảng viên'}">
+                        Nguyễn Văn A</h6>
+                    <span class="badge bg-primary-light text-primary fs-8 fw-semibold mt-1">Chuyên Viên</span>
+                </div>
+                <i data-lucide="chevron-down" class="dropdown-arrow-icon text-muted"
+                   style="width: 14px; height: 14px;"></i>
+            </div>
+
+            <ul class="dropdown-menu border-0 shadow-sm custom-user-dropdown-menu p-2">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2 fs-7"
+                       th:href="@{/instructor/sidebar}">
+                        <i data-lucide="user" style="width: 16px; height: 16px;"></i> Thông tin hồ sơ
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2 fs-7" href="#">
+                        <i data-lucide="settings" style="width: 16px; height: 16px;"></i> Cài đặt tài khoản
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider my-2 border-light">
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded-2 fs-7 text-danger"
+                       th:href="@{/logout}">
+                        <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <nav class="sidebar-menu">
+            <span class="menu-category">Tổng Quan</span>
+            <a href="#" class="menu-item"><i data-lucide="layout-dashboard"></i> <span>Bảng điều khiển</span></a>
+
+            <span class="menu-category">Chiến Dịch Ưu Đãi</span>
+            <a th:href="@{/list-coupon}" class="menu-item"><i data-lucide="ticket"></i>
+                <span>Danh sách Coupon</span></a>
+            <a th:href="@{/instructor/coupon}" class="menu-item active"><i data-lucide="badge-plus"></i> <span>Tạo Mã Mới</span></a>
+
+            <span class="menu-category">Cấu Hình</span>
+            <a href="#" class="menu-item"><i data-lucide="settings"></i> <span>Cài đặt hệ thống</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a th:href="@{/home}"
+               class="btn btn-back-home w-100 py-2.5 fw-semibold fs-7 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                <i data-lucide="arrow-left" style="width:16px; height:16px;"></i> Về Trang Chủ
+            </a>
+        </div>
+    </aside>
+
+    <main class="admin-main-content">
+        <header class="admin-topbar mb-4">
+            <span class="section-badge mb-1">Hệ thống Khuyến Mãi</span>
+            <h1 class="font-heading fw-bold fs-3 m-0">Phát Hành Mã Giảm Giá Mới</h1>
+        </header>
+
+        <div class="coupon-form-card">
+            <form th:action="@{/instructor/coupon}" th:object="${coupon}" method="POST" class="needs-validation">
+
+                <div class="auto-gen-banner d-flex align-items-center gap-3 mb-4 p-3 rounded-3">
+                    <div class="banner-icon-box">
+                        <i data-lucide="cpu" class="text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="m-0 fw-bold text-dark fs-7">Mã Code tự động kích hoạt</h6>
+                        <p class="m-0 text-muted fs-8">Hệ thống tự động thiết lập chuỗi mã định danh ngẫu nhiên (Ví dụ:
+                            <strong class="text-primary">CPN-XXXX</strong>) mã hóa duy nhất trong Database.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Tên Chiến Dịch Coupon <span
+                                class="text-danger">*</span></label>
+                        <input type="text" th:field="*{title}"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid-custom'"
+                               class="form-control coupon-form-input py-2.5" placeholder="Ví dụ: Ưu Đãi Chào Hè 2026"
+                               required>
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                            Tên chiến dịch không hợp lệ
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Loại Chiết Khấu <span
+                                class="text-danger">*</span></label>
+                        <select th:field="*{discountType}"
+                                th:classappend="${#fields.hasErrors('discountType')} ? 'is-invalid-custom'"
+                                class="form-select coupon-form-input py-2.5" required>
+                            <option value="">-- Chọn loại chiết khấu --</option>
+                            <option th:each="discountType : ${discountTypes}" th:value="${discountType}"
+                                    th:text="${discountType}"></option>
+                        </select>
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('discountType')}"
+                             th:errors="*{discountType}">Vui lòng chọn loại chiết khấu
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Mức Giá Trị Giảm <span
+                                class="text-danger">*</span></label>
+                        <input type="text" th:field="*{discountValue}"
+                               th:classappend="${#fields.hasErrors('discountValue')} ? 'is-invalid-custom'"
+                               class="form-control coupon-form-input py-2.5"
+                               placeholder="Ví dụ: 20 (cho %) hoặc 50000 (cho VND)" min="1" step="0.01" required>
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('discountValue')}"
+                             th:errors="*{discountValue}">Mức giảm không đúng định dạng
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Tổng Lượt Sử Dụng Tối
+                            Đa</label>
+                        <input type="text" th:field="*{usageLimit}"
+                               th:classappend="${#fields.hasErrors('usageLimit')} ? 'is-invalid-custom'"
+                               class="form-control coupon-form-input py-2.5"
+                               placeholder="Để trống nếu không giới hạn lượt dùng">
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('usageLimit')}"
+                             th:errors="*{usageLimit}">Lượt sử dụng tối thiểu là 1
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Ngày Hết Hạn Hiệu Lực <span
+                                class="text-danger">*</span></label>
+                        <input type="date" th:field="*{expiredAt}" th:min="${today}"
+                               th:classappend="${#fields.hasErrors('expiredAt')} ? 'is-invalid-custom'"
+                               class="form-control coupon-form-input py-2.5">
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('expiredAt')}"
+                             th:errors="*{expiredAt}">Ngày hết hạn phải lớn hơn ngày hiện tại
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label font-heading fw-semibold text-dark fs-7">Trạng Thái Hệ Thống</label>
+                        <select th:field="*{status}"
+                                th:classappend="${#fields.hasErrors('status')} ? 'is-invalid-custom'"
+                                class="form-select coupon-form-input py-2.5" required>
+                            <option value="">-- Chọn trạng thái --</option>
+                            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+                        </select>
+                        <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('status')}"
+                             th:errors="*{status}">Trạng thái không hợp lệ
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center gap-3 mt-5 pt-3 border-top border-light">
+                    <button type="submit"
+                            class="btn btn-primary-solid rounded-pill px-5 py-2.5 fw-semibold fs-7 shadow-blue">
+                        <i data-lucide="check-circle"
+                           style="width:16px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> Khởi
+                        Tạo Mã Hệ Thống
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    // Kích hoạt icon Lucide
+    lucide.createIcons();
+
+    // Nhận thông điệp từ Backend Spring Boot
+    // Nhận thông điệp từ Backend Spring Boot bằng cú pháp an toàn
+    var successMessage = /*[[${successMessage}]]*/ '';
+
+    // Bật popup nếu có tin nhắn thành công
+    if (successMessage) {
+        Swal.fire({
+            title: 'Thành Công!',
+            text: successMessage,
+            icon: 'success',
+            background: '#ffffff',
+            confirmButtonColor: '#1a56db',
+            confirmButtonText: 'Chấp nhận',
+            customClass: {
+                popup: 'premium-popup-border',
+                title: 'font-heading fw-bold fs-4 text-dark',
+                confirmButton: 'rounded-pill px-4 py-2 fs-7 fw-semibold'
+            }
+        });
+    }
+</script>
+</body>
+</html>

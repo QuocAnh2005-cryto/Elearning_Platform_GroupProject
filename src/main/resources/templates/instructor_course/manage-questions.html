@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Câu Hỏi Quiz — Learning Hub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/manage-questions.css}">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-quiz-dashboard">
+
+<header class="editor-navbar d-flex align-items-center justify-content-between px-4">
+    <div class="d-flex align-items-center gap-3">
+        <a th:href="@{/instructor/lesson-detail/{lessonId}(lessonId=${quiz.lessonId})}" class="btn-nav-back"
+           title="Quay lại bước trước">
+            <i data-lucide="arrow-left"></i>
+        </a>
+        <div class="editor-brand d-flex align-items-center gap-2">
+            <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+            <span class="logo-text fw-bold font-heading brand-color fs-4">LearningHub</span>
+            <span class="badge bg-brand-light brand-color font-heading fs-8 ms-2">QUIZ BUILDER</span>
+        </div>
+    </div>
+
+    <div class="dropdown user-profile-zone">
+        <div class="d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+            <img th:src="${currentUser != null && currentUser.getFullAvatarUrl() != null ? currentUser.getFullAvatarUrl() : '/images/avatar.png'}"
+                 class="editor-avatar" alt="User">
+            <div class="d-none d-sm-block text-start">
+                <h6 class="m-0 fw-bold fs-7 text-dark"
+                    th:text="${currentUser != null ? currentUser.firstName + ' ' + currentUser.lastName : 'Giảng viên'}">
+                    Giảng viên</h6>
+                <span class="fs-8 text-muted d-block">Chuyên Viên</span>
+            </div>
+            <i data-lucide="chevron-down" class="text-muted ms-1" style="width: 14px;"></i>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2 mt-2 custom-dropdown">
+            <li>
+                <a class="dropdown-item py-2 rounded-2 fs-7 text-dark d-flex align-items-center gap-2"
+                   th:href="@{/instructor/sidebar}">
+                    <i data-lucide="user" style="width:16px;"></i> Hồ sơ cá nhân
+                </a>
+            </li>
+            <li>
+                <hr class="dropdown-divider my-1 border-light">
+            </li>
+            <li>
+                <a class="dropdown-item py-2 rounded-2 fs-7 text-danger d-flex align-items-center gap-2"
+                   th:href="@{/logout}">
+                    <i data-lucide="log-out" style="width:16px;"></i> Đăng xuất
+                </a>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<div class="quiz-hero-banner py-4 mb-4 border-bottom bg-white" th:if="${quiz != null}">
+    <div class="container">
+        <div class="row align-items-center g-3">
+            <div class="col-lg-8 position-relative ps-5">
+                <button class="btn btn-quiz-settings shadow-xs" data-bs-toggle="modal"
+                        data-bs-target="#quizSettingsModal" title="Cài đặt thông số Quiz">
+                    <i data-lucide="settings"></i>
+                </button>
+
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-secondary-light text-muted border fs-8 text-uppercase letter-spacing-1 fw-semibold">Khung cấu hình hiện tại</span>
+                </div>
+                <h1 class="font-heading fw-bold text-dark fs-3 m-0 tracking-tight" th:text="${quiz.title}">Tiêu đề
+                    Quiz</h1>
+            </div>
+            <div class="col-lg-4 d-flex justify-content-lg-end gap-3">
+                <div class="meta-spec-card p-3 rounded-3 border bg-light-subtle d-flex align-items-center gap-3">
+                    <div class="meta-icon-box bg-brand-light brand-color"><i data-lucide="clock"></i></div>
+                    <div>
+                        <span class="fs-8 text-muted d-block fw-medium text-uppercase">Thời gian</span>
+                        <span class="fw-bold text-dark font-heading fs-6"
+                              th:text="${quiz.timeLimitMinutes != null ? quiz.timeLimitMinutes + ' phút' : 'Không giới hạn'}">0 phút</span>
+                    </div>
+                </div>
+                <div class="meta-spec-card p-3 rounded-3 border bg-light-subtle d-flex align-items-center gap-3">
+                    <div class="meta-icon-box bg-success-light text-success"><i data-lucide="award"></i></div>
+                    <div>
+                        <span class="fs-8 text-muted d-block fw-medium text-uppercase">Điểm Đạt</span>
+                        <span class="fw-bold text-dark font-heading fs-6"><span
+                                th:text="${quiz.passScorePercent}">0</span>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="container pb-5" style="margin-bottom: 100px;">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 bg-white rounded-4 border shadow-xs">
+        <div>
+            <h3 class="font-heading fw-bold text-dark fs-5 m-0">Danh sách câu hỏi liên kết</h3>
+            <p class="text-muted fs-8 m-0 mt-0.5">
+                Hiển thị các câu hỏi thuộc khung lưu trữ này
+            </p>
+        </div>
+
+        <a th:href="@{/instructor/quiz/add-question/{quizId}(quizId=${quiz.id})}"
+           class="btn btn-primary-solid rounded-pill px-4 py-2.5 fw-semibold fs-7 shadow-blue text-decoration-none">
+            <i data-lucide="plus-circle" class="me-1"
+               style="width:18px; display:inline-block; vertical-align:middle;"></i> Khởi Tạo Câu Hỏi Mới
+        </a>
+    </div>
+
+    <div class="questions-list-wrapper d-flex flex-column gap-4 mb-4">
+
+        <div class="quiz-empty-state text-center p-5 bg-white rounded-4 border" th:if="${#lists.isEmpty(questions)}">
+            <div class="empty-icon-circle mx-auto mb-3">
+                <i data-lucide="help-circle" class="text-muted" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h5 class="fw-bold text-dark font-heading mb-1">Chưa có câu hỏi nào được tạo</h5>
+            <p class="text-muted fs-7 max-w-sm mx-auto mb-4">Hãy bắt đầu xây dựng bộ trắc nghiệm bằng cách thêm câu hỏi
+                đầu tiên cho bài học này.</p>
+            <a th:href="@{/instructor/quiz/add-question/{quizId}(quizId=${quiz.id})}"
+               class="btn btn-outline-primary rounded-pill px-4 py-2 fs-7 fw-semibold text-decoration-none">
+                Tạo câu hỏi đầu tiên
+            </a>
+        </div>
+
+        <div class="question-premium-card bg-white rounded-4 border shadow-xs position-relative"
+             th:each="q, state : ${questions}">
+
+            <div class="card-meta-header d-flex align-items-center justify-content-between p-3 px-4 border-bottom bg-light-subtle rounded-top-4">
+                <div class="d-flex align-items-center gap-3">
+                <span class="question-index-tag font-heading fw-bold text-dark"
+                      th:text="${(currentPage != null ? currentPage : 0) * (pageSize != null ? pageSize : 10) + state.index + 1 < 10 ? '0' + ((currentPage != null ? currentPage : 0) * (pageSize != null ? pageSize : 10) + state.index + 1) : ((currentPage != null ? currentPage : 0) * (pageSize != null ? pageSize : 10) + state.index + 1)}">
+                    01
+                </span>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-brand-light brand-color fs-8 fw-semibold px-2.5 py-1 text-uppercase"
+                              th:text="${q.questionType}">SINGLE</span>
+                        <span class="text-muted fs-8 font-heading fw-medium bg-white border px-2 py-0.5 rounded-2">
+                        <i data-lucide="sparkles" class="brand-color me-1"
+                           style="width:12px; display:inline-block; vertical-align:middle;"></i>
+                        <span th:text="${q.points}">1</span> Điểm
+                    </span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 execution-actions-zone">
+                    <a th:href="@{/instructor/quiz/copy-question/{questionId}(questionId=${q.id}, quizId=${quiz.id}, page=${currentPage}, size=${pageSize})}" class="btn-crud-action btn-copy"
+                       data-bs-toggle="tooltip" title="Nhân bản câu hỏi">
+                        <i data-lucide="copy"></i>
+                    </a>
+                    <a th:href="@{/instructor/quiz/delete-question/{questionId}(questionId=${q.id}, quizId=${quiz.id}, page=${currentPage}, size=${pageSize})}"
+                       class="btn-crud-action btn-delete" data-bs-toggle="tooltip" title="Xóa câu hỏi"
+                       onclick="return confirm('Bạn có chắc muốn xóa câu hỏi này không?')">
+                        <i data-lucide="trash-2"></i>
+                    </a>
+                    <div class="action-divider-v mx-1"></div>
+                    <a th:href="@{/instructor/quiz/edit-question/{questionId}(questionId=${q.id}, quizId=${quiz.id}, page=${currentPage}, size=${pageSize})}"
+                       class="btn btn-edit-premium px-3 py-1.5 fs-8 fw-bold text-decoration-none"
+                       data-bs-toggle="tooltip" title="Chỉnh sửa toàn bộ nội dung">
+                        <i data-lucide="edit-3" class="me-1" style="width:14px;"></i> Chỉnh sửa
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-main-body p-4">
+                <h4 class="font-heading fw-bold text-dark fs-6 mb-4 lh-base tracking-tight" th:text="${q.questionText}">
+                    Nội dung tiêu đề câu hỏi trắc nghiệm hiển thị tại đây...
+                </h4>
+
+                <div class="row g-3 answers-render-grid">
+                    <div class="col-md-6" th:each="ans : ${q.answers}">
+                        <div class="answer-preview-item d-flex align-items-start gap-3 p-3 rounded-3 border h-100"
+                             th:classappend="${ans.correct} ? 'answer-correct-border bg-success-light-subtle' : 'bg-white'">
+
+                            <div class="answer-status-indicator"
+                                 th:classappend="${ans.correct} ? 'is-correct' : 'is-normal'">
+                                <i th:if="${ans.correct}" data-lucide="check" style="width:14px; height:14px;"></i>
+                                <span th:if="${!ans.correct}"></span>
+                            </div>
+
+                            <span class="fs-7 fw-medium flex-grow-1 text-secondary text-wrap-pre"
+                                  th:classappend="${ans.correct} ? 'text-success-dark fw-semibold' : ''"
+                                  th:text="${ans.answerText}">Nội dung phương án lựa chọn...
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation-alert-box mt-4 p-3 rounded-3 border border-dashed d-flex gap-2"
+                     th:if="${q.explanation != null && !#strings.isEmpty(q.explanation)}">
+                    <i data-lucide="info" class="text-primary flex-shrink-0" style="width:16px; margin-top: 2px;"></i>
+                    <div>
+                        <span class="fs-8 fw-bold text-dark font-heading text-uppercase d-block mb-0.5">Giải thích đáp án:</span>
+                        <p class="fs-7 text-muted m-0 lh-base text-wrap-pre" th:text="${q.explanation}">
+                            Giải thích chi tiết tại sao đáp án này đúng...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-sticky-control-bar bg-white p-3 px-4 border-top shadow-lg d-flex flex-wrap align-items-center justify-content-between position-fixed bottom-0 start-0 w-100"
+         style="z-index: 1020;">
+
+        <div class="control-left d-flex gap-2">
+            <button type="button" class="btn btn-outline-success rounded-pill px-4 py-2.5 fw-semibold fs-7"
+                    data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                <i class="fa-solid fa-file-import me-1"></i> Import Excel
+            </button>
+        </div>
+
+        <div class="control-center" th:if="${totalPages != null && totalPages > 1}">
+            <th:block th:with="
+        maxVisiblePages=5,
+        halfVisible=2,
+        startPage=${currentPage - halfVisible < 0 ? 0 : (currentPage + halfVisible >= totalPages ? totalPages - maxVisiblePages : currentPage - halfVisible)},
+        startPageValid=${startPage < 0 ? 0 : startPage},
+        endPage=${startPageValid + maxVisiblePages - 1 >= totalPages ? totalPages - 1 : startPageValid + maxVisiblePages - 1}
+    ">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm m-0 align-items-center gap-1">
+
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-2"
+                               th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id},page=0,size=${pageSize})}"
+                               title="Về trang đầu">
+                                <i data-lucide="chevrons-left" style="width:16px; height:16px;"></i>
+                            </a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-2"
+                               th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id},page=${currentPage - 1},size=${pageSize})}"
+                               aria-label="Previous">
+                                <i data-lucide="chevron-left" style="width:16px; height:16px;"></i>
+                            </a>
+                        </li>
+
+                        <li class="page-item disabled" th:if="${startPageValid > 0}">
+                            <span class="page-link border-0 px-2 text-muted">...</span>
+                        </li>
+
+                        <li class="page-item"
+                            th:each="pageIdx : ${#numbers.sequence(startPageValid, endPage)}"
+                            th:classappend="${pageIdx == currentPage} ? 'active'">
+                            <a class="page-link rounded-3 border-0 px-3 py-1.5 fw-semibold font-heading fs-7"
+                               th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id},page=${pageIdx},size=${pageSize})}"
+                               th:text="${pageIdx + 1}">1</a>
+                        </li>
+
+                        <li class="page-item disabled" th:if="${endPage < totalPages - 1}">
+                            <span class="page-link border-0 px-2 text-muted">...</span>
+                        </li>
+
+                        <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                            <a class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-2"
+                               th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id},page=${currentPage + 1},size=${pageSize})}"
+                               aria-label="Next">
+                                <i data-lucide="chevron-right" style="width:16px; height:16px;"></i>
+                            </a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                            <a class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-2"
+                               th:href="@{/instructor/quiz/quiz-manage/{quizId}(quizId=${quiz.id},page=${totalPages - 1},size=${pageSize})}"
+                               title="Đến trang cuối">
+                                <i data-lucide="chevrons-right" style="width:16px; height:16px;"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </th:block>
+        </div>
+
+        <div class="control-center d-none d-md-block text-muted fs-8 fw-medium"
+             th:if="${totalPages == null || totalPages <= 1}">
+            <i data-lucide="check-square" class="me-1 brand-color"
+               style="width:14px; display:inline-block; vertical-align:middle;"></i> Tất cả câu hỏi đã được hiển thị
+            trọn vẹn
+        </div>
+
+        <div class="control-right d-flex align-items-center gap-2">
+
+            <a th:href="@{/instructor/quiz/save-status/{quizId}(quizId=${quiz.id}, status='DRAFT')}"
+               class="btn btn-outline-primary rounded-pill px-4 py-2.5 fw-semibold fs-7 text-decoration-none">
+                Lưu Bản Nháp
+            </a>
+
+            <div class="ms-2 custom-divider-v d-none d-sm-block"></div>
+
+            <a th:href="@{/instructor/quiz/save-status/{quizId}(quizId=${quiz.id}, status='PUBLISHED')}"
+               class="btn btn-primary-solid rounded-pill px-4 py-2.5 fw-semibold fs-7 shadow-blue text-decoration-none">
+                <i data-lucide="rocket" class="me-1"
+                   style="width:16px; display:inline-block; vertical-align:middle;"></i> Xuất Bản Toàn Bộ Quiz
+            </a>
+        </div>
+    </div>
+
+</main>
+
+
+
+<div class="modal fade" id="quizSettingsModal" tabindex="-1" aria-labelledby="quizSettingsModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+            <form th:action="@{/instructor/quiz/update-quiz-meta}" method="POST" th:object="${quiz}">
+                <input type="hidden" name="id" th:value="${quiz.id}"/>
+
+                <div class="modal-header border-0 bg-primary text-white py-3.5 px-4">
+                    <h5 class="modal-title font-heading fw-bold fs-6 d-flex align-items-center gap-2"
+                        id="quizSettingsModalLabel">
+                        <i data-lucide="settings" style="width:18px; height:18px;"></i> Cấu hình thông số bài thi
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 bg-light-subtle">
+                    <div class="d-flex flex-column gap-3">
+
+                        <div>
+                            <label class="form-label text-dark fw-semibold fs-7 font-heading mb-1.5">Tiêu đề bài kiểm
+                                tra</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                        data-lucide="file-text" style="width:16px;"></i></span>
+                                <input type="text" class="form-control border-start-0 fs-7 ps-1" name="title"
+                                       th:value="${quiz.title}" placeholder="Nhập tiêu đề..." required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-1.5">
+                                    <label class="form-label text-dark fw-semibold fs-7 font-heading m-0">Thời lượng
+                                        (Phút)</label>
+                                    <label class="d-flex align-items-center gap-2 fs-8 fw-semibold text-muted m-0">
+                                        <input type="checkbox" class="form-check-input quiz-time-toggle" data-target="#editQuizTimeLimit"
+                                               th:checked="${quiz.timeLimitMinutes != null}">
+                                        Giới hạn
+                                    </label>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                            data-lucide="clock" style="width:16px;"></i></span>
+                                    <input type="number" class="form-control border-start-0 fs-7 ps-1"
+                                           id="editQuizTimeLimit" name="timeLimitMinutes" th:value="${quiz.timeLimitMinutes}" min="1"
+                                           placeholder="Ví dụ: 15"
+                                           th:disabled="${quiz.timeLimitMinutes == null}"
+                                           th:required="${quiz.timeLimitMinutes != null}">
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label text-dark fw-semibold fs-7 font-heading mb-1.5">Tỷ lệ điểm đạt
+                                    (%)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                            data-lucide="award" style="width:16px;"></i></span>
+                                    <input type="number" class="form-control border-start-0 fs-7 ps-1"
+                                           name="passScorePercent" th:value="${quiz.passScorePercent}" min="0" max="100"
+                                           placeholder="Ví dụ: 80" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2.5 rounded-3 bg-brand-light border border-primary-subtle d-flex gap-2 mt-2">
+                            <i data-lucide="info" class="brand-color flex-shrink-0"
+                               style="width: 16px; margin-top: 2px;"></i>
+                            <span class="fs-8 text-muted lh-sm">Các thay đổi sẽ cập nhật ngay lập tức lên banner và lưu trữ vào hệ thống dữ liệu sau khi bấm lưu.</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 bg-white p-3 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3.5 py-2 fs-7 fw-semibold"
+                            data-bs-dismiss="modal">Hủy bỏ
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary-solid rounded-pill px-4 py-2 fs-7 fw-semibold shadow-blue">
+                        <i data-lucide="save" class="me-1"
+                           style="width:14px; display:inline-block; vertical-align:middle;"></i> Lưu Cấu Hình
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-sm"
+         th:classappend="${toastType == 'error' || errorMessage != null} ? 'bg-danger' : 'bg-success'"
+         role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i th:if="${toastType != 'error' && errorMessage == null}" data-lucide="check-circle" style="width:18px; height:18px;"></i>
+                <i th:if="${toastType == 'error' || errorMessage != null}" data-lucide="alert-circle" style="width:18px; height:18px;"></i>
+
+                <span th:text="${errorMessage != null ? errorMessage : toastMessage}">Nội dung thông báo</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="quizEmptyErrorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-body text-center p-4">
+                <div class="text-danger mb-3">
+                    <i data-lucide="alert-octagon" style="width: 56px; height: 56px;"></i>
+                </div>
+                <h5 class="font-heading fw-bold text-dark mb-2">Không Thể Xuất Bản</h5>
+                <p class="text-muted fs-7 mb-4 px-2" th:text="${publishError}">
+                    Nội dung thông báo lỗi...
+                </p>
+                <div class="d-grid">
+                    <button type="button" class="btn btn-secondary rounded-pill py-2 fw-semibold fs-7" data-bs-dismiss="modal">
+                        Tôi đã hiểu, ở lại thêm câu hỏi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="importExcelModal" tabindex="-1" aria-labelledby="importExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+            <form th:action="@{/instructor/quiz/import-excel}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="quizId" th:value="${quiz.id}"/>
+
+                <div class="modal-header border-0 bg-white pt-4 px-4 pb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="import-icon-header bg-brand-light brand-color">
+                            <i class="fa-solid fa-file-excel fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title font-heading fw-bold fs-5 text-dark" id="importExcelModalLabel">Nhập câu hỏi từ bảng tính</h5>
+                            <p class="text-muted fs-8 m-0">
+                                Để sử dụng tính năng 1 cách hiệu quả nhất, vui lòng tải lên bảng tính excel theo đúng cấu trúc tệp mẫu.
+                                <a href="javascript:void(0)" class="fw-bold brand-color text-decoration-none ms-1 btn-trigger-guide" data-bs-toggle="modal" data-bs-target="#quizImportGuideModal">
+                                    Hướng dẫn sử dụng
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body px-4 py-3">
+                    <div class="excel-drag-drop-zone text-center p-5 mb-4 rounded-4 position-relative" id="dropZone">
+                        <input type="file" name="excelFile" id="excelFileInput" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" accept=".xlsx, .xls" required style="cursor: pointer; z-index: 2;">
+                        <div class="drag-drop-content">
+                            <div class="excel-big-icon mx-auto mb-3">
+                                <i class="fa-solid fa-table-cells brand-color fs-2"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark fs-6 mb-1 text-drag-status">Kéo và thả bảng tính của bạn vào đây</h6>
+                            <p class="text-muted fs-8 mb-3">Hoặc</p>
+                            <button type="button" class="btn btn-primary-solid rounded-3 px-4 py-2 fs-7 fw-semibold position-relative" style="z-index: 1;">
+                                <i data-lucide="laptop" class="me-1" style="width:14px; display:inline-block; vertical-align:middle;"></i> Tải lên từ thiết bị
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="import-strategy-section mb-2">
+                        <label class="form-label text-dark fw-bold fs-7 font-heading mb-2.5">Phương thức xử lý dữ liệu</label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="type-selector-card border rounded-3 p-3 d-flex align-items-center gap-3 w-100 h-100 m-0">
+                                    <input type="radio" name="importMode" value="APPEND" class="form-check-input correct-input-control type-radio-input" checked>
+                                    <div>
+                                        <span class="fs-7 fw-bold text-dark d-block mb-0.5">Thêm tiếp dữ liệu (Append)</span>
+                                        <span class="fs-8 text-muted d-block lh-sm">Giữ nguyên các câu hỏi hiện có, chèn thêm câu hỏi mới từ Excel vào cuối danh sách.</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="type-selector-card border rounded-3 p-3 d-flex align-items-center gap-3 w-100 h-100 m-0">
+                                    <input type="radio" name="importMode" value="OVERWRITE" class="form-check-input correct-input-control type-radio-input danger-check">
+                                    <div>
+                                        <span class="fs-7 fw-bold text-dark d-block mb-0.5 text-danger-hover">Ghi đè toàn bộ (Overwrite)</span>
+                                        <span class="fs-8 text-muted d-block lh-sm">Xóa sạch tất cả câu hỏi cũ trong Quiz này trước khi nạp bộ câu hỏi mới từ file Excel.</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 bg-light-subtle p-3 px-4 d-flex justify-content-between align-items-center">
+                    <a th:href="@{/download/template_quiz_question.xlsx}" class="btn-download-sample text-decoration-none d-flex align-items-center gap-2 fs-7 fw-semibold" download>
+                        <i class="fa-solid fa-file-excel text-success fs-5"></i> Tải về mẫu
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light rounded-pill px-4 py-2 fs-7 fw-semibold border" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary-solid rounded-pill px-4 py-2 fs-7 fw-semibold shadow-blue btn-submit-import">
+                            <i data-lucide="check" class="me-1" style="width:16px; display:inline-block; vertical-align:middle;"></i> Nhập dữ liệu
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="quizImportGuideModal" tabindex="-1" aria-labelledby="quizImportGuideModalLabel" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+            <div class="modal-header border-0 bg-primary text-white py-3 px-4">
+                <h5 class="modal-title font-heading fw-bold fs-6 d-flex align-items-center gap-2" id="quizImportGuideModalLabel">
+                    <!-- Đổi class brand-color thành text-white để icon có màu trắng tinh tế trên nền xanh dương -->
+                    <i class="fa-solid fa-book-open text-white"></i> Hướng dẫn chuẩn bị file Excel
+                </h5>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-toggle="modal" data-bs-target="#importExcelModal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 bg-white layout-guide-body">
+                <div class="guide-scroll-container">
+                    <div class="mb-3.5">
+                        <h6 class="fw-bold text-dark font-heading fs-7 mb-1.5"><span class="step-num-icon">1</span> Tải tệp mẫu quy chuẩn</h6>
+                        <p class="fs-8 text-muted m-0 ps-4">Bấm vào góc trái bên dưới của khung nạp dữ liệu để tải file `.xlsx` chuẩn. Hệ thống sẽ từ chối các file tự tạo sai cột.</p>
+                    </div>
+
+                    <div class="mb-3.5">
+                        <h6 class="fw-bold text-dark font-heading fs-7 mb-1.5"><span class="step-num-icon">2</span> Quy tắc điền cột thông tin</h6>
+                        <ul class="fs-8 text-muted list-unstyled ps-4 m-0 d-flex flex-column gap-1.5">
+                            <li><strong class="text-dark">• Cột Câu hỏi & Điểm:</strong> Điền tiêu đề và số điểm cụ thể (Hệ thống tự nhận nếu bỏ trống là 1 điểm).</li>
+                            <li><strong class="text-dark">• Cột Loại câu hỏi:</strong> Ghi chính xác `SINGLE` (Một đáp án) hoặc `MULTIPLE` (Nhiều đáp án).</li>
+                            <li><strong class="text-dark">• Cột Đáp án:</strong> Cung cấp tối thiểu từ 2 đến tối đa 6 phương án lựa chọn.</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3.5">
+                        <h6 class="fw-bold text-dark font-heading fs-7 mb-1.5"><span class="step-num-icon">3</span> Đánh dấu đáp án đúng</h6>
+                        <p class="fs-8 text-muted m-0 ps-4">Tại cột đáp án chính xác, điền ký hiệu số thứ tự tương ứng hoặc đánh dấu `TRUE`/`1` theo đúng thiết kế của tệp hàng mẫu để hệ thống chấm điểm tự động.</p>
+                    </div>
+
+                    <div class="p-3 rounded-3 bg-brand-light border border-primary-subtle d-flex gap-2">
+                        <i class="fa-solid fa-circle-info brand-color mt-0.5 fs-7"></i>
+                        <span class="fs-8 text-muted lh-sm"><strong>Lưu ý quan trọng:</strong> Hệ thống sẽ tự động quét và kiểm tra tính hợp lệ của toàn bộ file trước khi lưu. Nếu phát hiện dòng lỗi, quá trình Import của dòng đó sẽ bị hủy để bảo vệ dữ liệu.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 bg-light-subtle p-3 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary-solid rounded-pill px-4 py-2 fs-7 fw-semibold shadow-blue" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                    Quay lại Import
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    // Chạy lần đầu tiên khi DOM đã sẵn sàng
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Khởi tạo Icons và Tooltips (nếu có hàm initTooltips)
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+        if (typeof initTooltips === "function") {
+            initTooltips();
+        }
+
+        document.querySelectorAll(".quiz-time-toggle").forEach(function (toggle) {
+            const input = document.querySelector(toggle.dataset.target);
+            if (!input) {
+                return;
+            }
+
+            function syncTimeInput() {
+                input.disabled = !toggle.checked;
+                input.required = toggle.checked;
+                if (!toggle.checked) {
+                    input.value = "";
+                }
+            }
+
+            syncTimeInput();
+            toggle.addEventListener("change", syncTimeInput);
+        });
+
+        // 2. Đọc các Flash Attributes từ Spring Boot (Đã bọc comment ẩn chống báo đỏ IDE)
+        const hasToastMessage = /*[[${toastMessage != null}]]*/ false;
+        const hasErrorMessage = /*[[${errorMessage != null}]]*/ false; // Thêm biến kiểm tra lỗi
+        const hasPublishError = /*[[${publishError != null}]]*/ false;
+
+        // 3. XỬ LÝ HIỂN THỊ TOAST (Cả thành công và thất bại)
+        if (hasToastMessage || hasErrorMessage) {
+            const toastEl = document.getElementById('liveToast');
+            if (toastEl) {
+                const toast = new bootstrap.Toast(toastEl, { delay: 4000 }); // Tăng lên 4s để kịp đọc lỗi
+                toast.show();
+            }
+        }
+
+        // 4. XỬ LÝ MODAL BÁO LỖI (Ấn Publish khi Quiz chưa có câu hỏi)
+        if (hasPublishError) {
+            const errorModalEl = document.getElementById('quizEmptyErrorModal');
+            if (errorModalEl) {
+                const errorModal = new bootstrap.Modal(errorModalEl);
+                errorModal.show();
+            }
+        }
+
+        // =========================================================
+        // 5. CẬP NHẬT: XỬ LÝ KÉO THẢ & CHẶN FILE KHÔNG PHẢI EXCEL
+        // =========================================================
+        const fileInput = document.getElementById('excelFileInput');
+        const textStatus = document.querySelector('.text-drag-status');
+        const dropZone = document.getElementById('dropZone');
+
+        // Hàm kiểm tra file có hợp lệ hay không (chỉ nhận .xlsx và .xls)
+        function isValidExcelFile(file) {
+            const validExtensions = ['xlsx', 'xls'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            return validExtensions.includes(fileExtension);
+        }
+
+        if (fileInput && textStatus && dropZone) {
+
+            // Lắng nghe sự kiện CHANGE (Khi bấm nút chọn file từ thiết bị)
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    if (!isValidExcelFile(file)) {
+                        alert('Định dạng file không hợp lệ! Vui lòng chỉ chọn file Excel (.xlsx, .xls)');
+                        fileInput.value = ''; // Reset xóa file sai quy định
+                        textStatus.innerHTML = `Kéo và thả bảng tính của bạn vào đây`;
+                        return;
+                    }
+                    textStatus.innerHTML = `Đã chọn file: <span class="text-success fw-bold">${file.name}</span>`;
+                }
+            });
+
+            // Hiệu ứng Visual khi rê file ĐANG NẰM TRÊN vùng kéo thả
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--navy-brand)';
+                dropZone.style.backgroundColor = 'rgba(26, 86, 219, 0.04)';
+            });
+
+            // Trả lại giao diện cũ khi kéo file RA KHỎI vùng kéo thả hoặc khi đã THẢ xong
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function() {
+                    dropZone.style.borderColor = 'rgba(26, 86, 219, 0.25)';
+                    dropZone.style.backgroundColor = '#f8fafc';
+                });
+            });
+
+            // Lắng nghe sự kiện DROP (Khi THẢ file trực tiếp vào vùng nét đứt)
+            dropZone.addEventListener('drop', function(e) {
+                // Kiểm tra xem có file nào được thả vào thông qua dataTransfer không
+                if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+                    const file = e.dataTransfer.files[0];
+
+                    if (!isValidExcelFile(file)) {
+                        e.preventDefault(); // Chặn trình duyệt mở file PDF/Ảnh sang tab mới
+                        alert('Hệ thống từ chối nhận! Vui lòng chỉ kéo thả file Excel (.xlsx, .xls)');
+                        fileInput.value = ''; // Reset input
+                        textStatus.innerHTML = `Kéo và thả bảng tính của bạn vào đây`;
+                    }
+                    // Nếu là file Excel hợp lệ, trình duyệt tự động gán vào fileInput nhờ cấu trúc thẻ đè lên nhau của bạn
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

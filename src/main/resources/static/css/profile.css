@@ -1,0 +1,227 @@
+/* --- CSS Variables & Design System --- */
+:root {
+    --primary: #1a56db;
+    --primary-hover: #1e40af;
+    --primary-light: #eff6ff;
+    --bg-page: #f0f5fa;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+    
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Base Custom Resets & Typography --- */
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-page);
+    color: var(--text-main);
+}
+
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+.bg-page {
+    background-color: var(--bg-page) !important;
+}
+
+.fs-7 {
+    font-size: 14.5px !important;
+}
+
+.fs-8 {
+    font-size: 12.2px !important;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.leading-relaxed {
+    line-height: 1.7;
+}
+
+.leading-snug {
+    line-height: 1.4;
+}
+
+/* --- Custom Header Navigation Styles --- */
+.logo-icon-box {
+    transition: var(--transition);
+}
+
+.navbar-brand:hover .logo-icon-box {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+.logo-text {
+    font-size: 19px;
+    letter-spacing: -0.5px;
+}
+
+.search-input {
+    transition: var(--transition);
+    border: 1.5px solid transparent !important;
+}
+
+.search-input:focus {
+    background-color: #ffffff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1) !important;
+}
+
+
+/* Breadcrumbs Separator */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+    vertical-align: middle;
+}
+
+/* --- Left Column Sidebar --- */
+.verified-badge-box {
+    box-shadow: var(--shadow-sm);
+}
+
+/* Specialty Pill Badges */
+.badge-guitar {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+}
+
+.badge-tech {
+    background-color: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #ffedd5;
+}
+
+.badge-culinary {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+/* CTA buttons overrides */
+#btn-follow-instructor {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    transition: var(--transition);
+}
+
+#btn-follow-instructor:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25) !important;
+}
+
+#btn-send-message {
+    border-color: var(--primary);
+    color: var(--primary);
+    transition: var(--transition);
+}
+
+#btn-send-message:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+/* Social links icons */
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.social-link:hover {
+    background-color: var(--primary-light);
+    color: var(--primary) !important;
+    transform: translateY(-2px);
+    border-color: #dbeafe;
+}
+
+/* --- Right Column Bio & Specialties --- */
+.bio-tagline {
+    letter-spacing: 0.5px;
+}
+
+.specialty-icon-wrapper {
+    transition: var(--transition);
+}
+
+.specialty-sub-item:hover .specialty-icon-wrapper {
+    transform: scale(1.05) rotate(-3deg);
+}
+
+.quote-box {
+    border-left-width: 5px !important;
+}
+
+/* --- Course Card custom grid styling --- */
+.course-card-hover {
+    transition: var(--transition);
+    background-color: #ffffff;
+}
+
+.course-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.course-img-wrapper img {
+    transition: var(--transition);
+}
+
+.course-card-hover:hover .course-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.course-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.hover-primary-link {
+    transition: var(--transition);
+}
+
+.hover-primary-link:hover {
+    color: var(--primary) !important;
+}
+
+/* --- Responsive Adaptations --- */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px;
+    }
+}
+
+/* Hide default bootstrap dropdown caret */
+.no-caret::after {
+    display: none !important;
+}
+
+

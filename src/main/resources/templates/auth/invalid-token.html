@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên kết không hợp lệ | LearningHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../../static/css/invalid-token.css">
+    <link rel="stylesheet" th:href="@{/css/invalid-token.css}">
+</head>
+<body>
+
+<div class="register-container state-danger"> <div class="register-split-left">
+    <div class="form-wrapper">
+        <div class="brand-logo">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>LearningHub</span>
+        </div>
+
+        <div class="error-status-container">
+            <div class="warning-hex-icon">
+                <div class="hex-pulse"></div>
+                <div class="hex-bg"></div>
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="form-header">
+                <h1>Liên kết không hợp lệ</h1>
+                <p>Yêu cầu khôi phục mật khẩu đã hết hạn hoặc mã xác thực (Token) trên đường dẫn này không chính xác.</p>
+            </div>
+        </div>
+
+        <div class="suggestion-card-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>Vì lý do an ninh, liên kết xác thực chỉ có hiệu lực trong vòng <strong>15 phút</strong> và sẽ tự hủy sau một lần truy cập.</p>
+        </div>
+
+        <div class="action-group">
+            <a th:href="@{/forgot-password}" class="btn-submit-danger">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                <span>Yêu cầu liên kết mới</span>
+            </a>
+
+            <a th:href="@{/login}" class="btn-secondary-dark">
+                <span>Quay lại trang đăng nhập</span>
+            </a>
+        </div>
+
+        <div class="form-footer">
+            <p>Trợ giúp về sự cố đăng nhập?</p>
+            <a href="#" class="support-link">
+                <span>Trung tâm bảo mật</span>
+                <i class="fa-solid fa-shield-halved"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+    <div class="register-split-right">
+        <div class="color-fit-overlay"></div>
+
+        <div class="creative-security-wrapper">
+            <div class="radar-pulse-container danger-pulse">
+                <div class="pulse-ring ring-1"></div>
+                <div class="pulse-ring ring-2"></div>
+                <div class="pulse-ring ring-3"></div>
+                <div class="center-shield">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+            </div>
+
+            <div class="security-info-card">
+                <div class="card-tag">Hệ thống an toàn v3.0</div>
+                <h3>Token Đã Bị Vô Hiệu</h3>
+                <p>Cơ chế phòng thủ chủ động đã chặn phiên làm việc này để ngăn chặn các cuộc tấn công dò quét mã (Brute-force) hoặc chiếm đoạt tài khoản.</p>
+
+                <div class="security-checklist">
+                    <div class="check-item outdated">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        <span>Trạng thái mã khóa: Hết hạn (Expired)</span>
+                    </div>
+                    <div class="check-item">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>IP hiện tại: Đã được ghi nhận</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

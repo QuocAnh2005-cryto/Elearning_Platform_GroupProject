@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Learning Hub - Chỉnh Sửa Khóa Học</title>
+    <link rel="stylesheet" th:href="@{/css/course_manage.css}"/>
+    <link rel="stylesheet" th:href="@{/css/instructor-submit-review.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div th:replace="~{instructor_course/sidebar :: sidebar(activePage='courses')}"></div>
+
+<!-- MAIN -->
+<main class="main-content">
+    <div class="page-header">
+        <h1>
+            <span class="icon"></span>
+            <span th:text="${courseRequest != null ? courseRequest.title : 'Tạo Khóa Học Mới'}">Khóa Học</span>
+        </h1>
+        <a th:href="@{/instructor/courses}" class="btn btn-outline">← Quay lại danh sách</a>
+    </div>
+
+    <!-- Wizard Notice -->
+    <div class="wizard-notice" th:if="${error == null && success == null}">
+        <strong>Lưu ý:</strong> Hoàn thành từng bước và nhấn Lưu trước khi chuyển bước tiếp theo.
+    </div>
+
+    <!-- Wizard Steps -->
+    <div class="wizard-steps">
+        <a th:href="${courseRequest?.id != null}
+               ? @{/instructor/{id}/edit(id=${courseRequest.id})}
+               : '#'"
+           class="wizard-step" th:classappend="${activeStep == 'info'} ? 'active' : ''">
+            <div class="step-dot">1</div>
+            <div class="step-label">GIỚI THIỆU<br/>KHÓA HỌC</div>
+        </a>
+
+        <a th:href="${courseRequest?.id != null}
+               ? @{/instructor/{id}/curriculum(id=${courseRequest.id})}
+               : '#'"
+           class="wizard-step" th:classappend="${activeStep == 'curriculum'} ? 'active' : ''">
+            <div class="step-dot">2</div>
+            <div class="step-label">CHƯƠNG TRÌNH<br/>GIẢNG DẠY</div>
+        </a>
+
+        <a th:href="${courseRequest?.id != null}
+               ? @{/instructor/{id}/submit-review(id=${courseRequest.id})}
+               : '#'"
+           class="wizard-step" th:classappend="${activeStep == 'publish'} ? 'active' : ''">
+            <div class="step-dot">3</div>
+            <div class="step-label">XUẤT BẢN</div>
+        </a>
+    </div>
+
+    <div th:if="${activeStep == 'info'}"
+         th:insert="~{instructor_course/stepinfor :: content}"></div>
+    <div th:if="${activeStep == 'curriculum'}"
+         th:insert="~{instructor_course/stepcurriculum :: content}"></div>
+    <div th:if="${activeStep == 'quiz'}"
+         th:insert="~{instructor_course/stepquizz :: content}"></div>
+    <div th:if="${activeStep == 'publish'}"
+         th:insert="~{instructor_course/submit_review :: content}"></div>
+
+</main>
+
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+    <div class="app-toast toast-error" th:if="${error != null}">
+        <i class="bi bi-exclamation-circle"></i>
+        <span th:text="${error}">Có lỗi xảy ra</span>
+        <button type="button" class="toast-close" aria-label="Đóng">&times;</button>
+    </div>
+    <div class="app-toast toast-success" th:if="${success != null}">
+        <i class="bi bi-check-circle"></i>
+        <span th:text="${success}">Thành công</span>
+        <button type="button" class="toast-close" aria-label="Đóng">&times;</button>
+    </div>
+    <div class="app-toast toast-warning" th:if="${warning != null}">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span th:text="${warning}">Cảnh báo</span>
+        <button type="button" class="toast-close" aria-label="Đóng">&times;</button>
+    </div>
+</div>
+
+<!-- Modals dùng chung cho editor -->
+<div th:replace="~{instructor_course/modals :: all}"></div>
+
+<script th:src="@{/js/course_instructor.js}"></script>
+</body>
+</html>
+

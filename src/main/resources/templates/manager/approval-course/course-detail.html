@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager - Chi tiết Khóa học</title>
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/course.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- ══════════ BREADCRUMB / BACK HEADER ══════════ -->
+        <div class="back-header">
+            <a th:href="@{/manager/course/list}" class="back-btn">
+                <i class="ph ph-arrow-left"></i>
+            </a>
+            <div class="back-title">
+                <h1>Chi tiết Khóa học</h1>
+                <p>Xem xét nội dung và trạng thái khóa học.</p>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+            <i class="ph ph-check-circle fs-5"></i>
+            <span th:text="${successMessage}">Cập nhật thành công.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+            <i class="ph ph-x-circle fs-5"></i>
+            <span th:text="${errorMessage}">Đã xảy ra lỗi.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- ══════════ COURSE DETAIL CARD ══════════ -->
+        <div class="course-detail-container">
+            <!-- Thumbnail Cover -->
+            <img th:src="${course.thumbnailPath}" class="detail-cover-image" alt="Course Thumbnail">
+
+            <!-- Meta info & Action buttons -->
+            <div class="detail-info-row">
+                <div class="detail-meta">
+                    <span th:if="${course.status != null}" 
+                          th:class="${'badge py-2 px-3 fs-6 badge-' + (course.status.name() == 'PUBLISHED' ? 'success' : (course.status.name() == 'PENDING' ? 'warning' : (course.status.name() == 'RESUBMIT' ? 'info' : 'danger')))}"
+                          th:text="${course.statusLabel}">Trạng thái</span>
+                    <span class="detail-price" th:text="${course.price != null ? #numbers.formatDecimal(course.price, 0, 'POINT', 0, 'COMMA') + ' đ' : 'Miễn phí'}">$49.99</span>
+                </div>
+
+                <!-- Action buttons form -->
+                <div class="detail-actions" th:if="${course.status != null and (course.status.name() == 'PENDING' or course.status.name() == 'RESUBMIT')}">
+                    <!-- Phê duyệt (Approve) -->
+                    <button type="button" class="btn btn-approve d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#approveModal">
+                        <i class="ph ph-check-circle fs-5"></i> Phê duyệt
+                    </button>
+
+                    <!-- Từ chối (Reject) -->
+                    <button type="button" class="btn btn-reject d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                        <i class="ph ph-x-circle fs-5"></i> Từ chối
+                    </button>
+                </div>
+            </div>
+
+            <!-- Title & Instructor -->
+            <h2 class="detail-title text-break" th:text="${course.title}">Các Mẫu React Nâng Cao</h2>
+            <div class="detail-instructor">
+                <span>Bởi </span>
+                <strong th:text="${course.instructor != null ? (course.instructor.lastName + ' ' + course.instructor.firstName) : 'Không rõ'}">Michael Chang</strong>
+            </div>
+
+            <!-- Description -->
+            <div class="detail-section-title">
+                <i class="ph ph-text-align-left"></i>
+                <span>Mô tả</span>
+            </div>
+            <div class="detail-desc-content text-break" th:utext="${course.description != null ? course.description : 'Không có mô tả cho khóa học này.'}">
+                Học các mẫu thiết kế nâng cao để xây dựng các ứng dụng React có khả năng mở rộng.
+            </div>
+            <div class="detail-section-title">
+                <i class="ph ph-tag"></i>
+                <span>Danh mục</span>
+            </div>
+            <div class="detail-desc-content text-break"
+                 th:text="${course.category != null ? course.category.name : 'Chưa phân loại'}">
+                Danh mục
+            </div>
+
+            <!-- Course Curriculum & Integrated Materials -->
+            <div class="detail-section-title mt-4">
+                <i class="ph ph-book-bookmark"></i>
+                <span>Giáo trình & Tài liệu học tập</span>
+            </div>
+
+            <div th:if="${course.sections == null or course.sections.isEmpty()}" class="text-center py-4 text-muted border rounded bg-light mt-3 mb-4">
+                <i class="ph ph-folder-open fs-3 d-block mb-1"></i>
+                Chưa có chương học nào được tạo cho khóa học này.
+            </div>
+
+            <div th:if="${course.sections != null and !course.sections.isEmpty()}" class="accordion curriculum-accordion mt-3 mb-4" id="curriculumAccordion">
+                <div th:each="section, secStat : ${course.sections}" class="accordion-item border rounded mb-2 overflow-hidden shadow-sm">
+                    <h2 class="accordion-header" th:id="'heading-' + ${secStat.index}">
+                        <button class="accordion-button bg-light py-3 px-4 d-flex align-items-center gap-2" type="button" 
+                                data-bs-toggle="collapse" 
+                                th:data-bs-target="'#collapse-' + ${secStat.index}" 
+                                aria-expanded="true" 
+                                th:aria-controls="'collapse-' + ${secStat.index}">
+                            <div class="d-flex justify-content-between align-items-center w-100 pe-3">
+                                <span class="fw-bold text-dark text-break fs-6" th:text="${section.title}">Chương 1: Giới thiệu</span>
+                                <span class="badge bg-secondary rounded-pill font-monospace" th:text="${section.lessons != null ? section.lessons.size() + ' bài học' : '0 bài học'}">3 bài học</span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div th:id="'collapse-' + ${secStat.index}" class="accordion-collapse collapse show" 
+                         th:aria-labelledby="'heading-' + ${secStat.index}">
+                        <div class="accordion-body p-0">
+                            <ul class="lesson-list mb-0 list-unstyled">
+                                <li th:each="lesson : ${section.lessons}" class="lesson-item-container p-3 border-bottom bg-white">
+                                    <div class="d-flex justify-content-between align-items-start align-items-md-center flex-column flex-md-row gap-3">
+                                        <!-- Left Side: Title, Duration, & Materials/Quizzes list underneath -->
+                                        <div class="lesson-info-block flex-grow-1">
+                                            <div class="lesson-title-container d-flex align-items-center flex-wrap gap-2">
+                                                <i class="ph ph-play-circle text-primary fs-5"></i>
+                                                <span th:text="${lesson.title}" class="fw-semibold text-dark text-break">Bài 1: Cài đặt môi trường</span>
+                                                <span class="lesson-duration text-muted fs-xs ms-2" th:if="${lesson.durationSeconds != null}" 
+                                                      th:text="${(lesson.durationSeconds / 60) + ' phút'}">5 phút</span>
+                                            </div>
+                                            
+                                            <!-- Materials list below the title -->
+                                            <div class="lesson-materials-section mt-2 ps-4" th:if="${lesson.materials != null and !lesson.materials.isEmpty()}">
+                                                <div class="text-muted fs-xs mb-1 d-flex align-items-center gap-1">
+                                                    <i class="ph ph-paperclip text-info"></i>
+                                                    <span>Tài liệu đính kèm:</span>
+                                                </div>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <a th:each="mat : ${lesson.materials}" 
+                                                       th:href="@{/material/{id}/view(id=${mat.id})}" 
+                                                       target="_blank" 
+                                                       class="lesson-material-link btn btn-sm py-1 px-2 btn-light border d-inline-flex align-items-center gap-1 text-decoration-none">
+                                                        <i class="ph ph-file-pdf text-danger" th:if="${mat.fileType == 'pdf' or (mat.fileName != null and mat.fileName.endsWith('.pdf'))}"></i>
+                                                        <i class="ph ph-file-text text-info" th:if="${!(mat.fileType == 'pdf' or (mat.fileName != null and mat.fileName.endsWith('.pdf')))}"></i>
+                                                        <span th:text="${mat.fileName}">Tài liệu.pdf</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <!-- Quizzes list below the title -->
+                                            <div class="lesson-quizzes-section mt-2 ps-4" th:if="${lesson.quizzes != null and !lesson.quizzes.isEmpty()}">
+                                                <div class="text-muted fs-xs mb-1 d-flex align-items-center gap-1">
+                                                    <i class="ph ph-question text-warning"></i>
+                                                    <span>Câu hỏi ôn tập (Quiz):</span>
+                                                </div>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <a th:each="qz : ${lesson.quizzes}" 
+                                                       th:href="@{/quiz/lesson/{lessonId}(lessonId=${lesson.id})}" 
+                                                       target="_blank" 
+                                                       class="btn btn-sm py-1 px-2 btn-light border border-warning text-dark d-inline-flex align-items-center gap-1 text-decoration-none">
+                                                        <i class="ph ph-question text-warning"></i>
+                                                        <span th:text="${qz.title != null ? qz.title : 'Bài kiểm tra ôn tập'}">Quiz</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right Side: Action Buttons -->
+                                        <div class="lesson-actions-block d-flex align-items-center flex-wrap gap-2 mt-2 mt-md-0 align-self-end align-self-md-center">
+                                            <!-- Watch Video Button -->
+                                            <a th:if="${lesson.videoUrl != null and !lesson.videoUrl.isEmpty()}" 
+                                               th:href="@{/lesson/{id}/video(id=${lesson.id})}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 py-1.5 px-3">
+                                                <i class="ph ph-video"></i> Xem Video
+                                            </a>
+                                            
+                                            <!-- View Material Button (if exists) -->
+                                            <div th:if="${lesson.materials != null and !lesson.materials.isEmpty()}" class="d-inline-block">
+                                                <a th:if="${lesson.materials.size() == 1}" 
+                                                   th:href="@{/material/{id}/view(id=${lesson.materials.get(0).id})}" 
+                                                   target="_blank" 
+                                                   class="btn btn-sm btn-outline-info d-inline-flex align-items-center gap-1 py-1.5 px-3">
+                                                    <i class="ph ph-file-text"></i> Xem Tài liệu
+                                                </a>
+                                                <div th:if="${lesson.materials.size() > 1}" class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-info dropdown-toggle d-inline-flex align-items-center gap-1 py-1.5 px-3" 
+                                                            type="button" 
+                                                            data-bs-toggle="dropdown" 
+                                                            aria-expanded="false">
+                                                        <i class="ph ph-file-text"></i> Xem Tài liệu
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        <li th:each="mat : ${lesson.materials}">
+                                                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" 
+                                                               th:href="@{/material/{id}/view(id=${mat.id})}" 
+                                                               target="_blank">
+                                                                <i class="ph ph-file-text text-info"></i>
+                                                                <span th:text="${mat.fileName}">Tài liệu</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <!-- View Quiz Button (if exists) -->
+                                            <div th:if="${lesson.quizzes != null and !lesson.quizzes.isEmpty()}" class="d-inline-block">
+                                                <a th:href="@{/quiz/lesson/{lessonId}(lessonId=${lesson.id})}" 
+                                                   target="_blank" 
+                                                   class="btn btn-sm btn-outline-warning text-dark d-inline-flex align-items-center gap-1 py-1.5 px-3">
+                                                    <i class="ph ph-question"></i> Xem Quiz
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Communication & Activity Audit Log -->
+            <div class="detail-section-title mt-4">
+                <i class="ph ph-chat-centered-text"></i>
+                <span>Lịch sử tương tác & Nhật ký phê duyệt</span>
+            </div>
+
+            <div class="card border mt-3 mb-4 shadow-sm">
+                <div class="card-body p-4">
+                    <div th:if="${courseLogs == null or courseLogs.isEmpty()}" class="text-center py-3 text-muted">
+                        <i class="ph ph-clock-counter-clockwise fs-3 d-block mb-1"></i>
+                        Chưa có lịch sử tương tác hoặc ghi chú phê duyệt nào cho khóa học này.
+                    </div>
+
+                    <div th:if="${courseLogs != null and !courseLogs.isEmpty()}" class="timeline">
+                        <div th:each="log : ${courseLogs}" class="d-flex gap-3 mb-3 position-relative">
+                            <!-- Avatar / Role Icon -->
+                            <div class="flex-shrink-0">
+                                <div class="avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                                     th:classappend="${log.user != null and log.user.role != null and log.user.role.name() == 'ROLE_MANAGER' ? 'bg-primary' : 'bg-success'}"
+                                     style="width: 40px; height: 40px;">
+                                    <span th:text="${log.user != null and log.user.firstName != null and !log.user.firstName.isEmpty() ? #strings.substring(log.user.firstName, 0, 1).toUpperCase() : 'U'}">U</span>
+                                </div>
+                            </div>
+
+                            <!-- Log Content -->
+                            <div class="flex-grow-1 border rounded p-3 bg-white shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <strong class="text-dark fs-6" th:text="${log.user != null ? (log.user.lastName + ' ' + log.user.firstName) : 'Hệ thống'}">Cường Lê</strong>
+                                    <small class="text-muted" th:text="${#temporals.format(log.createdAt, 'HH:mm dd/MM/yyyy')}">14:30 23/07/2026</small>
+                                </div>
+
+                                <!-- Action Badge -->
+                                <div class="mb-2">
+                                    <span class="badge py-1 px-2"
+                                          th:classappend="${log.action != null and log.action.name() == 'APPROVE_COURSE' ? 'bg-success' : (log.action != null and log.action.name() == 'REJECT_COURSE' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                          th:text="${log.action != null ? log.action.label : 'Hành động'}">Trạng thái</span>
+                                </div>
+
+                                <!-- Log Message / Note -->
+                                <div class="text-secondary text-break fs-sm" 
+                                     th:text="${log.meta != null and log.meta.contains('Lý do từ chối: ') ? #strings.substringAfter(log.meta, 'Lý do từ chối: ') : log.meta}">
+                                    Nội dung ghi chú hoặc lý do phản hồi...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════ APPROVE MODAL ══════════ -->
+        <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/manager/course/edit/{id}(id=${course.id})}" method="post">
+                        <input type="hidden" name="status" value="PUBLISHED" />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="approveModalLabel">Phê duyệt khóa học</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Bạn có chắc chắn muốn phê duyệt khóa học <strong th:text="${course.title}">Các Mẫu React Nâng Cao</strong>?</p>
+                            <p class="text-muted mb-0">Khi đã phê duyệt, khóa học này sẽ hiển thị công khai trên hệ thống và người học có thể đăng ký tham gia khóa học ngay lập tức.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-approve">Xác nhận phê duyệt</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════ REJECT MODAL ══════════ -->
+        <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/manager/course/edit/{id}(id=${course.id})}" method="post">
+                        <input type="hidden" name="status" value="REJECTED" />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rejectModalLabel">Từ chối khóa học</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="rejectionReason" class="form-label font-weight-bold">Lý do từ chối (Reject Reason):</label>
+                                <textarea class="form-control" id="rejectionReason" name="rejectionReason" rows="4" placeholder="Nhập lý do từ chối... Ví dụ: Missing lesson videos" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <script>
+            // Ngăn chặn nhấp đúp khi gửi yêu cầu duyệt hoặc từ chối
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Đang xử lý...';
+                    }
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

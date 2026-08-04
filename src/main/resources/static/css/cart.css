@@ -1,0 +1,199 @@
+/* --- Custom Styles for Shopping Cart (cart.html) --- */
+
+/* Select All Bar & Shop Group Card */
+.select-all-bar {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    background-color: #ffffff;
+}
+
+.instructor-group-card {
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: var(--transition);
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.instructor-group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+}
+
+.instructor-group-header {
+    background-color: #f8fafc;
+}
+
+.instructor-tag {
+    font-size: 11px !important;
+    border-radius: 6px !important;
+    font-weight: 700;
+}
+
+/* Individual Cart Item Rows */
+.cart-item-row {
+    transition: var(--transition);
+    background-color: #ffffff;
+}
+
+.cart-item-row:hover {
+    background-color: #f8fafc;
+}
+
+.cart-item-title {
+    font-size: 15.5px !important;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.cart-item-row:hover .cart-item-title {
+    color: var(--primary);
+}
+
+.border-bottom-dashed {
+    border-bottom: 1px dashed #e2e8f0 !important;
+}
+
+/* Voucher and Message CSS */
+.instructor-voucher-section {
+    background-color: #f8fafc;
+}
+
+.input-instructor-voucher:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1) !important;
+}
+
+/* Rating Stars */
+.star-icon {
+    width: 13.5px;
+    height: 13.5px;
+}
+
+.star-filled {
+    color: #f59e0b !important;
+    fill: #f59e0b !important;
+}
+
+.star-filled-opacity {
+    color: #cbd5e1 !important;
+    fill: #cbd5e1 !important;
+}
+
+/* Checkbox customizations (Shopee-style using Learning Hub's blue theme) */
+.form-check-input:checked {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15) !important;
+}
+
+/* Coupon wrapper focus and success */
+#coupon-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1) !important;
+}
+
+/* Empty Cart animations */
+.empty-cart-icon-wrapper {
+    background-color: #f8fafc !important;
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Deleted fade out transition class */
+.fade-out-item {
+    opacity: 0 !important;
+    transform: scale(0.92) translateY(-10px) !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.hover-primary {
+    transition: var(--transition);
+}
+
+.hover-primary:hover {
+    color: var(--primary) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .cart-item-row img {
+        width: 100% !important;
+        height: 160px !important;
+    }
+}
+
+/* Sticky Summary Card on Desktop */
+@media (min-width: 992px) {
+    .sticky-summary {
+        position: sticky;
+        top: 100px; /* Offset from top header */
+        z-index: 10;
+        transition: top 0.3s ease;
+    }
+}
+
+/* Checkbox Hover & Press Micro-interactions */
+.form-check-input {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.form-check-input:hover {
+    transform: scale(1.15);
+    cursor: pointer;
+}
+
+.form-check-input:active {
+    transform: scale(0.9);
+}
+
+/* Price dynamic updates flash & pop animation */
+@keyframes price-pop {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.06); color: var(--primary); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-price-change {
+    animation: price-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-block;
+}
+
+/* Voucher Success pulse glow effect */
+@keyframes success-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.animate-voucher-success {
+    animation: success-pulse 0.45s ease-out;
+}
+
+.pulse-green {
+    animation: success-pulse 2s infinite;
+    border-radius: 50%;
+}
+
+/* Smooth Transitions for prices text */
+#summary-subtotal,
+#summary-discounts,
+#summary-instructor-discounts,
+#summary-total {
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+

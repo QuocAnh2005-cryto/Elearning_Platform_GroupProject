@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Đánh giá khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/course_manage.css}"/>
+</head>
+<body>
+
+<div th:replace="~{instructor_course/sidebar :: sidebar(activePage='courses')}"></div>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Đánh giá khóa học</h1>
+            <p class="page-subtitle">Theo dõi phản hồi của học viên để cải thiện nội dung khóa học.</p>
+        </div>
+        <a th:href="@{/instructor/courses(tab='all')}" class="btn btn-outline">Quay lại danh sách</a>
+    </div>
+
+    <section class="course-review-shell">
+        <div class="course-review-hero">
+            <div class="course-review-cover">
+                <img th:src="${course.thumbnailPath}" alt="Ảnh khóa học"/>
+            </div>
+            <div class="course-review-hero-main">
+                <div class="course-review-status" th:text="${course.statusLabel}">Published</div>
+                <h2 th:text="${course.title}">Tên khóa học</h2>
+                <div th:utext="${course.description ?: 'Khóa học chưa có mô tả.'}">Mô tả khóa học</div>
+                <div class="course-review-meta">
+                    <span th:text="${course.category != null ? course.category.name : 'Chưa có danh mục'}">Danh mục</span>
+                    <span th:text="${course.level ?: 'Chưa cập nhật cấp độ'}">Beginner</span>
+                    <span>
+                        <strong th:text="${ratingCount}">0</strong>
+                        đánh giá
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="course-review-grid">
+            <aside class="course-review-summary card">
+                <div class="review-score-block">
+                    <strong th:text="${averageRating}">4.8</strong>
+                    <span>/ 5</span>
+                </div>
+                <div class="review-score-stars">
+                    <span th:each="star : ${#numbers.sequence(1, 5)}"
+                          th:classappend="${star <= ratingStars} ? ' active' : ''">★</span>
+                </div>
+                <p>
+                    Dựa trên
+                    <strong th:text="${ratingCount}">0</strong>
+                    lượt đánh giá của học viên.
+                </p>
+
+                <!-- Instructor course reviews: thanh phan bo sao lay tu controller, co the replace logic neu sau nay co DTO rieng. -->
+                <div class="review-breakdown">
+                    <div class="review-breakdown-row" th:each="row : ${ratingBreakdown}">
+                        <span class="review-breakdown-label">
+                            <strong th:text="${row['star']}">5</strong>
+                            sao
+                        </span>
+                        <div class="review-breakdown-track">
+                            <div class="review-breakdown-fill"
+                                 th:style="|width:${row['percent']}%|"></div>
+                        </div>
+                        <span class="review-breakdown-value" th:text="${row['count']}">0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="course-review-list-panel card">
+                <div class="review-list-heading">
+                    <div>
+                        <div class="card-title">Phản hồi của học viên</div>
+                        <p>Danh sách nhận xét mới nhất của khóa học này.</p>
+                    </div>
+                    <span class="review-count-pill">
+                        <span th:text="${ratingCount}">0</span>
+                        review
+                    </span>
+                </div>
+
+                <!-- Backend da kiem quyen va truyen reviews cua dung course sang day. -->
+                <div class="table-empty review-empty-state" th:if="${reviews == null or #lists.isEmpty(reviews)}">
+                    <div class="review-empty-icon">★</div>
+                    <strong>Khóa học này chưa có đánh giá.</strong>
+                    <p>Khi học viên gửi review, toàn bộ phản hồi sẽ hiển thị tại đây để bạn theo dõi.</p>
+                </div>
+
+                <div class="instructor-review-list" th:if="${reviews != null and not #lists.isEmpty(reviews)}">
+                    <article class="instructor-review-item" th:each="review : ${reviews}">
+                        <div class="instructor-review-avatar">
+                            <img th:if="${review.user != null and review.user.avatarUrl != null and !#strings.isEmpty(review.user.avatarUrl)}"
+                                 th:src="${#strings.startsWith(review.user.avatarUrl, 'http') ? review.user.avatarUrl : userAvatarBaseUrl + review.user.avatarUrl}"
+                                 alt="Ảnh học viên"/>
+                            <span th:if="${review.user == null or review.user.avatarUrl == null or #strings.isEmpty(review.user.avatarUrl)}"
+                                  th:text="${review.user != null and review.user.lastName != null and !#strings.isEmpty(review.user.lastName) ? #strings.substring(review.user.lastName,0,1) : 'H'}">H</span>
+                        </div>
+
+                        <div class="instructor-review-content">
+                            <div class="instructor-review-head">
+                                <div>
+                                    <strong th:text="${review.user != null ? review.user.firstName + ' ' + review.user.lastName : 'Học viên'}">
+                                        Học viên
+                                    </strong>
+                                    <div class="course-card-meta"
+                                         th:text="${review.createdAt != null ? #temporals.format(review.createdAt, 'dd-MM-yyyy HH:mm') : 'Chưa có thời gian'}">
+                                        01-01-2026
+                                    </div>
+                                </div>
+                                <div class="review-rating-badge">
+                                    <span th:text="${review.rating ?: 0}">5</span>
+                                    <small>/5</small>
+                                </div>
+                            </div>
+
+                            <div class="review-stars">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                      th:classappend="${review.rating != null and i <= review.rating} ? ' active' : ''">★</span>
+                            </div>
+
+                            <p class="instructor-review-comment" th:text="${review.comment ?: 'Không có nhận xét.'}">
+                                Nội dung đánh giá
+                            </p>
+
+                            <div class="review-item-footer">
+                                <span th:text="${review.status != null ? review.status.name() : 'VISIBLE'}">VISIBLE</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

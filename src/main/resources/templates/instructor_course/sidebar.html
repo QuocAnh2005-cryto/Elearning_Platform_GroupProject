@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<aside th:fragment="sidebar(activePage)" class="sidebar instructor-sidebar">
+    <div class="sidebar-logo">
+        <a th:href="@{/instructor/dashboard}" class="sidebar-brand-link">
+            <img th:src="@{/images/logo.png}" alt="LearningHub Logo" style="height: 38px; width: auto; object-fit: contain;">
+            <span class="logo-text">LearningHub</span>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a th:href="@{/instructor/sidebar}"
+           th:classappend="${activePage == 'profile'} ? 'active' : ''">
+            <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0"/></svg>
+            </span>
+            <span>Thông tin của tôi</span>
+        </a>
+        <a th:href="@{/instructor/dashboard}"
+           th:classappend="${activePage == 'stats'} ? 'active' : ''">
+            <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z"/></svg>
+            </span>
+            <span>Tổng quan</span>
+        </a>
+        <a th:href="@{/instructor/courses}"
+           th:classappend="${activePage == 'courses'} ? 'active' : ''">
+            <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Zm0 0V21"/></svg>
+            </span>
+            <span>Khóa học</span>
+        </a>
+        <a th:href="@{/instructor/materials}"
+           th:classappend="${activePage == 'materials'} ? 'active' : ''">
+            <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5V4Zm4 4h6M9 12h6M9 16h4"/></svg>
+            </span>
+            <span>Thư viện tài liệu</span>
+        </a>
+        <a th:href="@{/logout}" class="nav-logout">
+            <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M10 6H6v12h4M14 8l4 4-4 4M8 12h10"/></svg>
+            </span>
+            <span>Đăng xuất</span>
+        </a>
+    </nav>
+</aside>
+</html>

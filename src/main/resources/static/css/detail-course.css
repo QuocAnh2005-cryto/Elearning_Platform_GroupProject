@@ -1,0 +1,211 @@
+/* Star Rating Styles */
+.star-rating-css {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.star-rating-css input[type="radio"] {
+    display: none;
+}
+
+.star-rating-css label {
+    cursor: pointer;
+    padding: 2px;
+}
+
+/* Default: hollow star (grey border, no fill) */
+.star-rating-css label svg, .star-rating-css label i {
+    width: 24px;
+    height: 24px;
+    fill: none !important;
+    stroke: #ccc !important;
+    transition: stroke 0.15s ease-in-out, fill 0.15s ease-in-out;
+}
+
+/* Hover & Checked: filled yellow star (yellow border + yellow fill) */
+.star-rating-css input[type="radio"]:checked~label svg,
+.star-rating-css input[type="radio"]:checked~label svg polygon,
+.star-rating-css label:hover svg,
+.star-rating-css label:hover svg polygon,
+.star-rating-css label:hover~label svg,
+.star-rating-css label:hover~label svg polygon {
+    fill: #ffc107 !important;
+    stroke: #ffc107 !important;
+}
+
+/* Force solid yellow fill for all read-only/filled stars on the page */
+.star-icon.filled,
+.star-icon.filled polygon,
+.star-icon.filled path {
+    fill: #ffc107 !important;
+    stroke: #ffc107 !important;
+}
+
+/* Star Icon Sizes & Fill Defaults */
+.star-icon {
+    width: 14px;
+    height: 14px;
+}
+.star-icon.filled {
+    fill: currentColor;
+}
+.star-icon.star-icon-sm {
+    width: 16px;
+    height: 16px;
+}
+.star-icon.star-icon-lg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Course Description Box */
+.description-card {
+    background-color: #e6f0fa !important;
+    border-left: 5px solid var(--bs-primary) !important;
+}
+
+.description-card p, .text-desc-color {
+    color: #274060 !important;
+}
+
+/* Sticky Purchase Sidebar */
+.course-purchase-aside {
+    top: 100px !important;
+    z-index: 10 !important;
+}
+
+/* Thumbnail Container aspect ratio */
+.thumbnail-container {
+    aspect-ratio: 16/9 !important;
+    overflow: hidden !important;
+}
+
+/* See More Reviews Button */
+.btn-see-more-reviews {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary-light) !important;
+}
+
+/* Generic Icon Size */
+.icon-size-16 {
+    width: 16px;
+    height: 16px;
+}
+
+/* Meta Attributes Icon Box and Labels */
+.meta-icon-box {
+    width: 36px !important;
+    height: 36px !important;
+}
+.meta-icon-box i, .meta-icon-box svg {
+    width: 18px !important;
+    height: 18px !important;
+}
+.meta-label {
+    font-size: 11px !important;
+}
+
+/* List Check Icons */
+.check-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Play Icon Container in Accordion */
+.play-icon-container {
+    width: 32px !important;
+    height: 32px !important;
+}
+.play-icon-container i, .play-icon-container svg {
+    width: 14px !important;
+    height: 14px !important;
+    fill: currentColor !important;
+}
+
+/* Lesson Separator border */
+.border-dashed-bottom {
+    border-bottom-style: dashed !important;
+}
+
+/* Reviews Panel Titles and Icons */
+.review-section-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+.inline-alert-icon {
+    width: 20px;
+    height: 20px;
+}
+.send-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Rating breakdown bar & labels */
+.star-label-text {
+    width: 44px;
+}
+.col-sm-8 .progress {
+    height: 6px !important;
+}
+.star-percentage-text {
+    width: 32px;
+}
+
+/* Reviewer Avatars */
+.avatar-ring-wrapper {
+    border: 2px solid #e2e8f0 !important;
+    width: 44px !important;
+    height: 44px !important;
+}
+.avatar-ring-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Purchasing Card layout styles */
+.play-overlay-btn i, .play-overlay-btn svg {
+    width: 16px;
+    height: 16px;
+}
+.purchase-card ul li i, .purchase-card ul li svg {
+    width: 18px;
+    height: 18px;
+}
+.original-price-text {
+    font-size: 11px !important;
+    margin-top: -2px !important;
+}
+.purchase-card a i, .purchase-card a svg,
+.purchase-card button i, .purchase-card button svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Preview Video Modals */
+#previewVideo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+.simulated-player {
+    aspect-ratio: 16/9 !important;
+    overflow: hidden !important;
+}
+
+/* Toast notifications container & message overrides */
+.toast-container {
+    z-index: 1100 !important;
+}
+.toast-body i, .toast-body svg {
+    width: 24px !important;
+    height: 24px !important;
+}
+.toast-message-custom {
+    color: rgba(255, 255, 255, 0.9) !important;
+}

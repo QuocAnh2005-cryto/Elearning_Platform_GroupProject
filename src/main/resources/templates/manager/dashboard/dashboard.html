@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/manager-layout}">
+<head>
+    <link rel="icon" type="image/png" th:href="@{/images/logo-background.png}">
+    <title>Academic Manager Dashboard</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <th:block layout:fragment="page-css">
+        <link rel="stylesheet" th:href="@{/css/manager/dashboard.css}">
+    </th:block>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="page-header mb-4">
+            <h1>Tổng quan</h1>
+            <p>Chào mừng trở lại. Dưới đây là hoạt động hôm nay.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Card 1 -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="icon-wrapper">
+                        <i class="ph ph-users"></i>
+                    </div>
+                    <span class="stat-title">GIẢNG VIÊN</span>
+                </div>
+                <div class="stat-body">
+                    <span class="stat-label">Tổng số giảng viên</span>
+                    <div class="stat-value" th:text="${totalInstructors}">12</div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="icon-wrapper">
+                        <i class="ph ph-book-open"></i>
+                    </div>
+                    <span class="stat-title">KHÓA HỌC</span>
+                </div>
+                <div class="stat-body">
+                    <span class="stat-label">Chờ phê duyệt</span>
+                    <div class="stat-value" th:text="${pendingCourses}">8</div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="icon-wrapper">
+                        <i class="ph ph-graduation-cap"></i>
+                    </div>
+                    <span class="stat-title">HỌC VIÊN</span>
+                </div>
+                <div class="stat-body">
+                    <span class="stat-label">Tổng số học viên</span>
+                    <div class="stat-value" th:text="${totalLearners}">150</div>
+                </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="icon-wrapper">
+                        <i class="ph ph-currency-dollar"></i>
+                    </div>
+                    <span class="stat-title">DOANH THU</span>
+                </div>
+                <div class="stat-body">
+                    <span class="stat-label">Tổng doanh thu</span>
+                    <div class="stat-value" th:text="${totalRevenue}">45.2M</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <h2>Tổng Quan Doanh Thu</h2>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="page-js">
+        <!-- Pass dynamic chart data from Spring Boot to JavaScript -->
+        <script th:inline="javascript">
+            window.chartLabels = /*[[${chartLabels}]]*/ [];
+            window.chartData = /*[[${chartData}]]*/ [];
+        </script>
+        <!-- Custom JS -->
+        <script th:src="@{/js/manager/dashboard.js}"></script>
+    </th:block>
+</body>
+</html>
